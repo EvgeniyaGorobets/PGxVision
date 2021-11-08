@@ -9,6 +9,14 @@
 #   Check Package:             'Ctrl + Shift + E'
 #   Test Package:              'Ctrl + Shift + T'
 
+
+# Setup script
+install.packages(c("devtools", "roxygen2", "testthat", "knitr", "usethis"))
+devtools::has_devel()
+
+# To update docs: devtools::document()
+# To check: devtools::check()
+
 # Chromosomes
 chromosomes <- c(1:22, "X", "Y")
 
@@ -32,7 +40,7 @@ buildForestPlot <- function() {
 
 }
 
-
+# TODO: example data should be saved as an R obj? why?
 biomarkerFile <- "data/pharmacodb_biomarkers_by_tissue.csv"
 
 # TODO: determine what part of this should be within the fxn
