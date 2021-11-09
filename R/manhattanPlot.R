@@ -1,51 +1,16 @@
-#
-# You can learn more about package authoring with RStudio at:
-#
-#   http://r-pkgs.had.co.nz/
-#
-# Some useful keyboard shortcuts for package authoring:
-#
-#   Install Package:           'Ctrl + Shift + B'
-#   Check Package:             'Ctrl + Shift + E'
-#   Test Package:              'Ctrl + Shift + T'
-
-
-# Setup script
-install.packages(c("devtools", "roxygen2", "testthat", "knitr", "usethis"))
-devtools::has_devel()
-
-# To update docs: devtools::document()
-# To check: devtools::check()
-
-# Chromosomes
-chromosomes <- c(1:22, "X", "Y")
-
-
-# Volcano Plot Tutorial:
-# https://training.galaxyproject.org/training-material/topics/transcriptomics/tutorials/rna-seq-viz-with-volcanoplot-r/tutorial.html
+# Possible extra packages
 install.packages('dplyr')   # tidyverse data manipulation
-install.packages('ggplot2') # tidyverse plotting
-library('ggplot2')
-install.packages('ggprism')
-library('ggprism')
 install.packages('ggrepel') # for overlapping labels in ggplot2
+install.packages("jsonlite") # for processing json files
 
-
-buildVolcacoPlot <- function() {
-  print("Hello, world!")
-  # waiting for rnaseq data
-}
-
-buildForestPlot <- function() {
-
-}
+# Constants
+chromosomes <- c(1:22, "X", "Y")
 
 # TODO: example data should be saved as an R obj? why?
 biomarkerFile <- "data/pharmacodb_biomarkers_by_tissue.csv"
-biomarkerDf = read.csv(biomarkerFile)
+biomarkerDf <- read.csv(biomarkerFile)
 
 # TODO: determine what part of this should be within the fxn
-install.packages("jsonlite")
 chromosomeData <- jsonlite::fromJSON("data/chromosome_lengths.json",
                                      simplifyDataFrame = TRUE)
 chromosomeDf <- chromosomeData$`Chromosome Info`
@@ -54,8 +19,6 @@ colnames(chromosomeDf)[colnames(chromosomeDf) == "value"] <- "total-length"
 experiment <- c("Lung", "Trametinib", "rna")
 names(experiment) <- c("tissue", "compound", "mDataType")
 
-# Consider making a "safe" version that sanitizes input and a "dangerous" version
-# which just takes whatever its given
 
 buildManhattanPlot <- function(biomarkerDf=NULL,
                                chromosomeDf=NULL,
@@ -100,6 +63,7 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
         labels=chromosomes, limits=c(1, totalGenomeLen)) +
     guides(x = guide_prism_minor())
 
+  return(plot)
 }
 
 selectExperiment <- function(biomarkerDf, experiment) {
