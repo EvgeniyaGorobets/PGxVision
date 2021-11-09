@@ -1,25 +1,28 @@
-# Possible extra packages
-install.packages('dplyr')   # tidyverse data manipulation
-install.packages('ggrepel') # for overlapping labels in ggplot2
-install.packages("jsonlite") # for processing json files
+# For development only, load sample data
+if (sys.nframe() == 0) {
+  # development code here
+  # TODO: example data should be saved as an R obj? why?
+  biomarkerFile <- "data/pharmacodb_biomarkers_by_tissue.csv"
+  biomarkerDf <- read.csv(biomarkerFile)
 
-# Constants
+  # TODO: determine what part of this should be within the fxn
+  chromosomeData <- jsonlite::fromJSON("data/chromosome_lengths.json",
+                                       simplifyDataFrame = TRUE)
+  chromosomeDf <- chromosomeData$`Chromosome Info`
+  colnames(chromosomeDf)[colnames(chromosomeDf) == "value"] <- "chrLength"
+  colnames(chromosomeDf)[colnames(chromosomeDf) == "molecule-name"] <- "chrName"
+
+  experiment <- c("Lung", "Trametinib", "rna")
+  names(experiment) <- c("tissue", "compound", "mDataType")
+}
+
+# TODO: move to zzz.R
 chromosomes <- c(1:22, "X", "Y")
 
-# TODO: example data should be saved as an R obj? why?
-biomarkerFile <- "data/pharmacodb_biomarkers_by_tissue.csv"
-biomarkerDf <- read.csv(biomarkerFile)
-
-# TODO: determine what part of this should be within the fxn
-chromosomeData <- jsonlite::fromJSON("data/chromosome_lengths.json",
-                                     simplifyDataFrame = TRUE)
-chromosomeDf <- chromosomeData$`Chromosome Info`
-colnames(chromosomeDf)[colnames(chromosomeDf) == "value"] <- "total-length"
-
-experiment <- c("Lung", "Trametinib", "rna")
-names(experiment) <- c("tissue", "compound", "mDataType")
-
-
+#' @importFrom data.table setDT
+#' @importFrom ggplot2 ggplot, geom_point, scale_x_continuous, guides, theme
+#' @importFrom ggprism guide_prism_minor
+# TODO: convert internally to data.table
 buildManhattanPlot <- function(biomarkerDf=NULL,
                                chromosomeDf=NULL,
                                experiment=NULL,
@@ -34,11 +37,15 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
   # Check that appropriate columns are provided
   # TODO: check columns for other df too (tissue, compoound, mDataType, gene_seq_start, pvalue/fdr)
   if (!is.data.frame(chromosomeDf) |
-      !('molecule-name' %in% colnames(chromosomeDf) &
-      'total-length' %in% colnames(chromosomeDf))) {
-    stop("chromosomeDf must be a data.frame with columns 'molecule-name'
-         (corresponding to different chromosomes) and 'total-length'.")
+      !('chrName' %in% colnames(chromosomeDf) &
+      'chrLength' %in% colnames(chromosomeDf))) {
+    stop("chromosomeDf must be a data.frame with columns 'chrName'
+         (corresponding to different chromosomes) and 'chrLength'.")
   }
+
+  # Convert dfs to data.table by reference
+  setDT(biomarkerDf, keep.rownames=TRUE)
+  setDT(chromosomeDf, keep.rownames=TRUE)
 
   # Pre-process data
   selectedBiomrks <- selectExperiment(biomarkerDf, experiment)
@@ -56,7 +63,7 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
   # Customize x-axis ticks and labels
   # TODO: add theme!
   midChromosome <- (chromosomeDf$seq_start + chromosomeDf$seq_end)/2
-  totalGenomeLen <- chromosomeDf$`total-length`[chromosomeDf$`molecule-name` == "all"]
+  totalGenomeLen <- chromosomeDf[chrName == "all", chrLength]
   plot <- plot + # theme(axis.text.x=element_text(family, face, colour, size)) +
     scale_x_continuous("Chromosome", breaks=midChromosome[-1],
         minor_breaks=c(chromosomeDf$seq_start, chromosomeDf$seq_end),
@@ -66,59 +73,32 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
   return(plot)
 }
 
-selectExperiment <- function(biomarkerDf, experiment) {
-  # Validate the experiment vector
-  if (is.null(experiment) | !("mDataType" %in% names(experiment) &
-      "tissue" %in% names(experiment) & "compound" %in% names(experiment))) {
-    stop("You must choose an experiment to plot. Please provide a vector with
-         a tissue, a compound, and a molecular data type (mDataType).")
-  }
-
-  # Select only biomarkers from the chosen experiment
-  tissue <- experiment["tissue"]
-  selectedBiomrks <- biomarkerDf[biomarkerDf$tissue == tissue, ]
-  compound <- experiment["compound"]
-  selectedBiomrks <- selectedBiomrks[selectedBiomrks$compound == compound, ]
-  mDataType <- experiment["mDataType"]
-  selectedBiomrks <- selectedBiomrks[selectedBiomrks$mDataType == mDataType, ]
-
-  # Check that the resulting df is not empty
-  if (nrow(selectedBiomrks) == 0) {
-    warning(paste0("There were no experiments with the combination ",
-                   sprintf("tissue=%s, compound=%s, mDataType=%s.\n",
-                           tissue, compound, mDataType),
-                   "Manhattan plot will be empty."))
-  }
-
-  return(selectedBiomrks)
-}
-
 
 absolutizeGenomicCoords <- function(selectedBiomrks, chromosomeDf) {
   # TODO: update this to use a reference genome?
 
   # Add columns to track absolute position in genome
   chromosomeDf$seq_start <- 1
-  chromosomeDf$seq_end <- chromosomeDf$`total-length`[chromosomeDf$`molecule-name` == "all"]
+  chromosomeDf$seq_end <- chromosomeDf[chrName == "all", chrLength]
   selectedBiomrks$abs_gene_seq_start <- selectedBiomrks$gene_seq_start
 
   # For each chromosome (except chr1), compute its absolute position in the
   # genome and shift biomarker positions accordingly
   for (chr in (seq_along(chromosomes[-1])+1)) {
     # Get the absolute seq_start and seq_end of the chromosome
-    prevChrom <- chromosomeDf$`molecule-name` == chromosomes[chr-1]
-    prevChromEnd <- chromosomeDf$seq_start[prevChrom] + chromosomeDf$`total-length`[prevChrom]
+    prevChrom <- chromosomeDf$chrName == chromosomes[chr-1]
+    prevChromEnd <- chromosomeDf$seq_start[prevChrom] + chromosomeDf$chrLength[prevChrom]
     chromosomeDf$seq_end[prevChrom] <- prevChromEnd - 1
 
-    currentChrom <- chromosomeDf$`molecule-name` == chromosomes[chr]
+    currentChrom <- chromosomeDf$chrName == chromosomes[chr]
     chromosomeDf$seq_start[currentChrom] <- prevChromEnd
 
     # Update all biomarkers in that chromosome with absolute gene_seq_start
     # TODO: I am modifying in place? should make a copy instead?
     chromName <- paste("chr", chromosomes[chr], sep="")
-    relativeSeqStart <- selectedBiomrks$gene_seq_start[selectedBiomrks$chr == chromName]
+    relativeSeqStart <- selectedBiomrks[chr == chromName, gene_seq_start]
     absoluteSeqStart <- relativeSeqStart + prevChromEnd - 1
-    selectedBiomrks$abs_gene_seq_start[selectedBiomrks$chr == chromName] <- absoluteSeqStart
+    selectedBiomrks[chr == chromName, abs_gene_seq_start] <- absoluteSeqStart
   }
 
   # Return the modified dfs
