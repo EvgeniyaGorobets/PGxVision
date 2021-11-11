@@ -12,7 +12,7 @@
 #' "compound", and "mDataType" (molecular data type)
 #' @param pValCutoff A decimal number indicating the cutoff value for
 #' significant observations; any results with a higher p-value will be grayed
-#' out on the plot. Default value is 0.01.
+#' out on the plot. Default value is 0.05.
 #' @return A ggplot2 plot object mapping the biomarkers of the experiment
 #' (x-axis = estimate; y-axis = -log10(p-value))
 #'
@@ -24,10 +24,10 @@
 #'
 #' @importFrom data.table setDT
 #' @importFrom ggplot2 ggplot geom_point scale_x_continuous guides theme aes
-#' scale_color_manual ggtitle element_text
+#' scale_color_manual ggtitle element_text geom_hline
 #' @importFrom ggprism guide_prism_minor
 #' @export
-buildVolcanoPlot <- function(biomarkerDf, experiment, pValCutoff=0.01) {
+buildVolcanoPlot <- function(biomarkerDf, experiment, pValCutoff=0.05) {
   # TODO: check inputs
 
   # Convert biomarkerDf to data.table and extract relevant biomarkers
@@ -47,7 +47,9 @@ buildVolcanoPlot <- function(biomarkerDf, experiment, pValCutoff=0.01) {
     ggtitle(paste0("P-value vs. estimate of biomarkers in ",
                    experiment["tissue"], " tissue in response to ",
                    experiment["compound"])) +
-    theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
+    theme(legend.position = "none", plot.title = element_text(hjust = 0.5)) +
+    geom_hline(yintercept=-log10(pValCutoff), linetype='dotted',
+               col = 'black', size=1)
 
   return(plot)
 }

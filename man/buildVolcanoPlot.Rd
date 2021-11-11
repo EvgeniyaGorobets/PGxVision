@@ -4,7 +4,7 @@
 \alias{buildVolcanoPlot}
 \title{Build a volcano plot of biomarkers}
 \usage{
-buildVolcanoPlot(biomarkerDf, experiment, pValCutoff = 0.01)
+buildVolcanoPlot(biomarkerDf, experiment, pValCutoff = 0.05)
 }
 \arguments{
 \item{biomarkerDf}{A data.frame of drug sensitivity biomarkers that you want
@@ -18,7 +18,7 @@ which you want to plot biomarkers; an experiment is defined by a "tissue",
 
 \item{pValCutoff}{A decimal number indicating the cutoff value for
 significant observations; any results with a higher p-value will be grayed
-out on the plot. Default value is 0.01.}
+out on the plot. Default value is 0.05.}
 }
 \value{
 A ggplot2 plot object mapping the biomarkers of the experiment

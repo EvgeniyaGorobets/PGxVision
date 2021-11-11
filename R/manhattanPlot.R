@@ -10,6 +10,9 @@
 #' @param experiment A named character vector representing the experiment for
 #' which you want to plot biomarkers; an experiment is defined by a "tissue",
 #' "compound", and "mDataType" (molecular data type)
+#' @param pValCutoff A decimal number indicating the cutoff value for
+#' significant observations; any results with a higher p-value will be grayed
+#' out on the plot. Default value is 0.05.
 #' @param relativeGenomeCoords A boolean that indicates whether the genomic
 #' coordinates given in biomarkerDf are relative to the chromosome (TRUE) or
 #' relative to the entire genome (absolute, FALSE). Default is TRUE.
@@ -27,12 +30,13 @@
 #'
 #' @importFrom data.table setDT copy
 #' @importFrom ggplot2 ggplot geom_point scale_x_continuous guides theme aes
-#' scale_color_manual ggtitle element_text
+#' scale_color_manual ggtitle element_text geom_hline
 #' @importFrom ggprism guide_prism_minor
 #' @export
 buildManhattanPlot <- function(biomarkerDf=NULL,
                                chromosomeDf=NULL,
                                experiment=NULL,
+                               pValCutoff=0.05,
                                relativeGenomeCoords=TRUE,
                                genomeName="GRCh38.p13") {
   # Check user input
@@ -71,10 +75,16 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
     chromosomeDf <- result[[2]]
   }
 
+  # Add a column which indicates whether each result is significant, based on
+  # the p-value cutoff given
+  # TODO: cutoff should be <= or < ?
+  selectedBiomrks[, significant := (pvalue <= pValCutoff)]
+
   # Build the Manhattan plot
   totalGenomeLen <- chromosomeDf[nrow(chromosomeDf), seq_start + chrLength]
   plot <- ggplot(selectedBiomrks, aes(x=abs_gene_seq_start, y=-log10(pvalue),
-                                      xmin=1, xmax=totalGenomeLen, color=chr))
+                                      xmin=1, xmax=totalGenomeLen, color=chr,
+                                      alpha=significant))
 
   # Add title and colors
   title <- paste0(genomeName, " gene response to ", experiment["compound"],
@@ -93,6 +103,9 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
         minor_breaks=c(1, chromosomeDf$seq_end), labels=chromosomeNames) +
     guides(x = guide_prism_minor())
 
+  # Add horizontal line to show significance cutoff
+  plot <- plot + geom_hline(yintercept=-log10(pValCutoff), linetype='dotted',
+                            col = 'black', size=1)
   return(plot)
 }
 

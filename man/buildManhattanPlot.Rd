@@ -8,6 +8,7 @@ buildManhattanPlot(
   biomarkerDf = NULL,
   chromosomeDf = NULL,
   experiment = NULL,
+  pValCutoff = 0.05,
   relativeGenomeCoords = TRUE,
   genomeName = "GRCh38.p13"
 )
@@ -25,6 +26,10 @@ order in the reference genome. If there is an "all" row, it should be first.}
 \item{experiment}{A named character vector representing the experiment for
 which you want to plot biomarkers; an experiment is defined by a "tissue",
 "compound", and "mDataType" (molecular data type)}
+
+\item{pValCutoff}{A decimal number indicating the cutoff value for
+significant observations; any results with a higher p-value will be grayed
+out on the plot. Default value is 0.05.}
 
 \item{relativeGenomeCoords}{A boolean that indicates whether the genomic
 coordinates given in biomarkerDf are relative to the chromosome (TRUE) or
