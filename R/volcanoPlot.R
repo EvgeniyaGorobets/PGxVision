@@ -23,7 +23,8 @@
 #' buildVolcanoPlot(Biomarkers, experiment, 0.005)
 #'
 #' @importFrom data.table setDT
-#' @importFrom ggplot2 ggplot geom_point scale_x_continuous guides theme aes scale_color_manual
+#' @importFrom ggplot2 ggplot geom_point scale_x_continuous guides theme aes
+#' scale_color_manual ggtitle element_text
 #' @importFrom ggprism guide_prism_minor
 #' @export
 buildVolcanoPlot <- function(biomarkerDf, experiment, pValCutoff=0.01) {
@@ -42,7 +43,11 @@ buildVolcanoPlot <- function(biomarkerDf, experiment, pValCutoff=0.01) {
   # Build the volcano plot
   plot <- ggplot(selectedBiomrkrs, aes(x=estimate, y=-log10(pvalue),
                                        col=significant))
-  plot <- plot + geom_point() + scale_color_manual(values=c("gray", "red"))
+  plot <- plot + geom_point() + scale_color_manual(values=c("gray", "red")) +
+    ggtitle(paste0("P-value vs. estimate of biomarkers in ",
+                   experiment["tissue"], " tissue in response to ",
+                   experiment["compound"])) +
+    theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
 
   return(plot)
 }
