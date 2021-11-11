@@ -1,10 +1,3 @@
-# For development only, load utils
-if (sys.nframe() == 0) {
-  # development code here
-  source("R/utils.R")
-}
-
-
 #' Build a Manhattan plot of biomarkers
 #'
 #' @param biomarkerDf A data.frame of drug sensitivity biomarkers that you want
@@ -21,7 +14,7 @@ if (sys.nframe() == 0) {
 #' coordinates given in biomarkerDf are relative to the chromosome (TRUE) or
 #' relative to the entire genome (absolute, FALSE). Default is TRUE.
 #' @return A ggplot2 plot object mapping the biomarkers of the experiment
-#' (x-axis = genome position; y-axis = p-value or fdr)
+#' (x-axis = genome position; y-axis = -log10(p-value or fdr))
 #'
 #' @examples
 #' data(Biomarkers)
