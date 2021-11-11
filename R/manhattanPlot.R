@@ -13,6 +13,8 @@
 #' @param relativeGenomeCoords A boolean that indicates whether the genomic
 #' coordinates given in biomarkerDf are relative to the chromosome (TRUE) or
 #' relative to the entire genome (absolute, FALSE). Default is TRUE.
+#' @param genomeName The name of the reference genome (used in plot title).
+#' Default value is "GRCh28.p13"
 #' @return A ggplot2 plot object mapping the biomarkers of the experiment
 #' (x-axis = genome position; y-axis = -log10(p-value or fdr))
 #'
@@ -24,13 +26,15 @@
 #' buildManhattanPlot(Biomarkers, GRCh38.p13.Assembly, experiment, TRUE)
 #'
 #' @importFrom data.table setDT copy
-#' @importFrom ggplot2 ggplot geom_point scale_x_continuous guides theme aes scale_color_manual
+#' @importFrom ggplot2 ggplot geom_point scale_x_continuous guides theme aes
+#' scale_color_manual ggtitle element_text
 #' @importFrom ggprism guide_prism_minor
 #' @export
 buildManhattanPlot <- function(biomarkerDf=NULL,
                                chromosomeDf=NULL,
                                experiment=NULL,
-                               relativeGenomeCoords=TRUE) {
+                               relativeGenomeCoords=TRUE,
+                               genomeName="GRCh38.p13") {
   # Check user input
   # TODO: parameterize the column names
   # use a renaming map to reduce the # of parameters for a fxn (i.e., a named character vector or list).
@@ -71,7 +75,14 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
   totalGenomeLen <- chromosomeDf[nrow(chromosomeDf), seq_start + chrLength]
   plot <- ggplot(selectedBiomrks, aes(x=abs_gene_seq_start, y=-log10(pvalue),
                                       xmin=1, xmax=totalGenomeLen, color=chr))
-  plot <- plot + geom_point() + scale_color_manual(values=rainbow(nrow(chromosomeDf)))
+
+  # Add title and colors
+  title <- paste0(genomeName, " gene response to ", experiment["compound"],
+                  " in ", experiment["tissue"],
+                  " tissue\n(drug sensitivity measured using -log10(p-value))")
+  plot <- plot + geom_point() + ggtitle(title) +
+    theme(legend.position = "none", plot.title = element_text(hjust = 0.5)) +
+    scale_color_manual(values=rainbow(nrow(chromosomeDf)))
 
   # Customize x-axis ticks and labels
   # TODO: add theme!

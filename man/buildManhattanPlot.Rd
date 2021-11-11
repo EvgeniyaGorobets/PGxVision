@@ -8,7 +8,8 @@ buildManhattanPlot(
   biomarkerDf = NULL,
   chromosomeDf = NULL,
   experiment = NULL,
-  relativeGenomeCoords = TRUE
+  relativeGenomeCoords = TRUE,
+  genomeName = "GRCh38.p13"
 )
 }
 \arguments{
@@ -28,10 +29,13 @@ which you want to plot biomarkers; an experiment is defined by a "tissue",
 \item{relativeGenomeCoords}{A boolean that indicates whether the genomic
 coordinates given in biomarkerDf are relative to the chromosome (TRUE) or
 relative to the entire genome (absolute, FALSE). Default is TRUE.}
+
+\item{genomeName}{The name of the reference genome (used in plot title).
+Default value is "GRCh28.p13"}
 }
 \value{
 A ggplot2 plot object mapping the biomarkers of the experiment
-(x-axis = genome position; y-axis = p-value or fdr)
+(x-axis = genome position; y-axis = -log10(p-value or fdr))
 }
 \description{
 Build a Manhattan plot of biomarkers
