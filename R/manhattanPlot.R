@@ -31,7 +31,7 @@ if (sys.nframe() == 0) {
 #' buildManhattanPlot(Biomarkers, GRCh38.p13.Assembly, experiment, TRUE)
 #'
 #' @importFrom data.table setDT copy
-#' @importFrom ggplot2 ggplot geom_point scale_x_continuous guides theme aes
+#' @importFrom ggplot2 ggplot geom_point scale_x_continuous guides theme aes scale_color_manual
 #' @importFrom ggprism guide_prism_minor
 #' @export
 buildManhattanPlot <- function(biomarkerDf=NULL,
@@ -77,8 +77,8 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
   # Build the Manhattan plot
   totalGenomeLen <- chromosomeDf[nrow(chromosomeDf), seq_start + chrLength]
   plot <- ggplot(selectedBiomrks, aes(x=abs_gene_seq_start, y=-log10(pvalue),
-                                      xmin=1, xmax=totalGenomeLen))
-  plot <- plot + geom_point()
+                                      xmin=1, xmax=totalGenomeLen, color=chr))
+  plot <- plot + geom_point() + scale_color_manual(values=rainbow(nrow(chromosomeDf)))
 
   # Customize x-axis ticks and labels
   # TODO: add theme!
@@ -86,8 +86,7 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
   chromosomeNames <- chromosomeDf$chrName
   plot <- plot + # theme(axis.text.x=element_text(family, face, colour, size)) +
     scale_x_continuous("Chromosome", breaks=midChromosome,
-        minor_breaks=c(chromosomeDf$seq_start, chromosomeDf$seq_end),
-        labels=chromosomeNames) +
+        minor_breaks=c(1, chromosomeDf$seq_end), labels=chromosomeNames) +
     guides(x = guide_prism_minor())
 
   return(plot)
