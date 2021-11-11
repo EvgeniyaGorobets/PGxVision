@@ -23,12 +23,17 @@
 #' buildVolcanoPlot(Biomarkers, experiment, 0.005)
 #'
 #' @importFrom data.table setDT
+#' @importFrom checkmate assertDataFrame assertNames assertNumber
 #' @importFrom ggplot2 ggplot geom_point scale_x_continuous guides theme aes
 #' scale_color_manual ggtitle element_text geom_hline
 #' @importFrom ggprism guide_prism_minor
 #' @export
 buildVolcanoPlot <- function(biomarkerDf, experiment, pValCutoff=0.05) {
-  # TODO: check inputs
+  # Check user inputs
+  checkmate::assertDataFrame(biomarkerDf)
+  checkmate::assertNames(colnames(biomarkerDf), must.include=c("tissue",
+    "compound", "mDataType", "pvalue", "estimate"))
+  checkmate::assertNumber(pValCutoff, lower=0, upper=1)
 
   # Convert biomarkerDf to data.table and extract relevant biomarkers
   setDT(biomarkerDf, keep.rownames=TRUE)

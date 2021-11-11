@@ -2,6 +2,9 @@
 
 export(buildManhattanPlot)
 export(buildVolcanoPlot)
+importFrom(checkmate,assertDataFrame)
+importFrom(checkmate,assertNames)
+importFrom(checkmate,assertNumber)
 importFrom(data.table,copy)
 importFrom(data.table,setDT)
 importFrom(ggplot2,aes)

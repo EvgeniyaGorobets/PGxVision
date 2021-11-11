@@ -26,9 +26,11 @@
 #' data(GRCh38.p13.Assembly)
 #' experiment <- c("Lung", "Trametinib", "rna")
 #' names(experiment) <- c("tissue", "compound", "mDataType")
-#' buildManhattanPlot(Biomarkers, GRCh38.p13.Assembly, experiment, TRUE)
+#' buildManhattanPlot(Biomarkers, GRCh38.p13.Assembly, experiment,
+#'                    pValCutoff=0.01, relativeGenomeCoords=TRUE)
 #'
 #' @importFrom data.table setDT copy
+#' @importFrom checkmate assertDataFrame assertNames assertNumber
 #' @importFrom ggplot2 ggplot geom_point scale_x_continuous guides theme aes
 #' scale_color_manual ggtitle element_text geom_hline
 #' @importFrom ggprism guide_prism_minor
@@ -39,21 +41,15 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
                                pValCutoff=0.05,
                                relativeGenomeCoords=TRUE,
                                genomeName="GRCh38.p13") {
-  # Check user input
-  # TODO: parameterize the column names
-  # use a renaming map to reduce the # of parameters for a fxn (i.e., a named character vector or list).
-  if (is.null(biomarkerDf) | !is.data.frame(biomarkerDf)) {
-    stop("Please provide a biomarkerDf of type data.frame")
-  }
-
-  # Check that appropriate columns are provided
-  # TODO: check columns for other df too (tissue, compoound, mDataType, gene_seq_start, pvalue/fdr)
-  if (!is.data.frame(chromosomeDf) |
-      !('chrName' %in% colnames(chromosomeDf) &
-      'chrLength' %in% colnames(chromosomeDf))) {
-    stop("chromosomeDf must be a data.frame with columns 'chrName'
-         (corresponding to different chromosomes) and 'chrLength'.")
-  }
+  # Check user inputs
+  checkmate::assertDataFrame(biomarkerDf)
+  checkmate::assertNames(colnames(biomarkerDf),
+    must.include=c("tissue", "compound", "mDataType", "pvalue",
+                   "gene_seq_start", "chr"))
+  checkmate::assertDataFrame(chromosomeDf)
+  checkmate::assertNames(colnames(chromosomeDf),
+                         must.include=c("chrName", "chrLength"))
+  checkmate::assertNumber(pValCutoff, lower=0, upper=1)
 
   # Convert dfs to data.table by reference
   setDT(biomarkerDf, keep.rownames=TRUE)

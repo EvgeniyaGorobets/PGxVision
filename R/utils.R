@@ -2,6 +2,10 @@
 # Select out all biomarkers matching the chosen experiment; used for all plots
 selectExperiment <- function(biomarkerDf, experiment) {
   # Validate the experiment vector
+  checkmate::assertVector(experiment)
+  checkmate::assertNames(names(experiment),
+                         permutation.of=c("tissue", "compound", "mDataType"))
+
   if (is.null(experiment) | !("mDataType" %in% names(experiment) &
                               "tissue" %in% names(experiment) & "compound" %in% names(experiment))) {
     stop("You must choose an experiment to plot. Please provide a vector with

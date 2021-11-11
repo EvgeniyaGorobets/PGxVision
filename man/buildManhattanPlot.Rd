@@ -50,6 +50,7 @@ data(Biomarkers)
 data(GRCh38.p13.Assembly)
 experiment <- c("Lung", "Trametinib", "rna")
 names(experiment) <- c("tissue", "compound", "mDataType")
-buildManhattanPlot(Biomarkers, GRCh38.p13.Assembly, experiment, TRUE)
+buildManhattanPlot(Biomarkers, GRCh38.p13.Assembly, experiment,
+                   pValCutoff=0.01, relativeGenomeCoords=TRUE)
 
 }
