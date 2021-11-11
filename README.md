@@ -48,7 +48,9 @@ Plot: TODO: add vignettes and include image
 
 ## Contributions
 
-TODO
+data.table is used to transform all data.frames into data.tables, for
+faster manipulation and cleaner syntax. ggplot2 and ggprism are used to
+create all plots in this package. checkmate is used to check user input.
 
 ## References
 
