@@ -31,7 +31,7 @@ if (sys.nframe() == 0) {
 #' buildManhattanPlot(Biomarkers, GRCh38.p13.Assembly, experiment, TRUE)
 #'
 #' @importFrom data.table setDT copy
-#' @importFrom ggplot2 ggplot geom_point scale_x_continuous guides theme
+#' @importFrom ggplot2 ggplot geom_point scale_x_continuous guides theme aes
 #' @importFrom ggprism guide_prism_minor
 #' @export
 buildManhattanPlot <- function(biomarkerDf=NULL,
@@ -75,8 +75,7 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
   }
 
   # Build the Manhattan plot
-  totalGenomeLen <- chromosomeDf[nrow(chromosomeDf),
-                                 abs_gene_seq_start + chrLength]
+  totalGenomeLen <- chromosomeDf[nrow(chromosomeDf), seq_start + chrLength]
   plot <- ggplot(selectedBiomrks, aes(x=abs_gene_seq_start, y=-log10(pvalue),
                                       xmin=1, xmax=totalGenomeLen))
   plot <- plot + geom_point()
@@ -86,9 +85,9 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
   midChromosome <- (chromosomeDf$seq_start + chromosomeDf$seq_end)/2
   chromosomeNames <- chromosomeDf$chrName
   plot <- plot + # theme(axis.text.x=element_text(family, face, colour, size)) +
-    scale_x_continuous("Chromosome", breaks=midChromosome[-1],
+    scale_x_continuous("Chromosome", breaks=midChromosome,
         minor_breaks=c(chromosomeDf$seq_start, chromosomeDf$seq_end),
-        labels=chromosomes) +
+        labels=chromosomeNames) +
     guides(x = guide_prism_minor())
 
   return(plot)
@@ -100,22 +99,22 @@ absolutizeGenomicCoords <- function(selectedBiomrks, chromosomeDf) {
   selectedBiomrks <- copy(selectedBiomrks)
   chromosomeDf <- copy(chromosomeDf)
 
-  # Add columns to track absolute position in genome
+  # Add columns to track absolute position in genome (TODO: can maybe remove this)
   chromosomeDf$seq_start <- 1
-  chromosomeDf$seq_end <- chromosomeDf[chrName == "all", chrLength]
-  selectedBiomrks$abs_gene_seq_start <- selectedBiomrks$gene_seq_start
+  chromosomeDf$seq_end <- 1
+  selectedBiomrks$abs_gene_seq_start <- 1
 
   # Shift genomic coords to be relative to genome instead of each chromosome
   chromEnd <- 0  # the end of the previous chromosome
   for (row in 1:nrow(chromosomeDf)) {
     # Set the absolute seq_start & seq_end of each chromosome
-    chromosomeDf[row, seq_start] <- chromEnd + 1
-    chromosomeDf[row, seq_end] <- chromEnd + chromosomeDf[row, chrLength]
+    chromosomeDf[row, seq_start := chromEnd + 1]
+    chromosomeDf[row, seq_end := chromEnd + chrLength]
 
     # Update all biomarkers in that chromosome with absolute gene_seq_start
     chromName <- paste("chr", chromosomeDf[row, chrName], sep="") #TODO: not generic enough
-    selectedBiomrks[chr == chromName, abs_gene_seq_start] <-
-      selectedBiomrks[chr == chromName, gene_seq_start] + chromEnd
+    selectedBiomrks[chr == chromName,
+                    abs_gene_seq_start := gene_seq_start + chromEnd]
 
     # Update chromEnd to end of current chromosome
     chromEnd <- chromosomeDf[row, seq_end]

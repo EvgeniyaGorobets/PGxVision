@@ -3,6 +3,7 @@
 export(buildManhattanPlot)
 importFrom(data.table,copy)
 importFrom(data.table,setDT)
+importFrom(ggplot2,aes)
 importFrom(ggplot2,geom_point)
 importFrom(ggplot2,ggplot)
 importFrom(ggplot2,guides)
