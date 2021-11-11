@@ -1,10 +1,7 @@
-# For development only, load sample data
+# For development only, load utils
 if (sys.nframe() == 0) {
   # development code here
   source("R/utils.R")
-
-  # TODO: move to zzz.R
-  chromosomes <- c(1:22, "X", "Y")
 }
 
 
@@ -33,7 +30,7 @@ if (sys.nframe() == 0) {
 #' names(experiment) <- c("tissue", "compound", "mDataType")
 #' buildManhattanPlot(Biomarkers, GRCh38.p13.Assembly, experiment, TRUE)
 #'
-#' @importFrom data.table setDT, copy
+#' @importFrom data.table setDT copy
 #' @importFrom ggplot2 ggplot geom_point scale_x_continuous guides theme
 #' @importFrom ggprism guide_prism_minor
 #' @export
