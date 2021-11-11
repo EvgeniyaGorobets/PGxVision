@@ -4,53 +4,57 @@
 # PGxVision
 
 <!-- badges: start -->
-
 <!-- badges: end -->
 
-The goal of PGxVision is to …
+## Description
+
+PGxVision (PharmacoGenomic Vision & Interpretation) helps identify and
+visualize RNA-based cancer biomarkers for drug response. This package is
+intended to be used in conjunction with the Roche-PharmacoGx pipeline.
+PGxVision is intended to guide cancer treatment decisions in molecular
+tumour boards.
+
+``` r
+R version 4.1.1 (2021-08-10)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 19043)
+```
 
 ## Installation
 
-You can install the development version of PGxVision from
-[GitHub](https://github.com/) with:
+To download the package:
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("EvgeniyaGorobets/PGxVision")
+library("PGxVision")
 ```
 
-## Example
-
-This is a basic example which shows you how to solve a common problem:
+To run the shinyApp:
 
 ``` r
-library(PGxVision)
-## basic example code
+Under construction
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+## Overview
 
 ``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
+ls("package:PGxVision")
+data(package = "PGxVision")
 ```
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this. You could also
-use GitHub Actions to re-render `README.Rmd` every time you push. An
-example workflow can be found here:
-<https://github.com/r-lib/actions/tree/v1/examples>.
+TODO: add descriptions! \* Manhattan Plot: \* Volcano Plot: \* Waterfall
+Plot: TODO: add vignettes and include image
 
-You can also embed plots, for example:
+## Contributions
 
-<img src="man/figures/README-pressure-1.png" width="100%" />
+TODO
 
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
+## References
+
+TODO
+
+## Acknowledgements
+
+This package was developed as part of an assessment for 2021 BCB410H:
+Applied Bioinformatics, University of Toronto, Toronto, CANADA.

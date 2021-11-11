@@ -14,6 +14,9 @@ if (sys.nframe() == 0) {
 
   # TO load the package:
   devtools::load_all()
+
+  # To update the README:
+  devtools::build_readme()
 }
 
 # You can learn more about package authoring with RStudio at:
