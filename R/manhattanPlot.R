@@ -87,7 +87,7 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
   title <- paste0(genomeName, " gene response to ", experiment["compound"],
                   " in ", experiment["tissue"],
                   " tissue\n(drug sensitivity measured using -log10(p-value))")
-  plot <- plot + geom_point() + ggtitle(title) +
+  plot <- plot + geom_point() + ggtitle(title) + theme_classic() +
     theme(legend.position = "none", plot.title = element_text(hjust = 0.5)) +
     scale_color_manual(values=rainbow(nrow(chromosomeDf)))
 
@@ -95,10 +95,10 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
   # TODO: add theme!
   midChromosome <- (chromosomeDf$seq_start + chromosomeDf$seq_end)/2
   chromosomeNames <- chromosomeDf$chrName
-  plot <- plot + # theme(axis.text.x=element_text(family, face, colour, size)) +
-    scale_x_continuous("Chromosome", breaks=midChromosome,
-        minor_breaks=c(1, chromosomeDf$seq_end), labels=chromosomeNames) +
-    guides(x = guide_prism_minor())
+  plot <- plot + scale_x_continuous("Chromosome", breaks=midChromosome,
+                                    minor_breaks=c(1, chromosomeDf$seq_end),
+                                    labels=chromosomeNames) +
+          guides(x = guide_prism_minor())
 
   # Add horizontal line to show significance cutoff
   plot <- plot + geom_hline(yintercept=-log10(pValCutoff), linetype='dotted',

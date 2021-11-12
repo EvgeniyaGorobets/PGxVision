@@ -24,9 +24,8 @@
 #'
 #' @importFrom data.table setDT copy :=
 #' @importFrom checkmate assertDataFrame assertNames assertNumber
-#' @importFrom ggplot2 ggplot geom_point scale_x_continuous guides theme aes
+#' @importFrom ggplot2 ggplot geom_point scale_x_continuous theme aes
 #' scale_color_manual ggtitle element_text geom_hline
-#' @importFrom ggprism guide_prism_minor
 #' @export
 buildVolcanoPlot <- function(biomarkerDf, experiment, pValCutoff=0.05) {
   # Check user inputs
