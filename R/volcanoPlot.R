@@ -22,7 +22,7 @@
 #' names(experiment) <- c("tissue", "compound", "mDataType")
 #' buildVolcanoPlot(Biomarkers, experiment, 0.005)
 #'
-#' @importFrom data.table setDT
+#' @importFrom data.table setDT copy :=
 #' @importFrom checkmate assertDataFrame assertNames assertNumber
 #' @importFrom ggplot2 ggplot geom_point scale_x_continuous guides theme aes
 #' scale_color_manual ggtitle element_text geom_hline

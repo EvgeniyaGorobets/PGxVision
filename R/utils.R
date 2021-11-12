@@ -1,6 +1,6 @@
 # Consider taking in multiple vectors, just a single vector
 # Select out all biomarkers matching the chosen experiment; used for all plots
-selectExperiment <- function(biomarkerDf, experiment) {
+selectExperiment <- function(biomarkerDt, experiment) {
   # Validate the experiment vector
   checkmate::assertVector(experiment)
   checkmate::assertNames(names(experiment),
@@ -13,16 +13,16 @@ selectExperiment <- function(biomarkerDf, experiment) {
   }
 
   # Select only biomarkers from the chosen experiment
-  selectedBiomrks <- biomarkerDf[tissue == experiment["tissue"], ]
+  selectedBiomrks <- biomarkerDt[tissue == experiment["tissue"], ]
   selectedBiomrks <- selectedBiomrks[compound == experiment["compound"], ]
   selectedBiomrks <- selectedBiomrks[mDataType == experiment["mDataType"], ]
 
   # Check that the resulting df is not empty
   if (nrow(selectedBiomrks) == 0) {
     warning(paste0("There were no experiments with the combination ",
-                   sprintf("tissue=%s, compound=%s, mDataType=%s.\n",
-                           tissue, compound, mDataType),
-                   "Manhattan plot will be empty."))
+      sprintf("tissue=%s, compound=%s, mDataType=%s.\n", experiment["tissue"],
+      experiment["compound"], experiment["mDataType"]),
+      "Manhattan plot will be empty."))
   }
 
   return(selectedBiomrks)

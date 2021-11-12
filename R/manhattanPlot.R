@@ -29,11 +29,12 @@
 #' buildManhattanPlot(Biomarkers, GRCh38.p13.Assembly, experiment,
 #'                    pValCutoff=0.01, relativeGenomeCoords=TRUE)
 #'
-#' @importFrom data.table setDT copy
+#' @importFrom data.table setDT copy :=
 #' @importFrom checkmate assertDataFrame assertNames assertNumber
 #' @importFrom ggplot2 ggplot geom_point scale_x_continuous guides theme aes
 #' scale_color_manual ggtitle element_text geom_hline
 #' @importFrom ggprism guide_prism_minor
+#' @importFrom grDevices rainbow
 #' @export
 buildManhattanPlot <- function(biomarkerDf=NULL,
                                chromosomeDf=NULL,
