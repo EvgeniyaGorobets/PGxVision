@@ -2,16 +2,15 @@
 % Please edit documentation in R/waterfallPlot.R
 \name{processXevaSet}
 \alias{processXevaSet}
-\title{Prepare a XevaSet for input into buildWaterfallPlot
-tissue <- "BRCA"
-mDataType <- "RNASeq"
-compound <- "paclitaxel"}
+\title{Prepare a XevaSet for input into buildWaterfallPlot}
 \usage{
-processXevaSet(xevaSet, tissue, compound, mDatatype)
+processXevaSet(xevaSet, tissue, compound, mDataType)
 }
 \description{
 Prepare a XevaSet for input into buildWaterfallPlot
-tissue <- "BRCA"
-mDataType <- "RNASeq"
-compound <- "paclitaxel"
+}
+\examples{
+data(PDXE)
+processXevaSet(PDXE, "BRCA", "paclitaxel", "RNASeq")
+
 }

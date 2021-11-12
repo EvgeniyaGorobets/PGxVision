@@ -42,9 +42,11 @@ buildWaterfallPlot <- function(pdxDf) {
 
 # THis whole function is a mess and I should probably delete it
 #' Prepare a XevaSet for input into buildWaterfallPlot
-#' tissue <- "BRCA"
-#' mDataType <- "RNASeq"
-#' compound <- "paclitaxel"
+#'
+#' @examples
+#' data(PDXE)
+#' processXevaSet(PDXE, "BRCA", "paclitaxel", "RNASeq")
+#'
 #' @importFrom Xeva subsetXeva summarizeData
 #' @importFrom Biobase exprs
 processXevaSet <- function(xevaSet, tissue, compound, mDataType) {
