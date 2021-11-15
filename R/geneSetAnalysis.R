@@ -121,10 +121,10 @@ computeGeneSetSimilarity <- function(geneSets, similarityMetric="overlap") {
 
   # Compute similarity score of each pair of gene sets
   similarityDf <- data.frame()
-  for (i in 1:(length(geneSetNames)-1)) {
+  for (i in 1:(length(geneSetIds)-1)) {
     for (j in (i+1):(length(geneSetIds))) {
-      gs1 <- geneSetNames[i]
-      gs2 <- geneSetNames[j]
+      gs1 <- geneSetIds[i]
+      gs2 <- geneSetIds[j]
       similarity <- overlapDistance(geneSets, gs1, gs2)
       similarityDf <- rbind(similarityDf, data.frame("gs1"=gs1, "gs2"=gs2,
                                                      "similarity"=similarity))

@@ -38,6 +38,12 @@ buildNetworkPlot <- function(gsSimilarityDf, similarityCutoff=0.5, title=NULL) {
 
   # Prune edges with similarity below the cutoff
   networkDf <- gsSimilarityDf[gsSimilarityDf$similarity >= similarityCutoff, ]
+  if (nrow(networkDf) == 0) {
+    stop(paste0("No edges were left in the network plot after applying a ",
+                "similarity cutoff of ", similarityCutoff, ".\n",
+                "Try a lower cutoff value (note that the max similarity in ",
+                "this data.frame is ", max(gsSimilarityDf$similarity), ")."))
+  }
 
   # Create network plot
   networkGraph <- igraph::graph_from_data_frame(networkDf, directed = F)
@@ -90,6 +96,13 @@ geneSetAnalysis <- function(geneId, queryType, similarityCutoff=NULL,
                             title=NULL) {
   # Perform gene set analysis
   geneSetIds <- queryGene(geneId, queryType)
+  if (length(geneSetIds) <= 1) {
+    stop(paste0("1 or fewer gene sets of type ", queryType, " and containing ",
+                geneId, " were found.\n",
+                "Further gene set analysis will not possible.\n",
+                "Try a different gene or a different query type."))
+  }
+
   geneSets <- expandGeneSets(geneSetIds, queryType)
   gsSimilarity <- computeGeneSetSimilarity(geneSets)
 
