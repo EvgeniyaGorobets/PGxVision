@@ -135,6 +135,17 @@ computeGeneSetSimilarity <- function(geneSets, similarityMetric="overlap") {
 }
 
 
+#' Helper function for computeGeneSetSimilarity
+#'
+#' Compute the overlap distance between two gene sets, defined as (number of
+#' overlapping genes) / (number of unique genes in the union of gene sets).
+#'
+#' @param geneSets A data.table with columns "gs_name" (gene set name) and
+#' "ensembl_gene" (ENSEMBL gene ID) which lists the genes in each gene set
+#' @param gs1 The name of gene set 1
+#' @param gs2 The name of gene set 2
+#' @return The overlap distance, as defined in the description, between the two
+#' gene sets
 overlapDistance <- function(geneSets, gs1, gs2) {
   # Get genes in each gene set
   geneSet1 <- geneSets[gs_name == gs1, ensembl_gene]
