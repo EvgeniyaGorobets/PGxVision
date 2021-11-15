@@ -15,7 +15,9 @@ Imports:
     data.table,
     ggplot2,
     ggprism,
+    igraph,
     msigdbr,
+    viridis,
     Xeva
 Suggests: 
     rmarkdown,

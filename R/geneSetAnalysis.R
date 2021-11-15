@@ -6,7 +6,7 @@
 #' @param geneId The ENSEMBL ID of the gene you want to query
 #' @param queryType The type of query you want to perform; see MSigDb for
 #' possible subcategories (use msigdbr::msigdbr_collections())
-#' @return A character vector containing the names of all gene sets this gene
+#' @return A character vector containing the IDs of all gene sets this gene
 #' is part of.
 #'
 #' @examples
@@ -27,9 +27,9 @@ queryGene <- function(geneId, queryType) {
                                   subcategory = queryType)
   data.table::setDT(allGeneSets)
   targetGeneSets <- allGeneSets[ensembl_gene == geneId]
-  geneSetNames <- targetGeneSets$gs_name # TODO: maybe use gs_id instead?
+  geneSetIds <- targetGeneSets$gs_id
 
-  return(geneSetNames)
+  return(geneSetIds)
 }
 
 
@@ -37,25 +37,25 @@ queryGene <- function(geneId, queryType) {
 #'
 #' Get all genes that are in the MSigDb gene sets corresponding to geneSetNames.
 #'
-#' @param geneSetNames A character vector containing gene set names from MSigDb
+#' @param geneSetIds A character vector containing gene set IDs from MSigDb
 #' @param geneSetType (optional) The types of gene sets in geneSetNames; see
 #' MSigDb for possible subcategories (use msigdbr::msigdbr_collections()). The
 #' geneSetNames alone are enough but providing the geneSetType may speed up
 #' computation because less data will be retrieved from MSigDb.
 #' @return A data.table mapping all gene sets to their component genes (2
-#' columns: "gs_name", "ensembl_gene")
+#' columns: "gs_id", "ensembl_gene")
 #'
 #' @examples
-#' geneSetNames <- queryGene("ENSG00000000971", "GO:BP")
-#' expandGeneSets(geneSetNames, "GO:BP")
+#' geneSetIds <- queryGene("ENSG00000000971", "GO:BP")
+#' expandGeneSets(geneSetIds, "GO:BP")
 #'
 #' @importFrom checkmate assertCharacter assertString assertSubset
 #' @importFrom msigdbr msigdbr
 #' @importFrom data.table setDT data.table rbindlist
 #' @export
-expandGeneSets <- function(geneSetNames, geneSetType=NULL) {
+expandGeneSets <- function(geneSetIds, geneSetType=NULL) {
   # Check user inputs
-  checkmate::assertCharacter(geneSetNames, min.len = 1)
+  checkmate::assertCharacter(geneSetIds, min.len = 1)
   if (!is.null(geneSetType)) {
     checkmate::assertString(geneSetType)
     allQueryTypes <- msigdbr::msigdbr_collections()$gs_subcat
@@ -68,10 +68,10 @@ expandGeneSets <- function(geneSetNames, geneSetType=NULL) {
   data.table::setDT(allGenes)
 
   # Map each gene set name to the set of corresponding genes
-  geneList <- vector(mode = "list", length = length(geneSetNames))
-  for (i in seq_along(geneSetNames)) {
-    geneList[[i]] <- allGenes[gs_name == geneSetNames[i],
-                              .(gs_name, ensembl_gene)]
+  geneList <- vector(mode = "list", length = length(geneSetIds))
+  for (i in seq_along(geneSetIds)) {
+    geneList[[i]] <- allGenes[gs_id == geneSetIds[i],
+                              .(gs_id, ensembl_gene)]
   }
 
   # Combine into a single data.table and return
@@ -82,8 +82,8 @@ expandGeneSets <- function(geneSetNames, geneSetType=NULL) {
 
 #' Compute the similarity between gene sets
 #'
-#' @param geneSets A data.table or data.frame with columns "gs_name" (gene set
-#' name) and "ensembl_gene" (ENSEMBL gene ID) which lists the genes in each
+#' @param geneSets A data.table or data.frame with columns "gs_id" (gene set
+#' ID) and "ensembl_gene" (ENSEMBL gene ID) which lists the genes in each
 #' gene set
 #' @param similarityMetric (optional) The type of similarity metric to compute.
 #' Currently, the only option is "overlap", which calculates the proportion of
@@ -93,8 +93,8 @@ expandGeneSets <- function(geneSetNames, geneSetType=NULL) {
 #' 2), and "similarity".
 #'
 #' @examples
-#' geneSetNames <- queryGene("ENSG00000000971", "GO:BP")
-#' geneSets <- expandGeneSets(geneSetNames, "GO:BP")
+#' geneSetIds <- queryGene("ENSG00000000971", "GO:BP")
+#' geneSets <- expandGeneSets(geneSetIds, "GO:BP")
 #' computeGeneSetSimilarity(geneSets)
 #'
 #' @importFrom checkmate assertDataFrame
@@ -104,13 +104,13 @@ expandGeneSets <- function(geneSetNames, geneSetType=NULL) {
 computeGeneSetSimilarity <- function(geneSets, similarityMetric="overlap") {
   # Check user inputs
   checkmate::assertDataFrame(geneSets, min.rows=1)
-  checkmate::assertNames(colnames(geneSets), must.include=c("gs_name",
+  checkmate::assertNames(colnames(geneSets), must.include=c("gs_id",
                                                             "ensembl_gene"))
   checkmate::assertString(similarityMetric, pattern="overlap")
 
   # Check that geneSets contains at least 2 different gene sets
-  geneSetNames <- unique(geneSets$gs_name)
-  if (length(geneSetNames) < 2) {
+  geneSetIds <- unique(geneSets$gs_id)
+  if (length(geneSetIds) < 2) {
     stop("geneSets must contain at least two different gene sets.")
   }
 
@@ -122,7 +122,7 @@ computeGeneSetSimilarity <- function(geneSets, similarityMetric="overlap") {
   # Compute similarity score of each pair of gene sets
   similarityDf <- data.frame()
   for (i in 1:(length(geneSetNames)-1)) {
-    for (j in (i+1):(length(geneSetNames))) {
+    for (j in (i+1):(length(geneSetIds))) {
       gs1 <- geneSetNames[i]
       gs2 <- geneSetNames[j]
       similarity <- overlapDistance(geneSets, gs1, gs2)
@@ -148,8 +148,8 @@ computeGeneSetSimilarity <- function(geneSets, similarityMetric="overlap") {
 #' gene sets
 overlapDistance <- function(geneSets, gs1, gs2) {
   # Get genes in each gene set
-  geneSet1 <- geneSets[gs_name == gs1, ensembl_gene]
-  geneSet2 <- geneSets[gs_name == gs2, ensembl_gene]
+  geneSet1 <- geneSets[gs_id == gs1, ensembl_gene]
+  geneSet2 <- geneSets[gs_id == gs2, ensembl_gene]
 
   # Compute overlap
   numOverlapping <- length(intersect(geneSet1, geneSet2))
