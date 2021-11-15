@@ -2,22 +2,65 @@
 % Please edit documentation in R/waterfallPlot.R
 \name{buildWaterfallPlot}
 \alias{buildWaterfallPlot}
-\title{Build a waterfall plot of ???}
+\title{Build a waterfall plot of drug response}
 \usage{
-buildWaterfallPlot(pdxDf)
+buildWaterfallPlot(
+  drugResponseDf,
+  xAxisCol,
+  drugSensitivityCol,
+  colorCol = NULL,
+  xLabel = NULL,
+  yLabel = NULL,
+  title = NULL
+)
 }
 \arguments{
-\item{pdxDf}{A data.frame of ??}
+\item{xAxisCol}{The name of the column in biomarkerDf that will be mapped
+on the x-axis}
+
+\item{drugSensitivityCol}{The name of the column in biomarkerDf that has the
+drug sensitivity metrics; will be mapped on the y-axis}
+
+\item{colorCol}{(optional) The name of the column that will determine the
+color of the bars (such as statistical significance). If no column is
+provided, it will default to the drugSensitivityCol.}
+
+\item{xLabel}{(optional) The label for the x-axis. Defaults to xAxisCol.}
+
+\item{yLabel}{(optional) The label for the y-axis. Defaults to
+drugSensitivityCol.}
+
+\item{title}{(optional) The title for the plot. Defaults to
+'drugSensitivityCol vs. xAxisCol'}
+
+\item{biomarkerDf}{A data.frame of drug sensitivity measurements in different
+tumours, subtypes, or replicates}
 }
 \value{
-A ggplot2 plot object mapping ???
+A ggplot2 plot object mapping the drug sensitivity metrics against
+the xAxisCol, sorted in descending order by drug sensitivity and colored by
+colorCol
 }
 \description{
-More description???
+Use a waterfall plot to visualize drug sensitivity in decreasing order (
+left -> right corresponds to most sensitive -> least sensitive). The
+waterfall plot can also be colored by a third parameter, such as statistical
+significance (p-value, fdr, etc.) There are many common uses of the
+waterfall plot, such as:
+\itemize{
+\item Find the most effective drugs for a particular tumour: plot different
+compounds along the x-axis, and the response of the tumor on the y-axis
+\item Find the tumour subtypes that respond best to a drug: plot different
+subtypes along the x-axis, and the response of each tumor to the compound
+of interest on the y-axis
+}
 }
 \examples{
 data(PDXE)
 df <- processXevaSet(PDXE, "BRCA", "paclitaxel", "RNASeq")
-buildWaterfallPlot(df)
+buildWaterfallPlot(df, xAxisCol="tumour", drugSensitivityCol="angle",
+                   colorCol="ODC1", xLabel="Tumour",
+                   yLabel="Angle Between Treatment and Control",
+                   title="Paclitaxel Response in BRCA Tumours")
 
 }

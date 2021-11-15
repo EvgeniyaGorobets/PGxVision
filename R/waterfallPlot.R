@@ -1,9 +1,34 @@
-#' Build a waterfall plot of ???
+#' Build a waterfall plot of drug response
 #'
-#' More description???
+#' Use a waterfall plot to visualize drug sensitivity in decreasing order (
+#' left -> right corresponds to most sensitive -> least sensitive). The
+#' waterfall plot can also be colored by a third parameter, such as statistical
+#' significance (p-value, fdr, etc.) There are many common uses of the
+#' waterfall plot, such as:
+#' * Find the most effective drugs for a particular tumour: plot different
+#'   compounds along the x-axis, and the response of the tumor on the y-axis
+#' * Find the tumour subtypes that respond best to a drug: plot different
+#'   subtypes along the x-axis, and the response of each tumor to the compound
+#'   of interest on the y-axis
+#' @md
 #'
-#' @param pdxDf A data.frame of ??
-#' @return A ggplot2 plot object mapping ???
+#' @param biomarkerDf A data.frame of drug sensitivity measurements in different
+#' tumours, subtypes, or replicates
+#' @param xAxisCol The name of the column in biomarkerDf that will be mapped
+#' on the x-axis
+#' @param drugSensitivityCol The name of the column in biomarkerDf that has the
+#' drug sensitivity metrics; will be mapped on the y-axis
+#' @param colorCol (optional) The name of the column that will determine the
+#' color of the bars (such as statistical significance). If no column is
+#' provided, it will default to the drugSensitivityCol.
+#' @param xLabel (optional) The label for the x-axis. Defaults to xAxisCol.
+#' @param yLabel (optional) The label for the y-axis. Defaults to
+#' drugSensitivityCol.
+#' @param title (optional) The title for the plot. Defaults to
+#' 'drugSensitivityCol vs. xAxisCol'
+#' @return A ggplot2 plot object mapping the drug sensitivity metrics against
+#' the xAxisCol, sorted in descending order by drug sensitivity and colored by
+#' colorCol
 #'
 #' @examples
 #' data(PDXE)
@@ -17,14 +42,14 @@
 #' @importFrom ggplot2 ggplot geom_bar scale_fill_continuous theme aes
 #' theme_classic ggtitle element_text ylab xlab
 #' @export
-buildWaterfallPlot <- function(biomarkerDf, xAxisCol, drugSensitivityCol,
+buildWaterfallPlot <- function(drugResponseDf, xAxisCol, drugSensitivityCol,
                                colorCol=NULL, xLabel=NULL, yLabel=NULL,
                                title=NULL) {
   # TODO: this already has selected experiment but maybe i should implement
   # so you can still select experiment
 
   # Check user inputs
-  checkmate::assertDataFrame(biomarkerDf)
+  checkmate::assertDataFrame(drugResponseDf)
   checkmate::assertString(xAxisCol)
   checkmate::assertString(drugSensitivityCol)
   requiredCols <- c(xAxisCol, drugSensitivityCol)
@@ -35,7 +60,7 @@ buildWaterfallPlot <- function(biomarkerDf, xAxisCol, drugSensitivityCol,
                    "plot.\nBars will be colored based on drug sensitivity."))
   }
   # Check that the dataframe actually has the data cols specified by the user
-  checkmate::assertNames(colnames(biomarkerDf), must.include=requiredCols)
+  checkmate::assertNames(colnames(drugResponseDf), must.include=requiredCols)
 
   # Assign axes labels, if needed
   if (is.null(xLabel)) {
@@ -55,13 +80,13 @@ buildWaterfallPlot <- function(biomarkerDf, xAxisCol, drugSensitivityCol,
   }
 
   # Order the x-axis data points based on their drug sensitivity
-  sortedDf <- biomarkerDf[order(biomarkerDf[,drugSensitivityCol],
+  sortedDf <- drugResponseDf[order(drugResponseDf[,drugSensitivityCol],
                                 decreasing=TRUE), ]
   sortedXAxis <- sortedDf[, xAxisCol]
 
   # Build the waterfall (bar) plot
   if (is.null(colorCol)) {
-    fill <- NULL
+    fill <- sortedDf[, drugSensitivityCol]
   } else {
     fill <- sortedDf[, colorCol]
   }
