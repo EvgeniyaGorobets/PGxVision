@@ -78,3 +78,75 @@ expandGeneSets <- function(geneSetNames, geneSetType=NULL) {
   expandedGeneSets <- data.table::rbindlist(geneList, use.names=TRUE)
   return(expandedGeneSets)
 }
+
+
+#' Compute the similarity between gene sets
+#'
+#' @param geneSets A data.table or data.frame with columns "gs_name" (gene set
+#' name) and "ensembl_gene" (ENSEMBL gene ID) which lists the genes in each
+#' gene set
+#' @param similarityMetric (optional) The type of similarity metric to compute.
+#' Currently, the only option is "overlap", which calculates the proportion of
+#' intersecting genes to total genes between each pair of gene sets.
+#' @return A data.frame that lists the similarity score between each pair of
+#' gene sets. There will be three columns: "gs1" (gene set 1), "gs2" (gene set
+#' 2), and "similarity".
+#'
+#' @examples
+#' geneSetNames <- queryGene("ENSG00000000971", "GO:BP")
+#' geneSets <- expandGeneSets(geneSetNames, "GO:BP")
+#' computeGeneSetSimilarity(geneSets)
+#'
+#' @importFrom checkmate assertDataFrame
+#' @importFrom msigdbr msigdbr
+#' @importFrom data.table setDT is.data.table
+#' @export
+computeGeneSetSimilarity <- function(geneSets, similarityMetric="overlap") {
+  # Check user inputs
+  checkmate::assertDataFrame(geneSets, min.rows=1)
+  checkmate::assertNames(colnames(geneSets), must.include=c("gs_name",
+                                                            "ensembl_gene"))
+  checkmate::assertString(similarityMetric, pattern="overlap")
+
+  # Check that geneSets contains at least 2 different gene sets
+  geneSetNames <- unique(geneSets$gs_name)
+  if (length(geneSetNames) < 2) {
+    stop("geneSets must contain at least two different gene sets.")
+  }
+
+  # Convert to data.table if data.frame given
+  if (!data.table::is.data.table(geneSets)) {
+    data.table::setDT(geneSets)
+  }
+
+  # Compute similarity score of each pair of gene sets
+  similarityDf <- data.frame()
+  for (i in 1:(length(geneSetNames)-1)) {
+    for (j in (i+1):(length(geneSetNames))) {
+      gs1 <- geneSetNames[i]
+      gs2 <- geneSetNames[j]
+      similarity <- overlapDistance(geneSets, gs1, gs2)
+      similarityDf <- rbind(similarityDf, data.frame("gs1"=gs1, "gs2"=gs2,
+                                                     "similarity"=similarity))
+    }
+  }
+
+  return(similarityDf)
+}
+
+
+overlapDistance <- function(geneSets, gs1, gs2) {
+  # Get genes in each gene set
+  geneSet1 <- geneSets[gs_name == gs1, ensembl_gene]
+  geneSet2 <- geneSets[gs_name == gs2, ensembl_gene]
+
+  # Compute overlap
+  numOverlapping <- length(intersect(geneSet1, geneSet2))
+  totalGenes <- length(unique(c(geneSet1, geneSet2)))
+  overlap <- numOverlapping / totalGenes
+
+  return(overlap)
+}
+
+
+
