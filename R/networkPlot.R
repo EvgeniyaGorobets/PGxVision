@@ -107,11 +107,12 @@ geneSetAnalysis <- function(geneId, queryType, similarityCutoff=NULL,
   gsSimilarity <- computeGeneSetSimilarity(geneSets)
 
   if (is.null(title)) {
-    title <- paste0(queryType, " Gene Sets containing ", geneId,
-                    "\n(edge weights based on gene set overlap)")
+    title <- paste0(queryType, " Gene Sets containing ", geneId)
   }
 
   graph <- buildNetworkPlot(gsSimilarity, similarityCutoff=similarityCutoff,
                             title=title)
   return(graph)
 }
+
+# [END]

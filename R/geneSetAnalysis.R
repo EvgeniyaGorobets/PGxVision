@@ -168,5 +168,4 @@ overlapDistance <- function(geneSets, gs1, gs2) {
   return(overlap)
 }
 
-
-
+# [END]

@@ -110,3 +110,5 @@ buildWaterfallPlot <- function(drugResponseDf, xAxisCol, drugSensitivityCol,
 
   return(plot)
 }
+
+# [END]

@@ -83,9 +83,10 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
 
   # Build the Manhattan plot
   totalGenomeLen <- chromosomeDf[nrow(chromosomeDf), seq_start + chrLength]
-  plot <- ggplot2::ggplot(selectedBiomrks, ggplot2::aes(
+  suppressWarnings(
+    plot <- ggplot2::ggplot(selectedBiomrks, ggplot2::aes(
     x=abs_gene_seq_start, y=-log10(pvalue), xmin=1, xmax=totalGenomeLen,
-    color=chr, alpha=significant))
+    color=chr, alpha=significant)))
 
   # Add title and colors
   title <- paste0(genomeName, " gene response to ", experiment["compound"],
@@ -97,7 +98,6 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
     ggplot2::scale_color_manual(values=rainbow(nrow(chromosomeDf)))
 
   # Customize x-axis ticks and labels
-  # TODO: add theme!
   midChromosome <- (chromosomeDf$seq_start + chromosomeDf$seq_end)/2
   chromosomeNames <- chromosomeDf$chrName
   plot <- plot + ggplot2::scale_x_continuous(
@@ -144,3 +144,5 @@ absolutizeGenomicCoords <- function(selectedBiomrks, chromosomeDf) {
   # Return the modified dfs
   return(list(selectedBiomrks, chromosomeDf))
 }
+
+# [END]
