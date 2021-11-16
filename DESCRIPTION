@@ -30,6 +30,7 @@ Imports:
     ggprism,
     igraph,
     msigdbr,
+    qpdf,
     viridis
 Suggests: 
     rmarkdown,

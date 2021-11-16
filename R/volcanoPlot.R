@@ -28,6 +28,9 @@
 #' scale_color_manual ggtitle element_text geom_hline
 #' @export
 buildVolcanoPlot <- function(biomarkerDf, experiment, pValCutoff=0.05) {
+  # Local bindings to satisfy check() and DT syntax
+  significant <- pvalue <- estimate <- NULL
+
   # Check user inputs
   checkmate::assertDataFrame(biomarkerDf)
   checkmate::assertNames(colnames(biomarkerDf), must.include=c("tissue",

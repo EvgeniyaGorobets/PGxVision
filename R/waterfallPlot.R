@@ -41,6 +41,7 @@
 #' @importFrom checkmate assertDataFrame assertNames assertString
 #' @importFrom ggplot2 ggplot geom_bar scale_fill_continuous theme aes
 #' theme_classic ggtitle element_text ylab xlab
+#' @importFrom grDevices colorRamp rgb
 #' @export
 buildWaterfallPlot <- function(drugResponseDf, xAxisCol, drugSensitivityCol,
                                colorCol=NULL, xLabel=NULL, yLabel=NULL,

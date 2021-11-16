@@ -13,7 +13,7 @@ A data frame with 38 rows and 3 variables:
 }
 }
 \source{
-\package{Xeva}
+Xeva. R package version 1.10.0.
 }
 \usage{
 BRCA.PDXE.paxlitaxel.response

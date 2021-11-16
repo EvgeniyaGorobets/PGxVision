@@ -9,7 +9,7 @@
 #'   \item{ODC1}{???}
 #'   \item{angle}{The angle between the treatment and control}
 #' }
-#' @source \package{Xeva}
+#' @source Xeva. R package version 1.10.0.
 "BRCA.PDXE.paxlitaxel.response"
 
 

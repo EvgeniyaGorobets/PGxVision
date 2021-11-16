@@ -42,6 +42,10 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
                                pValCutoff=0.05,
                                relativeGenomeCoords=TRUE,
                                genomeName="GRCh38.p13") {
+  # Local bindings to satisfy check() and DT syntax
+  pvalue <- seq_start <- abs_gene_seq_start <- significant <- chrLength <-
+    chrName <- chr <- NULL
+
   # Check user inputs
   checkmate::assertDataFrame(biomarkerDf)
   checkmate::assertNames(colnames(biomarkerDf),
@@ -108,6 +112,10 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
 
 
 absolutizeGenomicCoords <- function(selectedBiomrks, chromosomeDf) {
+  # Local bindings to satisfy check() and DT syntax
+  seq_end <- seq_start <- abs_gene_seq_start <- gene_seq_start <- chrLength <-
+    chrName <- chr <- NULL
+
   # Make a copy of the data.tables so you're not modifying user data
   selectedBiomrks <- data.table::copy(selectedBiomrks)
   chromosomeDf <- data.table::copy(chromosomeDf)

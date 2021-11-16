@@ -1,0 +1,15 @@
+data.table vignettes: https://rdatatable.gitlab.io/data.table/index.html
+colors in ggplot2:
+http://www.sthda.com/english/wiki/ggplot2-colors-how-to-change-colors-automatically-and-manually
+https://www.datanovia.com/en/blog/top-r-color-palettes-to-know-for-great-data-visualization/
+axis ticks in ggplot2/ggprism:
+http://www.sthda.com/english/wiki/ggplot2-axis-ticks-a-guide-to-customize-tick-marks-and-labels
+https://cran.r-project.org/web/packages/ggprism/vignettes/axes.html
+titles:
+http://www.sthda.com/english/wiki/ggplot2-title-main-axis-and-legend-titles
+https://www.datanovia.com/en/blog/how-to-remove-legend-from-a-ggplot/
+https://stackoverflow.com/questions/40675778/center-plot-title-in-ggplot2
+https://stackoverflow.com/questions/57177608/how-to-add-dashed-horizontal-line-with-label-in-ggplot
+
+https://stackoverflow.com/questions/9439256/how-can-i-handle-r-cmd-check-no-visible-binding-for-global-variable-notes-when
+https://stackoverflow.com/questions/15035150/r-cmd-check-as-cran-warning

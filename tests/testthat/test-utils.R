@@ -1,6 +1,7 @@
 # Test selectExperiment function
 test_that("selectExperiment doesn't accept faulty experiment vector", {
-  dt <- setDT(Biomarkers)
+  df <- copy(Biomarkers)
+  dt <- setDT(df)
   notVector <- list("Lung", "Panobinostat", "rna")
   expect_error(selectExperiment(dt, experiment=notVector))
 
@@ -10,7 +11,8 @@ test_that("selectExperiment doesn't accept faulty experiment vector", {
 })
 
 test_that("selectExperiment warns when it returns empty data.table", {
-  dt <- setDT(Biomarkers)
+  df <- copy(Biomarkers)
+  dt <- setDT(df)
   experiment <- setNames(c("Lung", "unknownDrug", "rna"),
                          c("tissue", "compound", "mDataType"))
   expect_warning(selectExperiment(dt, experiment))

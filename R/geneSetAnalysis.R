@@ -17,6 +17,9 @@
 #' @importFrom data.table setDT
 #' @export
 queryGene <- function(geneId, queryType) {
+  # Local bindings to satisfy check() and DT syntax
+  ensembl_gene <- NULL
+
   # Check user inputs
   checkmate::assertString(geneId)
   checkmate::assertString(queryType)
@@ -54,6 +57,9 @@ queryGene <- function(geneId, queryType) {
 #' @importFrom data.table setDT data.table rbindlist
 #' @export
 expandGeneSets <- function(geneSetIds, geneSetType=NULL) {
+  # Local bindings to satisfy check() and DT syntax
+  gs_id <- ensembl_gene <- NULL
+
   # Check user inputs
   checkmate::assertCharacter(geneSetIds, min.len = 1)
   if (!is.null(geneSetType)) {
@@ -71,7 +77,7 @@ expandGeneSets <- function(geneSetIds, geneSetType=NULL) {
   geneList <- vector(mode = "list", length = length(geneSetIds))
   for (i in seq_along(geneSetIds)) {
     geneList[[i]] <- allGenes[gs_id == geneSetIds[i],
-                              .(gs_id, ensembl_gene)]
+                              list(gs_id, ensembl_gene)]
   }
 
   # Combine into a single data.table and return
@@ -147,6 +153,9 @@ computeGeneSetSimilarity <- function(geneSets, similarityMetric="overlap") {
 #' @return The overlap distance, as defined in the description, between the two
 #' gene sets
 overlapDistance <- function(geneSets, gs1, gs2) {
+  # Local bindings to satisfy check() and DT syntax
+  gs_id <- ensembl_gene <- NULL
+
   # Get genes in each gene set
   geneSet1 <- geneSets[gs_id == gs1, ensembl_gene]
   geneSet2 <- geneSets[gs_id == gs2, ensembl_gene]

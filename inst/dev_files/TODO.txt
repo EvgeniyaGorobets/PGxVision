@@ -1,0 +1,16 @@
+BY TOMORROW:
+- finish README --> image
+- create vignettes
+- add custom x/y labels and titles
+- fix data.R
+- make user input testing more thorough
+- test selectExperiment
+- don't forget the video presentation
+- consider adding more examples
+- go through her requirements once more!
+
+FOR THE FINAL SUBMISSION:
+- make forest plot
+- consider different form of using experiments
+- interactiveness + Shiny dashboard!
+- expand testing to test actual ggplot objects

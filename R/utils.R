@@ -1,6 +1,9 @@
-# Consider taking in multiple vectors, just a single vector
+# TODO: Consider taking in multiple vectors, just a single vector
 # Select out all biomarkers matching the chosen experiment; used for all plots
 selectExperiment <- function(biomarkerDt, experiment) {
+  # Local bindings to satisfy check() and DT syntax
+  tissue <- compound <- mDataType <- NULL
+
   # Validate the experiment vector
   checkmate::assertVector(experiment)
   checkmate::assertNames(names(experiment),
