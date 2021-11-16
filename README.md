@@ -64,8 +64,8 @@ enhance the colors on the network plot (*buildNetworkPlot*).
 
 `checkmate` is used to succinctly check user input in all functions.
 
-`msigdbr` is used to query the MSigDb in gene set analysis functions (
-*queryGene, expandGeneSets*).
+`msigdbr` is used to query the MSigDb in gene set analysis functions
+(*queryGene, expandGeneSets*).
 
 ## References
 
