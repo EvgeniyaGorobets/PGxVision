@@ -16,7 +16,7 @@
 #' @examples
 #' geneSetIds <- queryGene("ENSG00000000971", "GO:BP")
 #' geneSets <- expandGeneSets(geneSetIds, "GO:BP")
-#' gsSimilarity <- computeGeneSetSimilarity(geneSets)
+#' gsSimilarityDf <- computeGeneSetSimilarity(geneSets)
 #' buildNetworkPlot(gsSimilarityDf, similarityCutoff=0.3)
 #'
 #' @importFrom checkmate assertDataFrame assertNames assertString

@@ -12,8 +12,8 @@
 #'   of interest on the y-axis
 #' @md
 #'
-#' @param biomarkerDf A data.frame of drug sensitivity measurements in different
-#' tumours, subtypes, or replicates
+#' @param drugResponseDf A data.frame of drug sensitivity measurements in
+#' different tumours, subtypes, or replicates
 #' @param xAxisCol The name of the column in biomarkerDf that will be mapped
 #' on the x-axis
 #' @param drugSensitivityCol The name of the column in biomarkerDf that has the

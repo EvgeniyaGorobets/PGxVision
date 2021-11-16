@@ -1,3 +1,18 @@
+#' Paxlitaxel response in BRCA PDXs
+#'
+#' A dataset containing the response of different BRCA tumours to paxlitaxel.
+#' The experiment tumours are patient-derived xenographs.
+#'
+#' @format A data frame with 38 rows and 3 variables:
+#' \describe{
+#'   \item{tumour}{The name of the PDX tumour}
+#'   \item{ODC1}{???}
+#'   \item{angle}{The angle between the treatment and control}
+#' }
+#' @source \package{Xeva}
+"BRCA.PDXE.paxlitaxel.response"
+
+
 #' Drug sensitivity data for genes in the GRCh38.p13 genome assembly
 #'
 #' A dataset containing the prices and other attributes of almost 54,000
@@ -23,6 +38,7 @@
 #' @source \url{https://pharmacodb.pmgenomics.ca/}
 "Biomarkers"
 
+
 #' Information about chromosomes in the GRCh38.p13 genome assembly
 #'
 #' A dataset containing the prices and other attributes of almost 54,000
@@ -37,5 +53,20 @@
 #'   \item{statistic}{the chromosome statistic measured in this row}
 #'   \item{chrLength}{the length of the chromosome (# nucleotides)}
 #' }
-#' @source \url{https://pharmacodb.pmgenomics.ca/}
+#' @source \url{https://www.gencodegenes.org/pages/gencode.html}
 "GRCh38.p13.Assembly"
+
+#' A set of 10 'GO cellular compartment' gene sets
+#'
+#' A dataset of all gene sets in the category 'GO cellular compartment' that
+#' contain the gene ENSG00000012124. Each row represents a single gene in one
+#' of the 10 gene sets.
+#'
+#' @format A data frame with 8187 rows and 2 variables:
+#' \describe{
+#'   \item{gs_id}{GO gene set ID}
+#'   \item{ensembl_gene}{ENSEMBL gene ID}
+#' }
+#' @source \url{
+#' https://www.gsea-msigdb.org/gsea/msigdb/genesets.jsp?collection=GO:CC}
+"TestGeneSets"

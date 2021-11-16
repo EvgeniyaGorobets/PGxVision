@@ -15,6 +15,9 @@ buildWaterfallPlot(
 )
 }
 \arguments{
+\item{drugResponseDf}{A data.frame of drug sensitivity measurements in
+different tumours, subtypes, or replicates}
+
 \item{xAxisCol}{The name of the column in biomarkerDf that will be mapped
 on the x-axis}
 
@@ -32,9 +35,6 @@ drugSensitivityCol.}
 
 \item{title}{(optional) The title for the plot. Defaults to
 'drugSensitivityCol vs. xAxisCol'}
-
-\item{biomarkerDf}{A data.frame of drug sensitivity measurements in different
-tumours, subtypes, or replicates}
 }
 \value{
 A ggplot2 plot object mapping the drug sensitivity metrics against

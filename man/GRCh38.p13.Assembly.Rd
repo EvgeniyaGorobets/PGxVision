@@ -16,7 +16,7 @@ A data frame with 25 rows and 6 variables:
 }
 }
 \source{
-\url{https://pharmacodb.pmgenomics.ca/}
+\url{https://www.gencodegenes.org/pages/gencode.html}
 }
 \usage{
 GRCh38.p13.Assembly
