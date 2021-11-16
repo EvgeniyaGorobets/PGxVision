@@ -50,10 +50,11 @@ Plot: TODO: add vignettes and include image
 
 The author of the package is Evgeniya Gorobets.
 
-data.table is used to transform data.frames into data.tables in some
-plotting and gene set analysis functions for faster manipulation and
-cleaner syntax (*buildVolcanoPlot, buildManhattanPlot, queryGene,
-expandGeneSets, computeGeneSetSimilarity*).
+`data.table` is used to transform `data.frame`s into `data.table`s in
+some plotting and gene set analysis functions (*buildVolcanoPlot,
+buildManhattanPlot, queryGene, expandGeneSets,
+computeGeneSetSimilarity*). The `data.table` vignettes were used to
+create cleaner syntax and optimize table manipulation.
 
 ggplot2 is used to create non-network plots (buildVolcanoPlot,
 buildManhattanPlot, buildWaterfallPlot), and igraph is used to create
