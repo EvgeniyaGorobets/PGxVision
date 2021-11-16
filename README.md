@@ -25,7 +25,7 @@ Running under: Windows 10 x64 (build 19043)
 To download the package:
 
 ``` r
-# install.packages("devtools")
+require("devtools")
 devtools::install_github("EvgeniyaGorobets/PGxVision")
 library("PGxVision")
 ```
