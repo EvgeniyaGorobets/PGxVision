@@ -54,7 +54,32 @@ create all plots in this package. checkmate is used to check user input.
 
 ## References
 
-TODO
+Lang, M. (2017). “checkmate: Fast Argument Checks for Defensive R
+Programming.” *The R Journal 9*(1), 437-445.
+<https://journal.r-project.org/archive/2017/RJ-2017-028/index.html>.
+
+Dowle, M., and Srinivasan, A. (2021). data.table: Extension of
+`data.frame`. R package version 1.14.2.
+<https://CRAN.R-project.org/package=data.table>.
+
+Wickham, H. (2016). ggplot2: Elegant Graphics for Data Analysis.
+Springer-Verlag New York. <https://ggplot2.tidyverse.org>.
+
+Dawson, C. (2021). ggprism: A ‘ggplot2’ Extension Inspired by ‘GraphPad
+Prism’. R package version 1.0.3.
+<https://CRAN.R-project.org/package=ggprism>
+
+Csardi, G., Nepusz, T. (2006). The igraph software package for complex
+network research, *InterJournal, Complex Systems 1695.*
+<https://igraph.org>
+
+Dolgalev, I. (2021). msigdbr: MSigDB Gene Sets for Multiple Organisms in
+a Tidy Data Format. R package version 7.4.1.
+<https://CRAN.R-project.org/package=msigdbr>
+
+Garnier, S., Ross, N., Rudis, R., Camargo, A. P., Sciaini, M., and
+Scherer, C. (2021). Rvision - Colorblind-Friendly Color Maps for R. R
+package version 0.6.2.
 
 ## Acknowledgements
 
