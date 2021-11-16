@@ -104,34 +104,3 @@ buildWaterfallPlot <- function(drugResponseDf, xAxisCol, drugSensitivityCol,
 
   return(plot)
 }
-
-
-
-# THis whole function is a mess and I should probably delete it
-#' Prepare a XevaSet for input into buildWaterfallPlot
-#'
-#' @examples
-#' data(PDXE)
-#' processXevaSet(PDXE, "BRCA", "paclitaxel", "RNASeq")
-#'
-#' @importFrom Xeva subsetXeva summarizeMolecularProfiles
-#' @importFrom Biobase exprs
-processXevaSet <- function(xevaSet, tissue, compound, mDataType) {
-  # TODO: check xeva set somehow?
-  # TODO: RENAME VARIABLES
-
-  # Subset XevaSet
-  brca <- Xeva::subsetXeva(PDXE, tissue, "tissue")
-  # Retrieve molecular profiles
-  brca_exprs <- Xeva::summarizeMolecularProfiles(brca, drug=compound, mDataType=mDataType)
-
-  # What is a factor? Why is it called tumor? i don't understand anything
-  tumour <- colnames(brca_exprs)
-  odc1 <- Biobase::exprs(brca_exprs)["ODC1",]
-  x <- brca_exprs$slope #TODO: wrong
-
-  # Construct data.frame
-  xevaDf <- data.frame(tumour=tumour, ODC1=odc1, angle=x, check.names=F)
-
-  return(xevaDf)
-}
