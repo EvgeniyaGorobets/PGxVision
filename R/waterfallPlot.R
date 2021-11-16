@@ -92,15 +92,20 @@ buildWaterfallPlot <- function(drugResponseDf, xAxisCol, drugSensitivityCol,
     fill <- sortedDf[, colorCol]
     legendName <- colorCol
   }
-  plot <- ggplot(sortedDf, aes(x=factor(sortedXAxis, levels=sortedXAxis),
-                               y=sortedDf[, drugSensitivityCol], fill=fill))
-  plot <- plot + geom_bar(stat="identity") +
-          scale_fill_continuous(type="viridis", name=legendName)
+
+  plot <- ggplot2::ggplot(sortedDf, ggplot2::aes(
+    x=factor(sortedXAxis, levels=sortedXAxis),
+    y=sortedDf[, drugSensitivityCol], fill=fill))
+
+  plot <- plot + ggplot2::geom_bar(stat="identity") +
+          ggplot2::scale_fill_continuous(type="viridis", name=legendName)
 
   # Add title and axes labels
-  plot <- plot + theme_classic() + ggtitle(title) + ylab(yLabel) +
-    xlab(xLabel) + theme(plot.title = element_text(hjust = 0.5),
-    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  plot <- plot + ggplot2::theme_classic() + ggplot2::ggtitle(title) +
+    ggplot2::ylab(yLabel) + ggplot2::xlab(xLabel) +
+    ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5),
+                   axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5,
+                                                       hjust=1))
 
   return(plot)
 }

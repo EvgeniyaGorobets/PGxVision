@@ -35,25 +35,27 @@ buildVolcanoPlot <- function(biomarkerDf, experiment, pValCutoff=0.05) {
   checkmate::assertNumber(pValCutoff, lower=0, upper=1)
 
   # Convert biomarkerDf to data.table and extract relevant biomarkers
-  setDT(biomarkerDf, keep.rownames=TRUE)
+  data.table::setDT(biomarkerDf, keep.rownames=TRUE)
   selectedBiomrkrs <- selectExperiment(biomarkerDf, experiment)
 
   # Create a copy and add a column which indicates whether each result is
   # significant, based on the p-value cutoff given
   # TODO: cutoff should be <= or < ?
-  selectedBiomrkrs <- copy(selectedBiomrkrs)
+  selectedBiomrkrs <- data.table::copy(selectedBiomrkrs)
   selectedBiomrkrs[, significant := (pvalue <= pValCutoff)]
 
   # Build the volcano plot
-  plot <- ggplot(selectedBiomrkrs, aes(x=estimate, y=-log10(pvalue),
-                                       col=significant))
-  plot <- plot + geom_point() + scale_color_manual(values=c("gray", "red")) +
-    ggtitle(paste0("P-value vs. estimate of biomarkers in ",
-                   experiment["tissue"], " tissue in response to ",
-                   experiment["compound"])) +
-    theme(legend.position = "none", plot.title = element_text(hjust = 0.5)) +
-    geom_hline(yintercept=-log10(pValCutoff), linetype='dotted',
-               col = 'black', size=1)
+  plot <- ggplot2::ggplot(selectedBiomrkrs, ggplot2::aes(
+    x=estimate, y=-log10(pvalue), col=significant))
+  plot <- plot + ggplot2::geom_point() +
+    ggplot2::scale_color_manual(values=c("gray", "red")) +
+    ggplot2::ggtitle(paste0("P-value vs. estimate of biomarkers in ",
+                            experiment["tissue"], " tissue in response to ",
+                            experiment["compound"])) +
+    ggplot2::theme(legend.position = "none",
+                   plot.title = ggplot2::element_text(hjust = 0.5)) +
+    ggplot2::geom_hline(yintercept=-log10(pValCutoff), linetype='dotted',
+                        col = 'black', size=1)
 
   return(plot)
 }

@@ -53,8 +53,8 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
   checkmate::assertNumber(pValCutoff, lower=0, upper=1)
 
   # Convert dfs to data.table by reference
-  setDT(biomarkerDf, keep.rownames=TRUE)
-  setDT(chromosomeDf, keep.rownames=TRUE)
+  data.table::setDT(biomarkerDf, keep.rownames=TRUE)
+  data.table::setDT(chromosomeDf, keep.rownames=TRUE)
 
   # Select drug sensitivity results from the experiment
   selectedBiomrks <- selectExperiment(biomarkerDf, experiment)
@@ -79,38 +79,38 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
 
   # Build the Manhattan plot
   totalGenomeLen <- chromosomeDf[nrow(chromosomeDf), seq_start + chrLength]
-  plot <- ggplot(selectedBiomrks, aes(x=abs_gene_seq_start, y=-log10(pvalue),
-                                      xmin=1, xmax=totalGenomeLen, color=chr,
-                                      alpha=significant))
+  plot <- ggplot2::ggplot(selectedBiomrks, ggplot2::aes(
+    x=abs_gene_seq_start, y=-log10(pvalue), xmin=1, xmax=totalGenomeLen,
+    color=chr, alpha=significant))
 
   # Add title and colors
   title <- paste0(genomeName, " gene response to ", experiment["compound"],
                   " in ", experiment["tissue"],
                   " tissue\n(drug sensitivity measured using -log10(p-value))")
-  plot <- plot + geom_point() + ggtitle(title) + theme_classic() +
-    theme(legend.position = "none", plot.title = element_text(hjust = 0.5)) +
-    scale_color_manual(values=rainbow(nrow(chromosomeDf)))
+  plot <- plot + ggplot2::geom_point() + ggplot2::ggtitle(title) +
+    ggplot2::theme(legend.position = "none",
+                   plot.title = ggplot2::element_text(hjust = 0.5)) +
+    ggplot2::scale_color_manual(values=rainbow(nrow(chromosomeDf)))
 
   # Customize x-axis ticks and labels
   # TODO: add theme!
   midChromosome <- (chromosomeDf$seq_start + chromosomeDf$seq_end)/2
   chromosomeNames <- chromosomeDf$chrName
-  plot <- plot + scale_x_continuous("Chromosome", breaks=midChromosome,
-                                    minor_breaks=c(1, chromosomeDf$seq_end),
-                                    labels=chromosomeNames) +
-          guides(x = guide_prism_minor())
+  plot <- plot + ggplot2::scale_x_continuous(
+    "Chromosome", breaks=midChromosome, minor_breaks=c(1, chromosomeDf$seq_end),
+    labels=chromosomeNames) + ggplot2::guides(x = guide_prism_minor())
 
   # Add horizontal line to show significance cutoff
-  plot <- plot + geom_hline(yintercept=-log10(pValCutoff), linetype='dotted',
-                            col = 'black', size=1)
+  plot <- plot + ggplot2::geom_hline(yintercept=-log10(pValCutoff),
+                                     linetype='dotted', col = 'black', size=1)
   return(plot)
 }
 
 
 absolutizeGenomicCoords <- function(selectedBiomrks, chromosomeDf) {
   # Make a copy of the data.tables so you're not modifying user data
-  selectedBiomrks <- copy(selectedBiomrks)
-  chromosomeDf <- copy(chromosomeDf)
+  selectedBiomrks <- data.table::copy(selectedBiomrks)
+  chromosomeDf <- data.table::copy(chromosomeDf)
 
   # Add columns to track absolute position in genome (TODO: can maybe remove this)
   chromosomeDf$seq_start <- 1
