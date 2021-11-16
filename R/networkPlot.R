@@ -63,7 +63,7 @@ buildNetworkPlot <- function(gsSimilarityDf, similarityCutoff=0.5, title=NULL) {
        edge.width=igraph::E(networkGraph)$weight*10,
        edge.color=igraph::E(networkGraph)$color)
   title(title)
-  return(invisible(NULL)) #TODO: return something more useful
+  return(networkGraph)
 }
 
 
@@ -111,6 +111,7 @@ geneSetAnalysis <- function(geneId, queryType, similarityCutoff=NULL,
                     "\n(edge weights based on gene set overlap)")
   }
 
-  buildNetworkPlot(gsSimilarity, similarityCutoff=similarityCutoff, title=title)
-  return(invisible(NULL))
+  graph <- buildNetworkPlot(gsSimilarity, similarityCutoff=similarityCutoff,
+                            title=title)
+  return(graph)
 }
