@@ -1,30 +1,155 @@
 ---
 title: "Plotting Biomarkers"
 author: Evgeniya Gorobets
-output: rmarkdown::html_vignette
+date: "`r format(Sys.time(), '%d %b %Y')`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    number_sections: false
 vignette: >
-  %\VignetteIndexEntry{Plotting_Biomarkers}
+  %\VignetteIndexEntry{A tour of mixGaussian}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(fig.align = "center", 
+               out.width = "90%",
+               fig.width = 6, fig.height = 5.5,
+               dev.args=list(pointsize=10),
+               par = TRUE, # needed for setting hook 
+               collapse = TRUE, # collapse input & ouput code in chunks
+               warning = FALSE)
+
+knit_hooks$set(par = function(before, options, envir)
+  { if(before && options$fig.show != "none") 
+       par(family = "sans", mar=c(4.1,4.1,1.1,1.1), mgp=c(3,1,0), tcl=-0.5)
+})
 ```
-
-```{r setup}
-library(PGxVision)
-```
-
-
+       
 ## Introduction
+
+The process of developing new cancer drugs has many phases. New compounds are 
+first tested on _in vitro_ cancer cell-lines, then the top candidates are 
+tested _in vivo_ on patient-derived xenografts in mice. Once these extensive 
+pre-clinical trials are done, drugs can finally progress to clinical trials. 
+New therapeutics are only administered to patients that have a good chance of 
+responding positively to the drug, as it would be unethical to intentionally 
+prescribe drugs to patients who are likely to have resistance to that drug.
+
+Molecular tumour boards are meetings between physicians, clinicians, providers, 
+and other specialists decide on the best treatment plan for a specific cancer 
+patient. Pre-clinical trials for candidate drugs are taken into consideration, 
+especially when analyzing drugs with little to no clinical data. However, due 
+to the huge amount of preclinical data that is often available, there is a need 
+for tools which help filter, process, and visualize that data, to make tumour 
+boards more efficient and effective.
+
+**PGxVision** is a graphical R package designed to fit this need. It provides a 
+set of functions for visualizing drug sensitivity data from preclinical trials 
+(__*buildManhattanPlot*__, __*buildVolcanoPlot*__, __*buildWaterfallPlot*__). 
+Such plots make it easy for clinicians to identify RNA-based biomarkers. 
+Specifically, these graphs let users see which genes are correlated most 
+strongly with high sensitivity to a compound. **PGxVision** also provides a set 
+of analytical functions for interpreting and contextualizing biomarkers. Once 
+clinicians have identified a gene of interest in the graphs, they can use 
+__*queryGene*__ to explore what biological pathways that gene is involved in. 
+Furthermore, they can use __*expandGeneSets*__, __*computeGeneSetSimilarity*__, 
+and __*buildNetworkPlot*__ to compute and visualize the overlap in the pathways.
+This similarity analysis can help connect the gene of interest to other 
+biomarkers that have already been thoroughly studied, or it may provide a 
+biological explanation for why the gene responds well to certain drugs. By 
+facilitating the visualization and interpretation of preclinical 
+pharmacogenomic data, **PGxVision** will allow clinicians to better predict how 
+their patients will respond to specific cancer therapies.
+
+To ensure robust drug sensitivity analysis, **PGxVision** is intended to be 
+used with data from [[pipeline??]], which will thoroughly process and evaluate 
+the reliability of preclinical data before it is visualized or analyzed further.
+Future versions of **PGxVision** will also allows clinicians to upload their 
+patient's data and will identify biomarkers found in preclinical trials within 
+the patient's genome, to further inform predictions and prognoses.
+
+The Shiny implementation of **PGxVision** is available as __*runPGxVision*__ 
+(under construction). It will allow clinicians to interact with the plots. 
+For more information, see details below. (??)
+
+**This document gives a tour of PGxVision (version 0.1.0) functionalities.** 
+It was written in R Markdown, using the 
+[knitr](https://cran.r-project.org/package=knitr) package for production. 
+
+<br>
+
+## Package Installation and Overview
+
+See `help(package = "PGxVision")` for further details. To cite this package, 
+use `citation("PGxVision")`. To download **PGxVision**, run the following 
+commands in the R console:
+
+``` r
+require("devtools")
+devtools::install_github("EvgeniyaGorobets/PGxVision")
+library("PGxVision")
+```
+
+To list all functions and data available in the package:
+``` r
+ls("package:PGxVision")
+data(package = "PGxVision")
+```
+
+<br>
+
+## Plotting Biomarkers
+
+### Manhattan Plot
+
+<br>
+
+### Volcano Plot
+
+<br>
+
+### Waterfall Plot
+
+<br>
+
+## Gene Set Analysis
+
+Here, an example dataset is created with two components, with a mixing proportion of 0.8 and 0.2. There are 100 observations in the dataset and the dimensionality is 6. 
+``` {r, fig.width = 4}
+ G <- 2 # number of true clusters/components
+ dimension <- 6
+
+ set.seed(1234)
+ mean1 <- rep(1, dimension)
+ mean2 <- rep(4, dimension)
+
+```
+
+<!-- Insert image:
+<div style="text-align:center"><img src="PairsPlot2Components.png" alt="PairsPlot2Components" width="800"/>
+ -->
+
+<div style="text-align:left">
+<br>
+<div style="text-align:left">
+
+
+``` r
+ # Cluster data
+ 
+
+```
 
 
 
 ## References
 
 
-(copy her template)
+----
+
+```{r}
+sessionInfo()
+```
