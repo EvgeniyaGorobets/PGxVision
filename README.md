@@ -51,7 +51,7 @@ provide biological context for genes of interest.
 ### Biomarker Plotting
 
 The *buildManhattanPlot* function visualizes gene response to a certain
-drug across the entire human genome. The x-axis represents the full
+drugs across the entire human genome. The x-axis represents the full
 human genome and is labeled by chromosome, and the y-axis can either
 plot the drug sensitivity or the p-value/fdr/significance of the drug
 sensitivity statistic. As is the standard for Manhattan plots, data
@@ -72,8 +72,7 @@ biomarker plotting vignette.
 
 ### Gene Set Analysis
 
-The gene set analysis that this package does is broken down into four
-steps:
+The gene set analysis in this package is broken down into four steps:
 
 1.  *queryGene*: Given a gene ID, find all gene sets that contain that
     gene. Users can examine different types of gene sets, such as those
@@ -84,9 +83,9 @@ steps:
 3.  *computeGeneSetSimilarity*: Using the fully expanded gene sets from
     *expandGeneSets*, compute the overlap between the gene sets. All
     gene sets will at least contain the initial query gene, so pairwise
-    overlap between gene sets will be non-zero. Currently, the package
-    only supports similarity metrics based on the proportion of
-    intersecting genes to total genes.
+    overlap will be non-zero. Currently, the package only supports
+    similarity metrics based on the proportion of intersecting genes to
+    total genes.
 4.  *buildNetworkPlot*: Plot the gene sets that were retrieved in
     *queryGene*, using their similarity scores from
     *computeGeneSetSimilarity* as edge weights. Gene sets that have high
@@ -97,6 +96,30 @@ In addition to these four functions, the *geneSetAnalysis* function is
 provided to run the entire analysis described above. You can learn more
 about how to use these gene set analysis functions in the gene set
 analysis vignette.
+
+### Sample Data
+
+The *BRCA.PDXE.paxlitaxel.response* data set is a `data.frame` with
+treatment vs. control angle data from BRCA PDXs (patient-derived
+xenographs). It is used in the *buildWaterfallPlot* example.
+
+The *Biomarkers* data set is a `data.frame` with drug
+sensitivity/response data in various experiments involving cancer cell
+lines (an experiment is a unique combination of a drug, tissue, and
+molecular data type). This data set also contains the p-values for the
+drug sensitivity statistics. It is used in the *buildManhattanPlot* and
+*buildVolcanoPlot* examples.
+
+The *GRCh38.p13.Assembly* data set is a `data.frame` containing basic
+information about the GRCh38.p13 genome assembly. Most notably, it
+includes the names and lengths of all the chromosomes. It is used in the
+*buildManhattanPlot* function.
+
+The *TestGeneSets* data set is a `data.frame` containing 10 different
+gene sets and all their constituent genes. This data set represents all
+the gene sets in the “<GO::CC>” (GO cellular compartment) category that
+gene ENSG00000012124 is a part of. It is used for testing and was
+retrieved from MSigDb.
 
 ## Contributions
 

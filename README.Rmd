@@ -61,7 +61,7 @@ for genes of interest.
 
 ### Biomarker Plotting
 
-The _buildManhattanPlot_ function visualizes gene response to a certain drug 
+The _buildManhattanPlot_ function visualizes gene response to a certain drugs 
 across the entire human genome. The x-axis represents the full human genome and 
 is labeled by chromosome, and the y-axis can either plot the drug sensitivity 
 or the p-value/fdr/significance of the drug sensitivity statistic. As is the 
@@ -83,7 +83,7 @@ plotting vignette.
 
 ### Gene Set Analysis
 
-The gene set analysis that this package does is broken down into four steps:
+The gene set analysis in this package is broken down into four steps:
 
 1. _queryGene_: Given a gene ID, find all gene sets that contain that gene. 
    Users can examine different types of gene sets, such as those based on 
@@ -92,9 +92,9 @@ The gene set analysis that this package does is broken down into four steps:
    other genes in those gene sets.
 3. _computeGeneSetSimilarity_: Using the fully expanded gene sets from 
    _expandGeneSets_, compute the overlap between the gene sets. All gene sets 
-   will at least contain the initial query gene, so pairwise overlap between 
-   gene sets will be non-zero. Currently, the package only supports similarity 
-   metrics based on the proportion of intersecting genes to total genes.
+   will at least contain the initial query gene, so pairwise overlap will be 
+   non-zero. Currently, the package only supports similarity metrics based on 
+   the proportion of intersecting genes to total genes.
 4. _buildNetworkPlot_: Plot the gene sets that were retrieved in _queryGene_, 
    using their similarity scores from _computeGeneSetSimilarity_ as edge 
    weights. Gene sets that have high overlap will be in closer proximity and 
@@ -103,6 +103,28 @@ The gene set analysis that this package does is broken down into four steps:
 In addition to these four functions, the _geneSetAnalysis_ function is provided 
 to run the entire analysis described above. You can learn more about how to use 
 these gene set analysis functions in the gene set analysis vignette.
+
+### Sample Data
+
+The _BRCA.PDXE.paxlitaxel.response_ data set is a `data.frame` with treatment 
+vs. control angle data from BRCA PDXs (patient-derived xenographs). It is used 
+in the _buildWaterfallPlot_ example.
+
+The _Biomarkers_ data set is a `data.frame` with drug sensitivity/response data 
+in various experiments involving cancer cell lines (an experiment is a unique 
+combination of a drug, tissue, and molecular data type). This data set 
+also contains the p-values for the drug sensitivity statistics. It is used in 
+the _buildManhattanPlot_ and _buildVolcanoPlot_ examples.
+
+The _GRCh38.p13.Assembly_ data set is a `data.frame` containing basic 
+information about the GRCh38.p13 genome assembly. Most notably, it includes the 
+names and lengths of all the chromosomes. It is used in the 
+_buildManhattanPlot_ function.
+
+The _TestGeneSets_ data set is a `data.frame` containing 10 different gene sets 
+and all their constituent genes. This data set represents all the gene sets 
+in the "GO::CC" (GO cellular compartment) category that gene ENSG00000012124 is 
+a part of. It is used for testing and was retrieved from MSigDb.
 
 
 ## Contributions
