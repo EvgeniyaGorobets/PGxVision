@@ -101,19 +101,20 @@ analysis vignette.
 
 The *BRCA.PDXE.paxlitaxel.response* data set is a `data.frame` with
 treatment vs. control angle data from BRCA PDXs (patient-derived
-xenographs). It is used in the *buildWaterfallPlot* example.
+xenographs). It is used in the *buildWaterfallPlot* example and was
+retrieved from the `Xeva` package.
 
 The *Biomarkers* data set is a `data.frame` with drug
 sensitivity/response data in various experiments involving cancer cell
 lines (an experiment is a unique combination of a drug, tissue, and
 molecular data type). This data set also contains the p-values for the
 drug sensitivity statistics. It is used in the *buildManhattanPlot* and
-*buildVolcanoPlot* examples.
+*buildVolcanoPlot* examples and was retrieved from PharmacoDb.
 
 The *GRCh38.p13.Assembly* data set is a `data.frame` containing basic
 information about the GRCh38.p13 genome assembly. Most notably, it
 includes the names and lengths of all the chromosomes. It is used in the
-*buildManhattanPlot* function.
+*buildManhattanPlot* function and was retrieved from Gencode.
 
 The *TestGeneSets* data set is a `data.frame` containing 10 different
 gene sets and all their constituent genes. This data set represents all
@@ -143,6 +144,8 @@ enhance the colors on the network plot (*buildNetworkPlot*).
 (*queryGene, expandGeneSets*).
 
 ## References
+
+### Package References
 
 Csardi, G., Nepusz, T. (2006). The igraph software package for complex
 network research, *InterJournal, Complex Systems 1695.*
@@ -174,6 +177,36 @@ computing. R Foundation for Statistical Computing, Vienna, Austria.
 
 Wickham, H. (2016). ggplot2: Elegant Graphics for Data Analysis.
 Springer-Verlag New York. <https://ggplot2.tidyverse.org>.
+
+### Data References
+
+Feizi, N., Nair, S. K., Smirnov, P., Beri, G., Eeles, C., Esfahani, P.
+N., … Haibe-Kains, B. (2021). PharmacoDB 2.0: Improving scalability and
+transparency of in vitro pharmacogenomics analysis. *bioRxiv.*
+<doi:10.1101/2021.09.21.461211>
+
+Frankish, A., Diekhans, M., Ferreira, A. M., Johnson, R., Jungreis, I.
+Loveland, J., Mudge, J. M., Sisu, C., Wright, J., Armstrong, J., Barnes,
+I., Berry, A., Bignell, A., Carbonell Sala, S., Chrast, J., Cunningham,
+F., Di  
+Domenico, T., Donaldson, S., Fiddes, I. T., García Girón, C., … Flicek,
+P. (2019). GENCODE reference annotation for the human and mouse genomes.
+*Nucleic acids research, 47*(D1), D766–D773.
+<https://doi.org/10.1093/nar/gky955>
+
+Mer A, Haibe-Kains B (2021). Xeva: Analysis of patient-derived xenograft
+(PDX) data. R package version 1.10.0.
+
+Mootha, V., Lindgren, C., Eriksson, K. F., et al. (2003).
+PGC-1α-responsive genes involved in oxidative phosphorylation are
+coordinately downregulated in human diabetes. *Nat Genet, 34*, 267–273.
+<https://doi.org/10.1038/ng1180>
+
+Subramanian, A., Tamayo, P., Mootha, V. K., Mukherjee, S., Ebert, B. L.,
+Gillette, M. A., … Mesirov, J. P. (2005). Gene set enrichment analysis:
+A knowledge-based approach for interpreting genome-wide expression
+profiles. *Proceedings of the National Academy of Sciences, 102*(43),
+15545–15550. <doi:10.1073/pnas.0506580102>
 
 ## Acknowledgements
 
