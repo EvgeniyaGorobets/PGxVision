@@ -19,7 +19,7 @@ will be.}
 "Gene Set Similarity Plot"}
 }
 \value{
-invisible NULL
+The igraph object containing the network plot of gene sets
 }
 \description{
 Create a network plot where each node corresponds to a gene set and edge

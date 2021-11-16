@@ -1,11 +1,24 @@
 Package: PGxVision
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Visualize Biomarkers and Pharmacogenomic Data
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Author: Evgeniya Gorobets
+Maintainer: Evgeniya Gorobets <evgeniya.gorobets@mail.utoronto.ca>
+Description: This is a generic plotting package meant to provide an easy way 
+    for bioinformaticists and clinicians to visualize pharmacogenomic data. The 
+    package provides some of the most commonly used graphs for visualizing drug 
+    response data: waterfall plots, volcano plots, and Manhattan plots. A 
+    forest plotting function is available for visualizing metadata.
+    These graphs are intended to help clinicians spot promising biomarkers. To 
+    further analyze biomarker genes, this package additionally provides some 
+    gene set analyis functions. These functions (wrapped in the geneSetAnalysis 
+    pipeline) allow clinicians to find all gene sets that a query gene belongs 
+    to, and then evaluate overlap in those gene sets. The gene sets that a 
+    query gene is found in are mapped on a network plot, to help visualize the 
+    most notable biological roles of a gene. This gene set analysis puts 
+    biomarkers into their biological context, which can help clinicians 
+    understand why some genes are more responsive to certain compounds than 
+    others, etc.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -17,13 +30,12 @@ Imports:
     ggprism,
     igraph,
     msigdbr,
-    viridis,
-    Xeva
+    viridis
 Suggests: 
     rmarkdown,
     knitr,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Depends: 
-    R (>= 2.10)
+    R (>= 3.1.0)
 Config/testthat/edition: 3

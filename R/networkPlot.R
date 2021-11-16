@@ -11,7 +11,7 @@
 #' will be.
 #' @param title (optional) A custom title for the network plot. Defaults to
 #' "Gene Set Similarity Plot"
-#' @return invisible NULL
+#' @return The igraph object containing the network plot of gene sets
 #'
 #' @examples
 #' geneSetIds <- queryGene("ENSG00000000971", "GO:BP")
@@ -83,7 +83,7 @@ buildNetworkPlot <- function(gsSimilarityDf, similarityCutoff=0.5, title=NULL) {
 #' @param title (optional) A custom title for the network plot. Defaults to
 #' "querytype Gene Sets containing geneId (edge weights based on gene set
 #' overlap)".
-#' @return invisible(NULL)
+#' @return The igraph object containing the network plot of gene sets
 #'
 #' @examples
 #' geneSetAnalysis("ENSG00000000971", "GO:BP", 0.3)

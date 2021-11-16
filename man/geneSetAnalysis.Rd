@@ -21,7 +21,7 @@ plot. Defaults to 0.5.}
 overlap)".}
 }
 \value{
-invisible(NULL)
+The igraph object containing the network plot of gene sets
 }
 \description{
 Query MSigDb to find all gene sets that queryGene is in, then compute the
