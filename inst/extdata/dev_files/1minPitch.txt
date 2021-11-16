@@ -1,0 +1,16 @@
+Objective: PGxVision is an R package for visualizing and interpreting 
+preclinical pharmacogenomic data. It provides functions for plotting the drug 
+responses of cancer cell lines and patient-derived xenografts and it lets 
+users see which genes are correlated with significant drug sensitivity or 
+resistance.
+
+Audience: It is intended to help clinicians, physicians, and other 
+specialists identify RNA-based biomarkers and then use those biomarkers to
+predict how cancer patients will react to certain therapeutic treatments.
+
+Uniqueness: PGxVision is unique because it lets users perform a gene set 
+analysis on biomarkers that they identify in the drug sensitivity plots. 
+Users can retrieve all the biological pathways that a gene is in and 
+build a network plot showing the overlap of the pathways. This  
+provides clinicians with biological context for the biomarkers, so that they 
+can better reason about the effectiveness of certain treatments over others. 

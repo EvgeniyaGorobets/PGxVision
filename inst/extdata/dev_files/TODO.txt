@@ -5,9 +5,9 @@ BY TOMORROW:
 - fix data.R
 - make user input testing more thorough
 - test selectExperiment
-- don't forget the video presentation
 - consider adding more examples
 - go through her requirements once more!
+- add # [END] to everything
 
 FOR THE FINAL SUBMISSION:
 - make forest plot
