@@ -198,10 +198,6 @@ Frankish, A., Diekhans, M., Ferreira, A. M., Johnson, R., Jungreis, I.
 
 Mer A, Haibe-Kains B (2021). Xeva: Analysis of patient-derived xenograft (PDX) 
   data. R package version 1.10.0.
-  
-Mootha, V., Lindgren, C., Eriksson, K. F., et al. (2003). PGC-1α-responsive 
-  genes involved in oxidative phosphorylation are coordinately downregulated in 
-  human diabetes. _Nat Genet, 34_, 267–273. https://doi.org/10.1038/ng1180
 
 Subramanian, A., Tamayo, P., Mootha, V. K., Mukherjee, S., Ebert, B. L., 
   Gillette, M. A., … Mesirov, J. P. (2005). Gene set enrichment analysis: 

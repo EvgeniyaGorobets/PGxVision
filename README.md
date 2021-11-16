@@ -197,11 +197,6 @@ P. (2019). GENCODE reference annotation for the human and mouse genomes.
 Mer A, Haibe-Kains B (2021). Xeva: Analysis of patient-derived xenograft
 (PDX) data. R package version 1.10.0.
 
-Mootha, V., Lindgren, C., Eriksson, K. F., et al. (2003).
-PGC-1α-responsive genes involved in oxidative phosphorylation are
-coordinately downregulated in human diabetes. *Nat Genet, 34*, 267–273.
-<https://doi.org/10.1038/ng1180>
-
 Subramanian, A., Tamayo, P., Mootha, V. K., Mukherjee, S., Ebert, B. L.,
 Gillette, M. A., … Mesirov, J. P. (2005). Gene set enrichment analysis:
 A knowledge-based approach for interpreting genome-wide expression
