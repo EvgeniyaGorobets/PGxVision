@@ -14,6 +14,7 @@ test_that("queryGene returns corrects gene set IDs", {
   expect_equal(geneSetIds, expected)
 })
 
+
 # Test expandGeneSet function
 test_that("expandGeneSets doesn't accept faulty user input", {
   badIds <- c(1, 2, 3)
@@ -35,8 +36,6 @@ test_that("expandGeneSets correctly expands gene sets", {
 })
 
 
-# Test computeGeneSetSimilarity function
-
 # Test overlapDistance helper function
 test_that("overlapDistance computes overlap correctly", {
   expect_equal(overlapDistance(TestGeneSets, "M17635", "M25848"), 0.055267703)
@@ -45,4 +44,18 @@ test_that("overlapDistance computes overlap correctly", {
 })
 
 
+# Test computeGeneSetSimilarity function
+test_that("computeGeneSetSimilarity doesn't accept faulty user input", {
+  notADf <- list(TestGeneSets)
+  expect_error(computeGeneSetSimilarity(notADf))
 
+  badDf <- TestGeneSets
+  names(badDf) <- c("gene_set_id", "gene_id")
+  expect_error(computeGeneSetSimilarity(badDf))
+})
+
+test_that("computeGeneSetSimilarity returns data.frame with correct columns", {
+  df <- computeGeneSetSimilarity(TestGeneSets)
+  expect_equal(names(df), c("gs1", "gs2", "similarity"))
+  expect_true(is.data.frame(df))
+})
