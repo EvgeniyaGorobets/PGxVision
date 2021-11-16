@@ -31,9 +31,9 @@
 #' colorCol
 #'
 #' @examples
-#' data(PDXE)
-#' df <- processXevaSet(PDXE, "BRCA", "paclitaxel", "RNASeq")
-#' buildWaterfallPlot(df, xAxisCol="tumour", drugSensitivityCol="angle",
+#' data(BRCA.PDXE.paxlitaxel.response)
+#' buildWaterfallPlot(BRCA.PDXE.paxlitaxel.response,
+#'                    xAxisCol="tumour", drugSensitivityCol="angle",
 #'                    colorCol="ODC1", xLabel="Tumour",
 #'                    yLabel="Angle Between Treatment and Control",
 #'                    title="Paclitaxel Response in BRCA Tumours")
@@ -87,13 +87,15 @@ buildWaterfallPlot <- function(drugResponseDf, xAxisCol, drugSensitivityCol,
   # Build the waterfall (bar) plot
   if (is.null(colorCol)) {
     fill <- sortedDf[, drugSensitivityCol]
+    legendName <- drugSensitivityCol
   } else {
     fill <- sortedDf[, colorCol]
+    legendName <- colorCol
   }
   plot <- ggplot(sortedDf, aes(x=factor(sortedXAxis, levels=sortedXAxis),
                                y=sortedDf[, drugSensitivityCol], fill=fill))
   plot <- plot + geom_bar(stat="identity") +
-          scale_fill_continuous(type="viridis")
+          scale_fill_continuous(type="viridis", name=legendName)
 
   # Add title and axes labels
   plot <- plot + theme_classic() + ggtitle(title) + ylab(yLabel) +

@@ -56,9 +56,9 @@ of interest on the y-axis
 }
 }
 \examples{
-data(PDXE)
-df <- processXevaSet(PDXE, "BRCA", "paclitaxel", "RNASeq")
-buildWaterfallPlot(df, xAxisCol="tumour", drugSensitivityCol="angle",
+data(BRCA.PDXE.paxlitaxel.response)
+buildWaterfallPlot(BRCA.PDXE.paxlitaxel.response,
+                   xAxisCol="tumour", drugSensitivityCol="angle",
                    colorCol="ODC1", xLabel="Tumour",
                    yLabel="Angle Between Treatment and Control",
                    title="Paclitaxel Response in BRCA Tumours")
