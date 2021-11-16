@@ -43,8 +43,60 @@ ls("package:PGxVision")
 data(package = "PGxVision")
 ```
 
-TODO: add descriptions! \* Manhattan Plot: \* Volcano Plot: \* Waterfall
-Plot: TODO: add vignettes and include image
+`PGxVision` contains eight functions and four sample data sets. Of the
+eight functions, three are plotting functions for visualizing drug
+sensitivity data, and five are gene set analysis functions that help
+provide biological context for genes of interest.
+
+### Biomarker Plotting
+
+The *buildManhattanPlot* function visualizes gene response to a certain
+drug across the entire human genome. The x-axis represents the full
+human genome and is labeled by chromosome, and the y-axis can either
+plot the drug sensitivity or the p-value/fdr/significance of the drug
+sensitivity statistic. As is the standard for Manhattan plots, data
+points are colored according to what chromosome they belong to.
+
+The *buildVolcanoPlot* function lets you simultaneously visualize the
+drug sensitivity and the p-value/significance of the sensitivity
+statistic. As is standard for volcano plots, points that are
+statistically insignificant are grayed out.
+
+The *buildWaterfallPlot* function plots drug sensitivity (or other
+similar metrics) across a range of tumours or a range of drugs. The
+waterfall plot will order results according to the y-axis, so users can
+quickly identify the most and least sensitive tumour-drug combinations.
+
+You can learn more about how to use these plotting functions in the
+biomarker plotting vignette.
+
+### Gene Set Analysis
+
+The gene set analysis that this package does is broken down into four
+steps:
+
+1.  *queryGene*: Given a gene ID, find all gene sets that contain that
+    gene. Users can examine different types of gene sets, such as those
+    based on biological pathways, cellular components, molecular
+    function, etc.
+2.  *expandGeneSets*: Using the gene set IDs retrieved in *queryGene*,
+    get all other genes in those gene sets.
+3.  *computeGeneSetSimilarity*: Using the fully expanded gene sets from
+    *expandGeneSets*, compute the overlap between the gene sets. All
+    gene sets will at least contain the initial query gene, so pairwise
+    overlap between gene sets will be non-zero. Currently, the package
+    only supports similarity metrics based on the proportion of
+    intersecting genes to total genes.
+4.  *buildNetworkPlot*: Plot the gene sets that were retrieved in
+    *queryGene*, using their similarity scores from
+    *computeGeneSetSimilarity* as edge weights. Gene sets that have high
+    overlap will be in closer proximity and will have thicker and darker
+    edges between them.
+
+In addition to these four functions, the *geneSetAnalysis* function is
+provided to run the entire analysis described above. You can learn more
+about how to use these gene set analysis functions in the gene set
+analysis vignette.
 
 ## Contributions
 
