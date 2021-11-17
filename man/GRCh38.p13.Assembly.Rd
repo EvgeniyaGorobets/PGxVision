@@ -3,15 +3,12 @@
 \docType{data}
 \name{GRCh38.p13.Assembly}
 \alias{GRCh38.p13.Assembly}
-\title{Information about chromosomes in the GRCh38.p13 genome assembly}
+\title{GRCh38.p13 genome assembly}
 \format{
-A data frame with 25 rows and 6 variables:
+A data frame with 25 rows and 3 variables:
 \describe{
-  \item{# unit-name}{???}
   \item{chrName}{the name of the chromosome (all, 1-22, X, Y)}
   \item{molecule-type/loc}{the molecule type ("chromosome" or "all")}
-  \item{sequence-type}{???}
-  \item{statistic}{the chromosome statistic measured in this row}
   \item{chrLength}{the length of the chromosome (# nucleotides)}
 }
 }
@@ -22,7 +19,7 @@ A data frame with 25 rows and 6 variables:
 GRCh38.p13.Assembly
 }
 \description{
-A dataset containing the prices and other attributes of almost 54,000
-diamonds.
+A dataset containing the characteristics of of the GRCh38.p13 genome
+assembly, specifically chromosome names and lengths.
 }
 \keyword{datasets}

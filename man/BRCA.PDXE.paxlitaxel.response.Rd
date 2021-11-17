@@ -8,7 +8,7 @@
 A data frame with 38 rows and 3 variables:
 \describe{
   \item{tumour}{The name of the PDX tumour}
-  \item{ODC1}{???}
+  \item{ODC1}{The transcript levels of the ODC1 gene in the tumour}
   \item{angle}{The angle between the treatment and control}
 }
 }

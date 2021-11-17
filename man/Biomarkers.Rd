@@ -10,8 +10,8 @@ A data frame with 7805 rows and 12 variables:
   \item{gene}{ENSEMBL gene name}
   \item{compound}{name of compound used in experiment}
   \item{tissue}{name of tissue used in experiment}
-  \item{estimate}{???}
-  \item{n}{???}
+  \item{estimate}{The drug sensitivity estimate}
+  \item{n}{The number of trials}
   \item{fdr}{false discovery rate (adjusted p-value)}
   \item{mDataType}{the molecular data type, i.e., rna, etc.}
   \item{gene_seq_start}{the relative starting position of the gene within
@@ -31,6 +31,6 @@ Biomarkers
 }
 \description{
 A dataset containing the prices and other attributes of almost 54,000
-diamonds.
+diamonds.???
 }
 \keyword{datasets}

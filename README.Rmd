@@ -52,12 +52,17 @@ Under construction
 ``` r
 ls("package:PGxVision")
 data(package = "PGxVision")
+browseVignettes("PGxVision")
 ```
 
 `PGxVision` contains eight functions and four sample data sets. Of the eight 
 functions, three are plotting functions for visualizing drug sensitivity data, 
 and five are gene set analysis functions that help provide biological context 
 for genes of interest.
+
+An overview of the package is illustrated below. 
+
+![](./inst/extdata/figures/PGxVisionSummary.png)
 
 ### Biomarker Plotting
 
