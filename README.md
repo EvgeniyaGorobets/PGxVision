@@ -51,7 +51,7 @@ provide biological context for genes of interest.
 
 An overview of the package is illustrated below.
 
-![](./inst/extdata/figures/PGxVisionSummary.png)
+![](./inst/extdata/figures/PGxVisionSummary.jpeg)
 
 ### Biomarker Plotting
 
