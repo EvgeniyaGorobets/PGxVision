@@ -65,15 +65,15 @@ pharmacogenomic data, **PGxVision** will allow clinicians to better predict how
 their patients will respond to specific cancer therapies.
 
 To ensure robust drug sensitivity analysis, **PGxVision** is intended to be 
-used with data from [[pipeline??]], which will thoroughly process and evaluate 
-the reliability of preclinical data before it is visualized or analyzed further.
+used with data from the BHKLab-Roche RNA-based drug response prediction 
+pipeline, which will thoroughly process and evaluate the reliability of 
+preclinical data before it is visualized or analyzed further.
 Future versions of **PGxVision** will also allows clinicians to upload their 
 patient's data and will identify biomarkers found in preclinical trials within 
 the patient's genome, to further inform predictions and prognoses.
 
 The Shiny implementation of **PGxVision** is available as __*runPGxVision*__ 
 (under construction). It will allow clinicians to interact with the plots. 
-For more information, see details below. (??)
 
 **This document gives a tour of PGxVision (version 0.1.0) functionalities.** 
 It was written in R Markdown, using the 
