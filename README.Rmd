@@ -38,7 +38,7 @@ To download the package:
 
 ``` r
 require("devtools")
-devtools::install_github("EvgeniyaGorobets/PGxVision")
+devtools::install_github("EvgeniyaGorobets/PGxVision", build_vignettes=TRUE)
 library("PGxVision")
 ```
 
