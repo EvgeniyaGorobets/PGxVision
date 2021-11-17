@@ -1,5 +1,5 @@
 ---
-title: "Plotting Biomarkers"
+title: "Visualizing and Interpreting Biomarkers"
 author: Evgeniya Gorobets
 date: "`r format(Sys.time(), '%d %b %Y')`"
 output: 
@@ -7,7 +7,7 @@ output:
     toc: true
     number_sections: false
 vignette: >
-  %\VignetteIndexEntry{A tour of mixGaussian}
+  %\VignetteIndexEntry{Visualizing and Interpreting Biomarkers}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -16,7 +16,7 @@ vignette: >
 library(knitr)
 opts_chunk$set(fig.align = "center", 
                out.width = "90%",
-               fig.width = 6, fig.height = 5.5,
+               fig.width = 8, fig.height = 6,
                dev.args=list(pointsize=10),
                par = TRUE, # needed for setting hook 
                collapse = TRUE, # collapse input & ouput code in chunks
@@ -105,45 +105,215 @@ data(package = "PGxVision")
 
 ### Manhattan Plot
 
+Manhattan plots are most often used in GWAS studies, to map single-nucleotide 
+polymorphisms (SNPs). However, **PGxVision** uses Manhattan plots to provide a 
+genome-wide view of drug sensitivity in a certain tissue.
+
+In the example below, we select for data points showing how genes in the 
+lymphoid tissues responded to Nvp-tae 684 treatment. We use the default 
+`pValueCutoff=0.05`.
+
+``` {r, fig.width = 8, fig.height = 6}
+ experiment <- setNames(c("Lymphoid", "Nvp-tae 684", "rna"), 
+                        c("tissue", "compound", "mDataType"))
+ PGxVision::buildManhattanPlot(biomarkerDf=PGxVision::Biomarkers,
+                               chromosomeDf=PGxVision::GRCh38.p13.Assembly,
+                               experiment=experiment)
+
+```
+
+Each point in the above plot corresponds to a gene, and its location along the 
+x-axis is determined by the starting location of that gene (
+`Biomarkers$gene_seq_start`). Each chromosome has its own color so that users 
+can easily distinguish genes belonging to different chromosomes. The horizontal 
+line reflects our selected `pValueCutoff`. Points below the line are 
+semi-transparent to show that they do not meet our significance requirements.
+
+In future version of the package, users will be able to interact with the plot.
+Specifically, they will be able to hover over a point to see which gene it 
+corresponds to, and see the exact p-value/estimate and genome location.
+
 <br>
 
 ### Volcano Plot
+
+Volcano plots are most often used to plot the results of a differential gene 
+expression analysis, to highlight genes that are significantly differentially 
+expressed between two samples. **PGxVision** uses the same concept to plot drug 
+sensitivity data.
+
+In the example below, we again select drug response data for genes in 
+lymphoid tissues exposed to Nvp-tae 684. We use the default 
+`pValueCutoff=0.05`, to match the significance cutoff in the Manhattan plot.
+
+``` {r, fig.width = 8, fig.height = 6}
+ experiment <- setNames(c("Lymphoid", "Nvp-tae 684", "rna"), 
+                        c("tissue", "compound", "mDataType"))
+ PGxVision::buildVolcanoPlot(biomarkerDf=PGxVision::Biomarkers,
+                             experiment=experiment)
+
+```
+
+On the right side (`estimate > 0`), we see genes that are sensitive to Nvp-tae 
+684 treatment. On the left (`estimate < 0`), we see genes that are resistant to 
+Nvp-tae 684 treatment. The horizontal line reflects our `pValueCutoff`. Points 
+below the line are grayed out to show that their sensitivity or resistance is 
+not statistically significant. 
+
+In future version of the package, users will be able to interact with the plot.
+Specifically, they will be able to hover over a point to see which gene it 
+corresponds to, and see the exact p-value and sensitivity estimate.
 
 <br>
 
 ### Waterfall Plot
 
+Waterfall plots are another useful way to visualize multi-dimensional 
+pharmacogenomic data. The bar plot format is sometimes easier to interpret than 
+scattered points (especially when using color to graph another facet of the 
+data), and the ordering of the bars by the y-axis makes it easy to 
+find the most and least extreme results.
+
+Instead of using cell-line data, we will use a waterfall plot to plot PDX data. 
+In the example below, we load a data set of BRCA xenografts that were treated 
+with paclitaxel (data taken from the Xeva package), and we plot the angle 
+between the treatment and control tumours. We color the bars according to the 
+level of ODC1 transcript expression in the tumours. ODC1 is the gene that 
+encodes Ornithine decarboxylase in humans. Ornithine decarboxylase is the rate-
+limiting enzyme in the polyamine biosynthesis pathway in humans, and is known 
+to have elevated activity in cancer cells.
+
+``` {r, fig.width = 8, fig.height = 6}
+ PGxVision::buildWaterfallPlot(PGxVision::BRCA.PDXE.paxlitaxel.response,
+                               xAxisCol="tumour", drugSensitivityCol="angle",
+                               colorCol="ODC1", xLabel="Tumour",
+                               yLabel="Angle Between Treatment and Control",
+                               title="Paclitaxel Response in BRCA Tumours")
+
+```
+
+This plot shows no obvious correlation between ODC1 transcript levels and 
+paclitaxel response (CITE). Alternatively, users can make waterfall plots with 
+different compounds along the x-axis (`xAxisCol="compound`), to see which drugs 
+are most effective at treating a specific PDX in mice. Similarly, users can 
+color bars by their p-value or significance (`colorCol="pValue"`).
+
+In future version of the package, users will be able to interact with the plot.
+Specifically, they will be able to hover over a bar to see which tumour or 
+compound it corresponds to, and see the exact drug sensitivity, transcript 
+levels, p-value, etc.
+
 <br>
 
 ## Gene Set Analysis
 
-Here, an example dataset is created with two components, with a mixing proportion of 0.8 and 0.2. There are 100 observations in the dataset and the dimensionality is 6. 
-``` {r, fig.width = 4}
- G <- 2 # number of true clusters/components
- dimension <- 6
+The gene set analysis functions provided by **PGxVision** are intended to go 
+hand-in-hand with the plotting functions above. The idea behind gene set 
+exploration is to contextualize genes of interest. 
 
- set.seed(1234)
- mean1 <- rep(1, dimension)
- mean2 <- rep(4, dimension)
+If we could interact with the Manhattan and Volcano plot examples above, we 
+might notice that gene ENSG00000000971 is correlated with a positive drug 
+sensitivity estimate (`estimate = 0.5871447`) with high significance 
+(`pvalue = 2.356379e-08 < 0.05`).
 
-```
-
-<!-- Insert image:
-<div style="text-align:center"><img src="PairsPlot2Components.png" alt="PairsPlot2Components" width="800"/>
- -->
-
-<div style="text-align:left">
-<br>
-<div style="text-align:left">
-
-
-``` r
- # Cluster data
- 
+``` {r}
+ data.table::setDT(PGxVision::Biomarkers)
+ PGxVision::Biomarkers[gene == "ENSG00000000971" & tissue == "Lymphoid" & 
+                       compound == "Nvp-tae 684"]
 
 ```
 
+To understand why this gene is correlated with high Nvp-tae 684 sensitivity, we 
+should look at the biological pathways that it is involved in. We can do this 
+by using the __*queryGene*__ function. We use `queryType="GO:BP"` to indicate 
+that we want to explore gene sets that correspond to GO biological pathways.
 
+``` {r}
+ geneSetIds <- PGxVision::queryGene(geneId = "ENSG00000000971", 
+                                    queryType ="GO:BP")
+ geneSetIds
+
+```
+The result is a vector of gene set IDs from MSigDb. For example, M15770 refers 
+to the gene set GOBP_CELL_KILLING, which is defined as "Any process in 
+an organism that results in the killing of its own cells or those of another 
+organism, including in some cases the death of the other organism. Killing here 
+refers to the induction of death in one cell by another cell, not 
+cell-autonomous death due to internal or other environmental conditions" (read 
+more at http://amigo.geneontology.org/amigo/term/GO:0001906). (CITE)
+
+However, looking up every gene set is cumbersome and not particularly useful. 
+It would help to first group the gene sets that are most closely associated 
+with each other, such as GOBP_CELL_KILLING and 
+GOBP_REGULATION_OF_CELL_KILLING (M16351) (CITE), which are both related to 
+cell killing. **PGxVision** lets users group gene sets by comparing their 
+component genes and calculating the pairwise intersection.
+
+In the example below, we use the __*expandGeneSets*__ function to first find 
+all the genes in each gene set, and then we use __*computeGeneSetSimilarity*__ 
+to compute the similarity score for each pair of gene sets. We use the default 
+`similarityMetric="overlap"` (number of intersecting genes / number of total 
+unique genes). Future versions of **PGxVision** will support more complex 
+similiarity metrics.
+
+``` {r}
+ geneSets <- PGxVision::expandGeneSets(geneSetIds = geneSetIds, 
+                                       geneSetType = "GO:BP")
+ similarityScores <- PGxVision::computeGeneSetSimilarity(geneSets)
+ head(similarityScores)
+
+```
+
+Now that we have the similarity scores, we can visualize how the gene set 
+groups using a network plot. The __*buildNetworkPlot*__ function creates a 
+network plot with gene sets as the nodes, and edges that are determined by 
+the similarity scores. The more overlap there is between two gene sets, the 
+closer the nodes will be, and the thicker and darker the edge between them will 
+be. For now, we override the default cutoff and set `similarityCutoff=0` to 
+plot all the edges.
+
+``` {r, fig.width = 8, fig.height = 6}
+ graph <- PGxVision::buildNetworkPlot(gsSimilarityDf = similarityScores, 
+                                     similarityCutoff = 0)
+
+```
+
+Unfortunately, the abundance of thin, light-colored edges in this plot 
+(indicating low similarity between gene sets) obscures the thicker edges and 
+makes it difficult to distinguish the gene set groupings. For this reason, the 
+default `similarityCutoff` is set to 0.5.
+
+``` {r, fig.width = 8, fig.height = 6}
+ graph <- PGxVision::buildNetworkPlot(gsSimilarityDf = similarityScores)
+
+```
+In this graph, we can clearly see that gene sets M15770 and M16351 have 
+significant (>= 0.5) overlap. We can also see that the biological pathways that 
+ENSG00000000971 is involved in can be roughly grouped into five categories. 
+This makes it much easier for clinicians to see the bigger biological picture 
+and to start reasoning about why ENSG00000000971 correlates with Nvp-tae 684 
+sensitivity in lymphoid tissues.
+
+To let users run the entire gene set analysis pipeline, from querying the gene 
+to plotting the gene sets, **PGxVision** provides the __*geneSetAnalysis*__ 
+function. In the following example, we use `queryType="GO:CC"` to examine the 
+GO cellular components that gene ENSG00000020577 is in.
+
+``` {r, fig.width = 8, fig.height = 6}
+ graph <- PGxVision::geneSetAnalysis(geneId="ENSG00000020577", 
+                                     queryType="GO:CC", 
+                                     similarityCutoff=0.2)
+
+```
+
+To get a list of all possible query types, you can use the `msigdbr` package:
+
+``` {r}
+ msigdbr::msigdbr_collections()$gs_subcat
+
+```
+Visit https://www.gsea-msigdb.org/gsea/msigdb/genesets.jsp to learn more about 
+different types of gene sets.
 
 ## References
 
