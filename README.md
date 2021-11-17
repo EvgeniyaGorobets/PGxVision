@@ -68,7 +68,8 @@ waterfall plot will order results according to the y-axis, so users can
 quickly identify the most and least sensitive tumour-drug combinations.
 
 You can learn more about how to use these plotting functions in the
-biomarker plotting vignette.
+Plotting Biomarkers section of the Visualizing and Interpreting
+Biomarkers vignette.
 
 ### Gene Set Analysis
 
@@ -94,8 +95,9 @@ The gene set analysis in this package is broken down into four steps:
 
 In addition to these four functions, the *geneSetAnalysis* function is
 provided to run the entire analysis described above. You can learn more
-about how to use these gene set analysis functions in the gene set
-analysis vignette.
+about how to use these gene set analysis functions in the Gene Set
+Analysis section of the Visualizing and Interpreting Biomarkers
+vignette.
 
 ### Sample Data
 
