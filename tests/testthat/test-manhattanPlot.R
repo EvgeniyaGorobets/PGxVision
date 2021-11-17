@@ -27,9 +27,6 @@ test_that("buildManhattanPlot doesn't accept faulty user input", {
 
 })
 
-
-# TODO: Test the plot of buildManhattanPlot? test line placement? IDK
-
 # Test absolutizeGenomicCoords (helper of buildManhattanPlot)
 test_that("absolutizeGenomicCoords computes genomic coords correctly", {
   df <- Biomarkers
@@ -46,7 +43,6 @@ test_that("absolutizeGenomicCoords computes genomic coords correctly", {
   expect_equal(shiftedBiomrks[chr == "chrX", abs_gene_seq_start],
                shiftedChr[chrName == "X", seq_start] +
                shiftedBiomrks[chr == "chrX", gene_seq_start] - 1)
-  # expect_equal(shiftedChr[chrName == "Y", seq_end], 3099734149) # sum of lengths = 3095248640
 
   # Check for NAs
   expect_false(is.na(shiftedChr[, sum(seq_start) + sum(seq_end)]))

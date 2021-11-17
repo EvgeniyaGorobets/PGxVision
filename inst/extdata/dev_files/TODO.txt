@@ -7,7 +7,6 @@ BY TOMORROW:
 - test selectExperiment
 - consider adding more examples
 - go through her requirements once more!
-- add # [END] to everything
 
 FOR THE FINAL SUBMISSION:
 - make forest plot
