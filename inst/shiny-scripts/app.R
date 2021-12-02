@@ -47,6 +47,24 @@ ui <- dashboardPage(
   )
 )
 
-server <- function(input, output) { }
+server <- function(input, output) {
+  experiment <- c()
+
+  # renderPlot, renderImage, renderDataTable, renderTable, renderText, renderUI, etc.
+  getExperiment <- reactive({
+    experiment$tissue <- if (input$tissue != "") input$tissue else "Lung"
+    experiment$compound <- if (input$compound != "") input$compound else "Trametinib"
+    experiment$mDataType <- if (input$mDataType != "") input$mDataType else "rna"
+    return(experiment)
+  })
+
+  output$manhattanPlot <- renderPlot({
+    buildManhattanPlot(Biomarkers, GRCh38.p13.Assembly, getExperiment())
+  })
+
+  output$volcanoPlot <- renderPlot({
+    buildVolcanoPlot(Biomarkers, getExperiment())
+  })
+}
 
 shinyApp(ui, server)
