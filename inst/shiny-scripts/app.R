@@ -17,15 +17,15 @@ ui <- dashboardPage(
         tabName = "biomarkers",
         h2("Biomarker Analysis"),
         fluidRow(box(width=12,
-          div(style="display:inline-block", selectInput("tissue", "Tissue",
+          column(width=4, selectInput("tissue", "Tissue",
                       c("Select a tissue..." = "", "Lung", "Breast"),
-                      selected = "", width = '25vw')),
-          div(style="display:inline-block", selectInput("compound", "Compound/Drug",
+                      selected = "")),
+          column(width=4, selectInput("compound", "Compound/Drug",
                       c("Select a compound..." = "", "Trametinib", "Daporinad", "Dasatinib"),
-                      selected = "", width = '25vw')),
-          div(style="display:inline-block", selectInput("mDataType", "Molecular Data Type",
+                      selected = "")),
+          column(width=4, selectInput("mDataType", "Molecular Data Type",
                       c("Select a molecular data type..." = "", "RNA"),
-                      selected = "", width = '25vw'))
+                      selected = ""))
         )),
         fluidRow(
           box(plotOutput("manhattanPlot", height = 350)),
@@ -36,7 +36,11 @@ ui <- dashboardPage(
       # Drug Response tab
       tabItem(
         tabName = "drugResponse",
-        h2("Drug Response: Under Construction")
+        h2("Drug Response"),
+        fluidRow(
+          box(plotOutput("waterfallPlot", height = 350)),
+          box(plotOutput("forestPlot", height = 350))
+        )
       )
     )
 
