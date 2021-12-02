@@ -31,6 +31,7 @@ Imports:
     igraph,
     msigdbr,
     qpdf,
+    shinydashboard,
     viridis
 Suggests: 
     rmarkdown,
