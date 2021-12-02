@@ -17,15 +17,9 @@ ui <- dashboardPage(
         tabName = "biomarkers",
         h2("Biomarker Analysis"),
         fluidRow(box(width=12,
-          column(width=4, selectInput("tissue", "Tissue",
-                      c("Select a tissue..." = "", "Lung", "Breast"),
-                      selected = "")),
-          column(width=4, selectInput("compound", "Compound/Drug",
-                      c("Select a compound..." = "", "Trametinib", "Daporinad", "Dasatinib"),
-                      selected = "")),
-          column(width=4, selectInput("mDataType", "Molecular Data Type",
-                      c("Select a molecular data type..." = "", "RNA"),
-                      selected = ""))
+          column(width=4, uiOutput("tissueSelect")),
+          column(width=4, uiOutput("compoundSelect")),
+          column(width=4, uiOutput("mDataTypeSelect"))
         )),
         fluidRow(
           box(plotOutput("manhattanPlot", height = 350)),
@@ -48,22 +42,47 @@ ui <- dashboardPage(
 )
 
 server <- function(input, output) {
+  biomarkerDf <- Biomarkers
+
+  # Get all tissues, compounds, and mDataTypes from biomarkerDf
+  output$tissueSelect <- renderUI({
+    tissueChoices <- unique(biomarkerDf$tissue) #FIXME: unsafe
+    selectInput("tissue", "Tissue",
+                c("Select a tissue..." = "", tissueChoices),
+                selected = "")
+  })
+
+  output$compoundSelect <- renderUI({
+    compoundChoices <- unique(biomarkerDf$compound) #FIXME: unsafe
+    selectInput("compound", "Compound/Drug",
+                c("Select a compound..." = "", compoundChoices),
+                selected = "")
+  })
+
+  output$mDataTypeSelect <- renderUI({
+    mDataTypeChoices <- unique(biomarkerDf$mDataType) #FIXME: unsafe
+    selectInput("mDataType", "Molecular Data Type",
+                c("Select a molecular data type..." = "", mDataTypeChoices),
+                selected = "")
+  })
+
+
   experiment <- c()
 
   # renderPlot, renderImage, renderDataTable, renderTable, renderText, renderUI, etc.
   getExperiment <- reactive({
-    experiment$tissue <- if (input$tissue != "") input$tissue else "Lung"
-    experiment$compound <- if (input$compound != "") input$compound else "Trametinib"
-    experiment$mDataType <- if (input$mDataType != "") input$mDataType else "rna"
+    experiment$tissue <- input$tissue
+    experiment$compound <- input$compound
+    experiment$mDataType <- input$mDataType
     return(experiment)
   })
 
   output$manhattanPlot <- renderPlot({
-    buildManhattanPlot(Biomarkers, GRCh38.p13.Assembly, getExperiment())
+    buildManhattanPlot(biomarkerDf, GRCh38.p13.Assembly, getExperiment())
   })
 
   output$volcanoPlot <- renderPlot({
-    buildVolcanoPlot(Biomarkers, getExperiment())
+    buildVolcanoPlot(biomarkerDf, getExperiment())
   })
 }
 
