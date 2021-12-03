@@ -15,6 +15,7 @@
 #' out on the plot. Default value is 0.05.
 #' @return A ggplot2 plot object mapping the biomarkers of the experiment
 #' (x-axis = estimate; y-axis = -log10(p-value))
+#' #TODO: update
 #'
 #' @examples
 #' data(Biomarkers)
@@ -46,10 +47,11 @@ buildVolcanoPlot <- function(biomarkerDf, experiment, pValCutoff=0.05) {
   # TODO: cutoff should be <= or < ?
   selectedBiomrkrs <- data.table::copy(selectedBiomrkrs)
   selectedBiomrkrs[, significant := (pvalue <= pValCutoff)]
+  selectedBiomrkrs[, log10pValue := -log10(pvalue)] #FIXME: these can be combined into one statement
 
   # Build the volcano plot
   plot <- ggplot2::ggplot(selectedBiomrkrs, ggplot2::aes(
-    x=estimate, y=-log10(pvalue), col=significant))
+    x=estimate, y=log10pValue, col=significant))
   plot <- plot + ggplot2::geom_point() +
     ggplot2::scale_color_manual(values=c("gray", "red")) +
     ggplot2::ggtitle(paste0("P-value vs. estimate of biomarkers in ",
@@ -60,7 +62,8 @@ buildVolcanoPlot <- function(biomarkerDf, experiment, pValCutoff=0.05) {
     ggplot2::geom_hline(yintercept=-log10(pValCutoff), linetype='dotted',
                         col = 'black', size=1)
 
-  return(plot)
+  result <- list("dt" = selectedBiomrkrs, "plot" = plot)
+  return(result)
 }
 
 # [END]

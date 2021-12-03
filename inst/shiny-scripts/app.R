@@ -118,7 +118,7 @@ server <- function(input, output) {
   })
 
   output$volcanoPlot <- renderPlot({
-    buildVolcanoPlot(rv$biomarkerDf, experiment())
+    buildVolcanoPlot(rv$biomarkerDf, experiment())$plot
   })
 
   # Update selected gene when users click on plots

@@ -23,6 +23,7 @@ out on the plot. Default value is 0.05.}
 \value{
 A ggplot2 plot object mapping the biomarkers of the experiment
 (x-axis = estimate; y-axis = -log10(p-value))
+#TODO: update
 }
 \description{
 Note that this volcano plot is NOT plotting results of differential gene
