@@ -25,15 +25,27 @@ ui <- dashboardPage(
             "biomarkerFile", "Upload Biomarker CSV:",
             accept = c("text/csv", ".csv"), buttonLabel="Browse files")),
           column(width=6, fileInput(
-            "genomeFile", "Upload Genome JSON:",
+            "genomeFile", "Upload Genome CSV:",
             accept = c("text/csv", ".csv"), buttonLabel="Browse files")),
           p("NOTE: If no biomarker file is uploaded, then a sample biomarker
-              dataset will be used by default (see LINK for more).")
+          dataset will be used by default (see LINK for more). If no genome
+          file is uploaded, then the GRCh38.p13.Assembly genome will
+          be used automatically (see LINK for more).")
         )),
-        fluidRow(box(width=12,
+        fluidRow(box(width = 12, title = "Filter Biomarkers",
           column(width=4, uiOutput("tissueSelect")),
           column(width=4, uiOutput("compoundSelect")),
           column(width=4, uiOutput("mDataTypeSelect"))
+        )),
+        fluidRow(box(
+          width = 12, collapsible = T, collapsed = T, title = "Plot Properties",
+          column(width = 4, sliderInput(
+            "pValCutoff", "P-Value Cutoff", min=0, max=1, value=0.05)),
+          # TODO: something funny happens when pval >= 0.39 ?? consider
+          # reducing range of slider
+          column(width = 4, p("Color manipulation: under construction")),
+          column(width = 4, p(
+            "Title/axis label manipulation: under construction"))
         )),
         fluidRow(
           box(plotOutput("manhattanPlot", click = "mouseClick", height = 350)),
@@ -104,6 +116,11 @@ server <- function(input, output) {
     rv$biomarkerDf <- read.csv(input$biomarkerFile$datapath)
   })
 
+  observeEvent(input$genomeFile, {
+    req(input$genomeFile)
+    rv$chromosomeDf <- read.csv(input$genomeFile$datapath)
+  })
+
   # Get all tissues, compounds, and mDataTypes from biomarkerDf
   # and update dropdown elements accordingly
   output$tissueSelect <- renderUI({
@@ -135,13 +152,15 @@ server <- function(input, output) {
 
   # Update plots based on experiment
   output$manhattanPlot <- renderPlot({
-    result <- buildManhattanPlot(rv$biomarkerDf, rv$chromosomeDf, experiment())
+    result <- buildManhattanPlot(rv$biomarkerDf, rv$chromosomeDf, experiment(),
+                                 pValCutoff = input$pValCutoff)
     rv$plottedBiomrkrs <- result$dt
     result$plot
   })
 
   output$volcanoPlot <- renderPlot({
-    buildVolcanoPlot(rv$biomarkerDf, experiment())$plot
+    buildVolcanoPlot(
+      rv$biomarkerDf, experiment(), pValCutoff = input$pValCutoff)$plot
   })
 
   # Update selected gene when users click on plots
