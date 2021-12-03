@@ -3,6 +3,7 @@
 
 ui <- dashboardPage(
   dashboardHeader(title = "PGxVision"),
+
   dashboardSidebar(
     sidebarMenu(
       menuItem("Biomarkers", tabName = "biomarkers", icon = icon("dna")),
@@ -10,12 +11,23 @@ ui <- dashboardPage(
               icon = icon("capsules"))
     )
   ),
+
   dashboardBody(
     tabItems(
       # Biomarkers tab
       tabItem(
         tabName = "biomarkers",
         h2("Biomarker Analysis"),
+        fluidRow(box(width=12,
+          column(width=6, fileInput(
+            "biomarkerFile", "Upload Biomarker CSV:",
+            accept = c("text/csv", ".csv"), buttonLabel="Browse files")),
+          column(width=6, fileInput(
+            "genomeFile", "Upload Genome JSON:",
+            accept = c("text/csv", ".csv"), buttonLabel="Browse files")),
+          p("NOTE: If no biomarker file is uploaded, then a sample biomarker
+              dataset will be used by default (see LINK for more).")
+        )),
         fluidRow(box(width=12,
           column(width=4, uiOutput("tissueSelect")),
           column(width=4, uiOutput("compoundSelect")),
@@ -42,47 +54,52 @@ ui <- dashboardPage(
 )
 
 server <- function(input, output) {
-  biomarkerDf <- Biomarkers
+  # Update biomarkerDf based on file uploads
+  biomarkerDf <- reactive({
+    biomarkerFile <- input$biomarkerFile
+    if (!is.null(biomarkerFile)) {
+      read.csv(input$biomarkerFile$datapath)
+    } else {
+      Biomarkers
+    }
+  })
 
   # Get all tissues, compounds, and mDataTypes from biomarkerDf
+  # and update dropdown elements accordingly
   output$tissueSelect <- renderUI({
-    tissueChoices <- unique(biomarkerDf$tissue) #FIXME: unsafe
+    tissueChoices <- unique(biomarkerDf()$tissue) #FIXME: unsafe
     selectInput("tissue", "Tissue",
                 c("Select a tissue..." = "", tissueChoices),
                 selected = "")
   })
 
   output$compoundSelect <- renderUI({
-    compoundChoices <- unique(biomarkerDf$compound) #FIXME: unsafe
+    compoundChoices <- unique(biomarkerDf()$compound) #FIXME: unsafe
     selectInput("compound", "Compound/Drug",
                 c("Select a compound..." = "", compoundChoices),
                 selected = "")
   })
 
   output$mDataTypeSelect <- renderUI({
-    mDataTypeChoices <- unique(biomarkerDf$mDataType) #FIXME: unsafe
+    mDataTypeChoices <- unique(biomarkerDf()$mDataType) #FIXME: unsafe
     selectInput("mDataType", "Molecular Data Type",
                 c("Select a molecular data type..." = "", mDataTypeChoices),
                 selected = "")
   })
 
-
-  experiment <- c()
-
-  # renderPlot, renderImage, renderDataTable, renderTable, renderText, renderUI, etc.
-  getExperiment <- reactive({
-    experiment$tissue <- input$tissue
-    experiment$compound <- input$compound
-    experiment$mDataType <- input$mDataType
-    return(experiment)
+  # Update experiment based on dropdown selections
+  experiment <- reactive({
+    setNames(c(input$tissue, input$compound, input$mDataType),
+             c("tissue", "compound", "mDataType"))
   })
 
+  # Update plots based on experiment
   output$manhattanPlot <- renderPlot({
-    buildManhattanPlot(biomarkerDf, GRCh38.p13.Assembly, getExperiment())
+    buildManhattanPlot(biomarkerDf(), GRCh38.p13.Assembly, experiment())
   })
 
   output$volcanoPlot <- renderPlot({
-    buildVolcanoPlot(biomarkerDf, getExperiment())
+    buildVolcanoPlot(biomarkerDf(), experiment())
   })
 }
 
