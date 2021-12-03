@@ -41,6 +41,7 @@ Default value is "GRCh28.p13"}
 \value{
 A ggplot2 plot object mapping the biomarkers of the experiment
 (x-axis = genome position; y-axis = -log10(p-value or fdr))
+TODO: update!
 }
 \description{
 Build a Manhattan plot of biomarkers

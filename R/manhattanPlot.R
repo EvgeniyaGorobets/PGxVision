@@ -20,6 +20,7 @@
 #' Default value is "GRCh28.p13"
 #' @return A ggplot2 plot object mapping the biomarkers of the experiment
 #' (x-axis = genome position; y-axis = -log10(p-value or fdr))
+#' TODO: update!
 #'
 #' @examples
 #' data(Biomarkers)
@@ -80,13 +81,13 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
   # the p-value cutoff given
   # TODO: cutoff should be <= or < ?
   selectedBiomrks[, significant := (pvalue <= pValCutoff)]
+  selectedBiomrks[, log10pValue := -log10(pvalue)] #FIXME: these can be combined into one statement
 
   # Build the Manhattan plot
   totalGenomeLen <- chromosomeDf[nrow(chromosomeDf), seq_start + chrLength]
-  suppressWarnings(
-    plot <- ggplot2::ggplot(selectedBiomrks, ggplot2::aes(
-    x=abs_gene_seq_start, y=-log10(pvalue), xmin=1, xmax=totalGenomeLen,
-    color=chr, alpha=significant)))
+  plot <- ggplot2::ggplot(selectedBiomrks, ggplot2::aes(
+    x=abs_gene_seq_start, y=log10pValue, xmin=1, xmax=totalGenomeLen,
+    color=chr, alpha=significant))
 
   # Add title and colors
   title <- paste0(genomeName, " gene response to ", experiment["compound"],
@@ -107,7 +108,9 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
   # Add horizontal line to show significance cutoff
   plot <- plot + ggplot2::geom_hline(yintercept=-log10(pValCutoff),
                                      linetype='dotted', col = 'black', size=1)
-  return(plot)
+
+  result <- list("dt" = selectedBiomrks, "plot" = plot)
+  return(result)
 }
 
 
