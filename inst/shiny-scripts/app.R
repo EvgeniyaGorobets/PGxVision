@@ -34,8 +34,11 @@ ui <- dashboardPage(
           column(width=4, uiOutput("mDataTypeSelect"))
         )),
         fluidRow(
-          box(plotOutput("manhattanPlot", height = 350)),
-          box(plotOutput("volcanoPlot", height = 350))
+          box(plotOutput("manhattanPlot", hover = "mouseHover", height = 350)),
+          box(plotOutput("volcanoPlot", hover = "mouseHover", height = 350))
+        ),
+        fluidRow(
+          box(tableOutput("data"))
         )
       ),
 
@@ -100,6 +103,11 @@ server <- function(input, output) {
 
   output$volcanoPlot <- renderPlot({
     buildVolcanoPlot(biomarkerDf(), experiment())
+  })
+
+  output$data <- renderTable({
+    req(input$mouseHover)
+    nearPoints(biomarkerDf(), input$mouseHover)
   })
 }
 
