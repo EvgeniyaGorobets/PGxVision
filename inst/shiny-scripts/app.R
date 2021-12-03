@@ -51,9 +51,10 @@ ui <- dashboardPage(
           box(plotOutput("manhattanPlot", click = "mouseClick", height = 350)),
           box(plotOutput("volcanoPlot", click = "mouseClick", height = 350))
         ),
-        fluidRow(box(width=12,
+        fluidRow(box(width = 12,
           column(
-            width=9,
+            width = 9,
+            h3("Biomarker Info"),
             div(tags$b("Gene: "), textOutput("geneName", inline = TRUE)),
             div(tags$b("Genome Position: "),
                 textOutput("geneStart", inline = TRUE)),
@@ -62,7 +63,14 @@ ui <- dashboardPage(
                 textOutput("geneEstimate", inline = TRUE)),
             div(tags$b("P-Value: "), textOutput("genePVal", inline = TRUE)),
             div(tags$b("FDR: "), textOutput("geneFdr", inline = TRUE))),
-          column(width=3, actionButton(
+          column(
+            width = 3,
+            br(),
+            p("Click on any point to see more information about
+              the gene."),
+            p("Click on the button below to perform gene set analysis on the
+              selected gene."),
+            actionButton(
             "runGsAnalysis", "Run Gene Set Analysis!"))
                   #TODO: change styling of button
         )),
