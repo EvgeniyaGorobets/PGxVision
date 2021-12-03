@@ -1,6 +1,8 @@
 #library(shiny)
 #library(shinydashboard)
 
+gsTypes <- unique(msigdbr::msigdbr_collections()$gs_subcat)
+
 ui <- dashboardPage(
   dashboardHeader(title = "PGxVision"),
 
@@ -51,7 +53,27 @@ ui <- dashboardPage(
           column(width=3, actionButton(
             "runGsAnalysis", "Run Gene Set Analysis!"))
                   #TODO: change styling of button
-        ))
+        )),
+        fluidRow(box(
+          width=12,
+          h3("Gene Set Analysis"),
+          column(
+            width=4,
+            selectInput("gsType", "Gene Set Type",
+                        c("Select a gene set type..." = "", gsTypes),
+                        selected = "")
+          ),
+          column(
+            width=4,
+            selectInput("simAlgo", "Similarity Algorithm", c("overlap"))
+          ),
+          column(
+            width=4,
+            sliderInput("simCutoff", "Similarity Cutoff", min=0, max=1,
+                        value=0.5)
+          ),
+          plotOutput("networkPlot")
+        )),
       ),
 
       # Drug Response tab
@@ -73,7 +95,8 @@ server <- function(input, output) {
   rv <- reactiveValues(biomarkerDf = Biomarkers,
                        chromosomeDf = GRCh38.p13.Assembly,
                        plottedBiomrkrs = NULL,
-                       selectedGene = NULL)
+                       selectedGene = NULL,
+                       networkPlot = NULL)
 
   # Update biomarkerDf and chromosomeDf based on file uploads
   observeEvent(input$biomarkerFile, {
@@ -154,7 +177,15 @@ server <- function(input, output) {
     rv$selectedGene[1, fdr]
   })
 
-  # data <- eventReactive(input$runGsAnalysis, {code to run it})
+  observeEvent(input$runGsAnalysis, {
+    rv$networkPlot <- geneSetAnalysis(rv$selectedGene[1, gene], input$gsType,
+                                      input$simAlgo, input$simCutoff)
+  })
+
+  output$networkPlot <- renderPlot({
+    req(rv$networkPlot)
+    plot(rv$networkPlot)
+  })
 }
 
 shinyApp(ui, server)

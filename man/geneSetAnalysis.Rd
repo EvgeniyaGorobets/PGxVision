@@ -4,13 +4,22 @@
 \alias{geneSetAnalysis}
 \title{Perform a gene set analysis on a gene}
 \usage{
-geneSetAnalysis(geneId, queryType, similarityCutoff = NULL, title = NULL)
+geneSetAnalysis(
+  geneId,
+  queryType,
+  similarityMetric = "overlap",
+  similarityCutoff = NULL,
+  title = NULL
+)
 }
 \arguments{
 \item{geneId}{The ENSEMBL ID of the gene you want to query}
 
 \item{queryType}{The type of query you want to perform; see MSigDb for
 possible subcategories (use msigdbr::msigdbr_collections())}
+
+\item{similarityMetric}{The algorithm used to compute the similarity between
+gene sets. The default (and only option currently) is "overlap".}
 
 \item{similarityCutoff}{(optional) A number indicating the minimum
 similarity two gene sets must have in order for an edge to show up on the

@@ -77,6 +77,8 @@ buildNetworkPlot <- function(gsSimilarityDf, similarityCutoff=0.5, title=NULL) {
 #' @param geneId The ENSEMBL ID of the gene you want to query
 #' @param queryType The type of query you want to perform; see MSigDb for
 #' possible subcategories (use msigdbr::msigdbr_collections())
+#' @param similarityMetric The algorithm used to compute the similarity between
+#' gene sets. The default (and only option currently) is "overlap".
 #' @param similarityCutoff (optional) A number indicating the minimum
 #' similarity two gene sets must have in order for an edge to show up on the
 #' plot. Defaults to 0.5.
@@ -92,8 +94,8 @@ buildNetworkPlot <- function(gsSimilarityDf, similarityCutoff=0.5, title=NULL) {
 #' @importFrom igraph graph_from_data_frame E
 #' @importFrom viridis magma
 #' @export
-geneSetAnalysis <- function(geneId, queryType, similarityCutoff=NULL,
-                            title=NULL) {
+geneSetAnalysis <- function(geneId, queryType, similarityMetric="overlap",
+                            similarityCutoff=NULL, title=NULL) {
   # Perform gene set analysis
   geneSetIds <- queryGene(geneId, queryType)
   if (length(geneSetIds) <= 1) {
@@ -104,7 +106,7 @@ geneSetAnalysis <- function(geneId, queryType, similarityCutoff=NULL,
   }
 
   geneSets <- expandGeneSets(geneSetIds, queryType)
-  gsSimilarity <- computeGeneSetSimilarity(geneSets)
+  gsSimilarity <- computeGeneSetSimilarity(geneSets, similarityMetric)
 
   if (is.null(title)) {
     title <- paste0(queryType, " Gene Sets containing ", geneId)
