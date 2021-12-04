@@ -33,7 +33,7 @@
 #' @importFrom data.table setDT copy :=
 #' @importFrom checkmate assertDataFrame assertNames assertNumber
 #' @importFrom ggplot2 ggplot geom_point scale_x_continuous guides theme aes
-#' scale_color_manual ggtitle element_text geom_hline
+#' scale_color_manual ggtitle element_text geom_hline xlim
 #' @importFrom ggprism guide_prism_minor
 #' @importFrom grDevices rainbow
 #' @export
@@ -86,14 +86,14 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
   # Build the Manhattan plot
   totalGenomeLen <- chromosomeDf[nrow(chromosomeDf), seq_start + chrLength]
   plot <- ggplot2::ggplot(selectedBiomrks, ggplot2::aes(
-    x=abs_gene_seq_start, y=log10pValue, xmin=1, xmax=totalGenomeLen,
-    color=chr, alpha=significant))
+    x=abs_gene_seq_start, y=log10pValue, color=chr, alpha=significant)) +
+    ggplot2::geom_point()
 
   # Add title and colors
   title <- paste0(genomeName, " gene response to ", experiment["compound"],
                   " in ", experiment["tissue"],
                   " tissue\n(drug sensitivity measured using -log10(p-value))")
-  plot <- plot + ggplot2::geom_point() + ggplot2::ggtitle(title) +
+  plot <- plot + ggplot2::ggtitle(title) +
     ggplot2::theme(legend.position = "none",
                    plot.title = ggplot2::element_text(hjust = 0.5)) +
     ggplot2::scale_color_manual(values=rainbow(nrow(chromosomeDf)))
@@ -103,7 +103,7 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
   chromosomeNames <- chromosomeDf$chrName
   plot <- plot + ggplot2::scale_x_continuous(
     "Chromosome", breaks=midChromosome, minor_breaks=c(1, chromosomeDf$seq_end),
-    labels=chromosomeNames) + ggplot2::guides(x = guide_prism_minor())
+    labels=chromosomeNames, limits=c(1, totalGenomeLen), guide = guide_prism_minor()) #+ ggplot2::guides(x = guide_prism_minor())
 
   # Add horizontal line to show significance cutoff
   plot <- plot + ggplot2::geom_hline(yintercept=-log10(pValCutoff),
