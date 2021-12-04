@@ -4,7 +4,7 @@
 gsTypes <- unique(msigdbr::msigdbr_collections()$gs_subcat)
 
 
-fileUploadBox <- box(
+biomarkerFileUploadBox <- box(
   width = 12,
   column(
     width = 6,
@@ -20,6 +20,23 @@ fileUploadBox <- box(
   will be used by default (see LINK for more). If no genome file is uploaded,
   then the GRCh38.p13.Assembly genome will be used automatically (see LINK for
   more).")
+)
+
+
+sensitivityFileUploadBox <- box(
+  width = 12,
+  column(
+    width = 6,
+    fileInput("drugSensFile", "Upload Drug Sensitivity CSV:",
+              accept = c("text/csv", ".csv"), buttonLabel="Browse files")
+  ),
+  column(
+    width=6,
+    fileInput("forestFile", "Upload Forest Plot CSV???:",
+              accept = c("text/csv", ".csv"), buttonLabel="Browse files")
+  ),
+  p("NOTE: If no drug sensitivity file is uploaded, then a sample dataset
+  will be used by default (see LINK for more). (forest plot???)")
 )
 
 
@@ -105,7 +122,7 @@ ui <- dashboardPage(
       tabItem(
         tabName = "biomarkers",
         h2("Biomarker Analysis"),
-        fluidRow(fileUploadBox),
+        fluidRow(biomarkerFileUploadBox),
         fluidRow(filterBiomarkersBox),
         fluidRow(plotPropertiesBox),
         fluidRow(
@@ -120,6 +137,7 @@ ui <- dashboardPage(
       tabItem(
         tabName = "drugResponse",
         h2("Drug Response"),
+        fluidRow(sensitivityFileUploadBox),
         fluidRow(
           box(plotOutput("waterfallPlot", height = 350)),
           box(plotOutput("forestPlot", height = 350))
@@ -131,12 +149,15 @@ ui <- dashboardPage(
 )
 
 server <- function(input, output) {
-  # Define reactive values biomarkerDf and chromosomeDf
+  # Define reactive values
   rv <- reactiveValues(biomarkerDf = Biomarkers,
                        chromosomeDf = GRCh38.p13.Assembly,
                        plottedBiomrkrs = NULL,
                        selectedGene = NULL,
-                       gsSimilarityDf = NULL)
+                       gsSimilarityDf = NULL,
+                       sensitivityDf = BRCA.PDXE.paxlitaxel.response)
+
+  # ------------------ BIOMARKER TAB ------------------ #
 
   # Update biomarkerDf and chromosomeDf based on file uploads
   observeEvent(input$biomarkerFile, {
@@ -239,6 +260,27 @@ server <- function(input, output) {
     req(rv$gsSimilarityDf)
     buildNetworkPlot(rv$gsSimilarityDf, input$simCutoff)
   })
+
+  # ------------------ END BIOMARKER TAB ------------------ #
+
+  # ------------------ DRUG RESPONSE TAB ------------------ #
+
+  # Update waterfallDf based on file upload
+  observeEvent(input$drugSensFile, {
+    req(input$drugSensFile)
+    rv$sensitivityDf <- read.csv(input$drugSensFile$datapath)
+  })
+
+  # Update plots based on file upload
+  output$waterfallPlot <- renderPlot({
+    buildWaterfallPlot(
+      rv$sensitivityDf, xAxisCol="tumour", drugSensitivityCol="angle",
+      colorCol="ODC1", xLabel="Tumour",
+      yLabel="Angle Between Treatment and Control",
+      title="Paclitaxel Response in BRCA Tumours")
+  })
+
+  # ------------------ END DRUG RESPONSE TAB ------------------ #
 }
 
 shinyApp(ui, server)
