@@ -23,6 +23,14 @@ fileUploadBox <- box(
 )
 
 
+filterBiomarkersBox <- box(
+  width = 12, title = "Filter Biomarkers",
+  column(width = 4, uiOutput("tissueSelect")),
+  column(width = 4, uiOutput("compoundSelect")),
+  column(width = 4, uiOutput("mDataTypeSelect"))
+)
+
+
 plotPropertiesBox <- box(
   width = 12, collapsible = T, collapsed = T, title = "Plot Properties",
   column(
@@ -47,10 +55,38 @@ geneInfoBox <- box(width = 12,
     div(tags$b("FDR: "), textOutput("geneFdr", inline = TRUE))
   ),
   column(
-    width = 3, br(),
+    width = 3, br(), br(),
     p("Click on any point to see more information about the gene."), br()
   )
 )
+
+
+geneSetAnalysisBox <- box(
+  width=12,
+  h3("Gene Set Analysis"),
+  column(width = 3, uiOutput("geneSelect")),
+  column(
+    width = 3,
+    selectInput("gsType", "Gene Set Type",
+                c("Select a gene set type..." = "", gsTypes), selected = "")
+  ),
+  column(
+    width = 3, selectInput("simAlgo", "Similarity Algorithm", c("overlap"))
+  ),
+  column(
+    width = 3, br(),
+    actionButton("runGsAnalysis", "Run Gene Set Analysis!")
+  ),
+  column(width = 9, plotOutput("networkPlot", height = 400)),
+  # FIXME: plot doesn't always fully show, overflows
+  column(
+    width = 3, br(),
+    sliderInput("simCutoff", "Similarity Cutoff",
+                min = 0, max = 1, value = 0.5),
+    br(), h4("Gene Set Info"), p("Under construction")
+  ),
+)
+
 
 ui <- dashboardPage(
   dashboardHeader(title = "PGxVision"),
@@ -70,45 +106,14 @@ ui <- dashboardPage(
         tabName = "biomarkers",
         h2("Biomarker Analysis"),
         fluidRow(fileUploadBox),
-        fluidRow(box(width = 12, title = "Filter Biomarkers",
-          column(width=4, uiOutput("tissueSelect")),
-          column(width=4, uiOutput("compoundSelect")),
-          column(width=4, uiOutput("mDataTypeSelect"))
-        )),
+        fluidRow(filterBiomarkersBox),
         fluidRow(plotPropertiesBox),
         fluidRow(
           box(plotOutput("manhattanPlot", click = "mouseClick", height = 350)),
           box(plotOutput("volcanoPlot", click = "mouseClick", height = 350))
         ),
         fluidRow(geneInfoBox),
-        fluidRow(box(
-          width=12,
-          h3("Gene Set Analysis"),
-          column(width = 3, uiOutput("geneSelect")),
-          column(
-            width = 3,
-            selectInput("gsType", "Gene Set Type",
-              c("Select a gene set type..." = "", gsTypes), selected = "")
-          ),
-          column(
-            width = 3,
-            selectInput("simAlgo", "Similarity Algorithm", c("overlap"))
-          ),
-          column(
-            width = 3, br(),
-            actionButton("runGsAnalysis", "Run Gene Set Analysis!")
-          ),
-          column(width = 9, plotOutput("networkPlot", height = 400)),
-          # FIXME: plot doesn't always fully show, overflows
-          column(
-            width = 3, br(),
-            sliderInput("simCutoff", "Similarity Cutoff",
-                        min = 0, max = 1, value = 0.5),
-            br(),
-            h4("Gene Set Info"),
-            p("Under construction")
-          ),
-        )),
+        fluidRow(geneSetAnalysisBox),
       ),
 
       # Drug Response tab
