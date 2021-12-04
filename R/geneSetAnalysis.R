@@ -1,3 +1,40 @@
+#' Perform a gene set analysis on a gene
+#'
+#' Query MSigDb to find all gene sets that queryGene is in, then compute the
+#' similarity of the gene sets and return the result in a data frame. This is a
+#' wrapper function which performs the full gene set analysis pipeline, minus
+#' the network plot.
+#'
+#' @param geneId The ENSEMBL ID of the gene you want to query
+#' @param queryType The type of query you want to perform; see MSigDb for
+#' possible subcategories (use msigdbr::msigdbr_collections())
+#' @param similarityMetric The algorithm used to compute the similarity between
+#' gene sets. The default (and only option currently) is "overlap".
+#' @return TODO
+#'
+#' @examples
+#' geneSetAnalysis("ENSG00000000971", "GO:BP")
+#'
+#' @importFrom checkmate assertDataFrame assertNames assertString
+#' @importFrom igraph graph_from_data_frame E
+#' @importFrom viridis magma
+#' @export
+geneSetAnalysis <- function(geneId, queryType, similarityMetric="overlap") {
+  # Perform gene set analysis
+  geneSetIds <- queryGene(geneId, queryType)
+  if (length(geneSetIds) <= 1) {
+    stop(paste0("1 or fewer gene sets of type ", queryType, " and containing ",
+                geneId, " were found.\n",
+                "Further gene set analysis will not possible.\n",
+                "Try a different gene or a different query type."))
+  }
+
+  geneSets <- expandGeneSets(geneSetIds, queryType)
+  gsSimilarity <- computeGeneSetSimilarity(geneSets, similarityMetric)
+  return(gsSimilarity)
+}
+
+
 #' Query a gene
 #'
 #' Get all gene sets from MSigDb that contain the query gene. Gene sets can be

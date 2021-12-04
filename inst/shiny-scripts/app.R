@@ -3,6 +3,55 @@
 
 gsTypes <- unique(msigdbr::msigdbr_collections()$gs_subcat)
 
+
+fileUploadBox <- box(
+  width = 12,
+  column(
+    width = 6,
+    fileInput("biomarkerFile", "Upload Biomarker CSV:",
+              accept = c("text/csv", ".csv"), buttonLabel="Browse files")
+  ),
+  column(
+    width=6,
+    fileInput("genomeFile", "Upload Genome CSV:",
+              accept = c("text/csv", ".csv"), buttonLabel="Browse files")
+  ),
+  p("NOTE: If no biomarker file is uploaded, then a sample biomarker dataset
+  will be used by default (see LINK for more). If no genome file is uploaded,
+  then the GRCh38.p13.Assembly genome will be used automatically (see LINK for
+  more).")
+)
+
+
+plotPropertiesBox <- box(
+  width = 12, collapsible = T, collapsed = T, title = "Plot Properties",
+  column(
+    width = 4,
+    sliderInput("pValCutoff", "P-Value Cutoff", min=0, max=1, value=0.05)),
+  # TODO: something funny happens when pval >= 0.39 ?? consider
+  # reducing range of slider
+  column(width = 4, p("Color manipulation: under construction")),
+  column(width = 4, p("Title/axis label manipulation: under construction"))
+)
+
+
+geneInfoBox <- box(width = 12,
+  column(
+    width = 9,
+    h3("Biomarker Info"),
+    div(tags$b("Gene: "), textOutput("geneName", inline = TRUE)),
+    div(tags$b("Genome Position: "), textOutput("geneStart", inline = TRUE)),
+    div(tags$b("Chromosome: "), textOutput("geneChr", inline = TRUE)),
+    div(tags$b("Estimate: "), textOutput("geneEstimate", inline = TRUE)),
+    div(tags$b("P-Value: "), textOutput("genePVal", inline = TRUE)),
+    div(tags$b("FDR: "), textOutput("geneFdr", inline = TRUE))
+  ),
+  column(
+    width = 3, br(),
+    p("Click on any point to see more information about the gene."), br()
+  )
+)
+
 ui <- dashboardPage(
   dashboardHeader(title = "PGxVision"),
 
@@ -20,79 +69,45 @@ ui <- dashboardPage(
       tabItem(
         tabName = "biomarkers",
         h2("Biomarker Analysis"),
-        fluidRow(box(width=12,
-          column(width=6, fileInput(
-            "biomarkerFile", "Upload Biomarker CSV:",
-            accept = c("text/csv", ".csv"), buttonLabel="Browse files")),
-          column(width=6, fileInput(
-            "genomeFile", "Upload Genome CSV:",
-            accept = c("text/csv", ".csv"), buttonLabel="Browse files")),
-          p("NOTE: If no biomarker file is uploaded, then a sample biomarker
-          dataset will be used by default (see LINK for more). If no genome
-          file is uploaded, then the GRCh38.p13.Assembly genome will
-          be used automatically (see LINK for more).")
-        )),
+        fluidRow(fileUploadBox),
         fluidRow(box(width = 12, title = "Filter Biomarkers",
           column(width=4, uiOutput("tissueSelect")),
           column(width=4, uiOutput("compoundSelect")),
           column(width=4, uiOutput("mDataTypeSelect"))
         )),
-        fluidRow(box(
-          width = 12, collapsible = T, collapsed = T, title = "Plot Properties",
-          column(width = 4, sliderInput(
-            "pValCutoff", "P-Value Cutoff", min=0, max=1, value=0.05)),
-          # TODO: something funny happens when pval >= 0.39 ?? consider
-          # reducing range of slider
-          column(width = 4, p("Color manipulation: under construction")),
-          column(width = 4, p(
-            "Title/axis label manipulation: under construction"))
-        )),
+        fluidRow(plotPropertiesBox),
         fluidRow(
           box(plotOutput("manhattanPlot", click = "mouseClick", height = 350)),
           box(plotOutput("volcanoPlot", click = "mouseClick", height = 350))
         ),
-        fluidRow(box(width = 12,
-          column(
-            width = 9,
-            h3("Biomarker Info"),
-            div(tags$b("Gene: "), textOutput("geneName", inline = TRUE)),
-            div(tags$b("Genome Position: "),
-                textOutput("geneStart", inline = TRUE)),
-            div(tags$b("Chromosome: "), textOutput("geneChr", inline = TRUE)),
-            div(tags$b("Estimate: "),
-                textOutput("geneEstimate", inline = TRUE)),
-            div(tags$b("P-Value: "), textOutput("genePVal", inline = TRUE)),
-            div(tags$b("FDR: "), textOutput("geneFdr", inline = TRUE))),
-          column(
-            width = 3,
-            br(),
-            p("Click on any point to see more information about
-              the gene."),
-            p("Click on the button below to perform gene set analysis on the
-              selected gene."),
-            actionButton(
-            "runGsAnalysis", "Run Gene Set Analysis!"))
-                  #TODO: change styling of button
-        )),
+        fluidRow(geneInfoBox),
         fluidRow(box(
           width=12,
           h3("Gene Set Analysis"),
+          column(width = 3, uiOutput("geneSelect")),
           column(
-            width=4,
+            width = 3,
             selectInput("gsType", "Gene Set Type",
-                        c("Select a gene set type..." = "", gsTypes),
-                        selected = "")
+              c("Select a gene set type..." = "", gsTypes), selected = "")
           ),
           column(
-            width=4,
+            width = 3,
             selectInput("simAlgo", "Similarity Algorithm", c("overlap"))
           ),
           column(
-            width=4,
-            sliderInput("simCutoff", "Similarity Cutoff", min=0, max=1,
-                        value=0.5)
+            width = 3, br(),
+            actionButton("runGsAnalysis", "Run Gene Set Analysis!")
           ),
-          plotOutput("networkPlot")
+          column(width = 9, plotOutput("networkPlot", height = 400)),
+          # FIXME: plot doesn't always fully show, overflows
+          column(
+            width = 3, br(),
+            sliderInput("simCutoff", "Similarity Cutoff",
+                        min = 0, max = 1, value = 0.5),
+            br(),
+            h4("Gene Set Info"),
+            p("Under construction")
+          ),
         )),
       ),
 
@@ -116,7 +131,7 @@ server <- function(input, output) {
                        chromosomeDf = GRCh38.p13.Assembly,
                        plottedBiomrkrs = NULL,
                        selectedGene = NULL,
-                       networkPlot = NULL)
+                       gsSimilarityDf = NULL)
 
   # Update biomarkerDf and chromosomeDf based on file uploads
   observeEvent(input$biomarkerFile, {
@@ -129,20 +144,24 @@ server <- function(input, output) {
     rv$chromosomeDf <- read.csv(input$genomeFile$datapath)
   })
 
-  # Get all tissues, compounds, and mDataTypes from biomarkerDf
+  # Get all gene, tissues, compounds, and mDataTypes from biomarkerDf
   # and update dropdown elements accordingly
+  output$geneSelect <- renderUI({
+    geneChoices <- unique(rv$biomarkerDf$gene) #FIXME: unsafe
+    selectInput("gene", "Gene", c("Select a gene..." = "", geneChoices),
+                selected = "")
+  })
+
   output$tissueSelect <- renderUI({
     tissueChoices <- unique(rv$biomarkerDf$tissue) #FIXME: unsafe
-    selectInput("tissue", "Tissue",
-                c("Select a tissue..." = "", tissueChoices),
+    selectInput("tissue", "Tissue", c("Select a tissue..." = "", tissueChoices),
                 selected = "")
   })
 
   output$compoundSelect <- renderUI({
     compoundChoices <- unique(rv$biomarkerDf$compound) #FIXME: unsafe
     selectInput("compound", "Compound/Drug",
-                c("Select a compound..." = "", compoundChoices),
-                selected = "")
+                c("Select a compound..." = "", compoundChoices), selected = "")
   })
 
   output$mDataTypeSelect <- renderUI({
@@ -179,6 +198,7 @@ server <- function(input, output) {
                                   threshold = 5, maxpoints = 1)
   })
 
+  # Update biomarker info box in response to new selected gene
   output$geneName <- renderText({
     req(rv$selectedGene)
     rv$selectedGene[1, gene]
@@ -204,14 +224,15 @@ server <- function(input, output) {
     rv$selectedGene[1, fdr]
   })
 
+  # Update & rerender network plot only when the runGsAnalysis button is pressed
   observeEvent(input$runGsAnalysis, {
-    rv$networkPlot <- geneSetAnalysis(rv$selectedGene[1, gene], input$gsType,
-                                      input$simAlgo, input$simCutoff)
+    rv$gsSimilarityDf <- geneSetAnalysis(
+      input$gene, input$gsType, input$simAlgo)
   })
 
   output$networkPlot <- renderPlot({
-    req(rv$networkPlot)
-    plot(rv$networkPlot)
+    req(rv$gsSimilarityDf)
+    buildNetworkPlot(rv$gsSimilarityDf, input$simCutoff)
   })
 }
 

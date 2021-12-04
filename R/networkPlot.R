@@ -88,33 +88,26 @@ buildNetworkPlot <- function(gsSimilarityDf, similarityCutoff=0.5, title=NULL) {
 #' @return The igraph object containing the network plot of gene sets
 #'
 #' @examples
-#' geneSetAnalysis("ENSG00000000971", "GO:BP", 0.3)
+#' geneSetSimilarityPlot("ENSG00000000971", "GO:BP",
+#'                       similarityCutoff = 0.3, title = "Sample Network Plot")
 #'
 #' @importFrom checkmate assertDataFrame assertNames assertString
 #' @importFrom igraph graph_from_data_frame E
 #' @importFrom viridis magma
 #' @export
-geneSetAnalysis <- function(geneId, queryType, similarityMetric="overlap",
-                            similarityCutoff=NULL, title=NULL) {
+geneSetSimilarityPlot <- function(geneId, queryType, similarityMetric="overlap",
+                                  similarityCutoff=NULL, title=NULL) {
   # Perform gene set analysis
-  geneSetIds <- queryGene(geneId, queryType)
-  if (length(geneSetIds) <= 1) {
-    stop(paste0("1 or fewer gene sets of type ", queryType, " and containing ",
-                geneId, " were found.\n",
-                "Further gene set analysis will not possible.\n",
-                "Try a different gene or a different query type."))
-  }
+  gsSimilarity <- geneSetAnalysis(geneId, queryType, similarityMetric)
 
-  geneSets <- expandGeneSets(geneSetIds, queryType)
-  gsSimilarity <- computeGeneSetSimilarity(geneSets, similarityMetric)
-
+  # Plot results
   if (is.null(title)) {
     title <- paste0(queryType, " Gene Sets containing ", geneId)
   }
-
   graph <- buildNetworkPlot(gsSimilarity, similarityCutoff=similarityCutoff,
                             title=title)
   return(graph)
 }
+# TODO: consider deleting this function
 
 # [END]
