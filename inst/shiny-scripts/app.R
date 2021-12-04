@@ -1,5 +1,5 @@
-#library(shiny)
-#library(shinydashboard)
+library(shiny)
+library(shinydashboard)
 
 gsTypes <- unique(msigdbr::msigdbr_collections()$gs_subcat)
 
@@ -105,6 +105,15 @@ geneSetAnalysisBox <- box(
 )
 
 
+waterfallPlotBox <- box(
+  width = 6,
+  column(width = 4, uiOutput("wfXSelect")),
+  column(width = 4, uiOutput("wfYSelect")),
+  column(width = 4, uiOutput("wfColSelect")),
+  plotOutput("waterfallPlot", height = 350)
+)
+
+
 ui <- dashboardPage(
   dashboardHeader(title = "PGxVision"),
 
@@ -139,8 +148,8 @@ ui <- dashboardPage(
         h2("Drug Response"),
         fluidRow(sensitivityFileUploadBox),
         fluidRow(
-          box(plotOutput("waterfallPlot", height = 350)),
-          box(plotOutput("forestPlot", height = 350))
+          waterfallPlotBox,
+          box(plotOutput("forestPlot"))
         )
       )
     )
@@ -271,11 +280,25 @@ server <- function(input, output) {
     rv$sensitivityDf <- read.csv(input$drugSensFile$datapath)
   })
 
+  # Create waterfall plot dropdowns based on file upload
+  output$wfXSelect <- renderUI({
+    selectInput("wfX", "x-Axis", colnames(rv$sensitivityDf), selectize = F)
+  })
+
+  output$wfYSelect <- renderUI({
+    selectInput("wfY", "y-Axis", colnames(rv$sensitivityDf), selectize = F)
+  })
+
+  output$wfColSelect <- renderUI({
+    selectInput("wfCol", "Color", colnames(rv$sensitivityDf), selectize = F)
+  })
+
+
   # Update plots based on file upload
   output$waterfallPlot <- renderPlot({
     buildWaterfallPlot(
-      rv$sensitivityDf, xAxisCol="tumour", drugSensitivityCol="angle",
-      colorCol="ODC1", xLabel="Tumour",
+      rv$sensitivityDf, xAxisCol=input$wfX, drugSensitivityCol=input$wfY,
+      colorCol=input$wfCol, xLabel="Tumour",
       yLabel="Angle Between Treatment and Control",
       title="Paclitaxel Response in BRCA Tumours")
   })
