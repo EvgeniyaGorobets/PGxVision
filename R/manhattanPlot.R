@@ -91,8 +91,7 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
 
   # Add title and colors
   title <- paste0(genomeName, " gene response to ", experiment["compound"],
-                  " in ", experiment["tissue"],
-                  " tissue\n(drug sensitivity measured using -log10(p-value))")
+                  " in ", experiment["tissue"], " tissue")
   plot <- plot + ggplot2::ggtitle(title) +
     ggplot2::theme(legend.position = "none",
                    plot.title = ggplot2::element_text(hjust = 0.5)) +
