@@ -26,18 +26,8 @@ biomarkerFileUploadBox <- box(
 
 sensitivityFileUploadBox <- box(
   width = 12,
-  column(
-    width = 6,
-    fileInput("drugSensFile", "Upload Drug Sensitivity CSV:",
-              accept = c("text/csv", ".csv"), buttonLabel="Browse files")
-  ),
-  column(
-    width=6,
-    fileInput("forestFile", "Upload Forest Plot CSV???:",
-              accept = c("text/csv", ".csv"), buttonLabel="Browse files")
-  ),
-  p("NOTE: If no drug sensitivity file is uploaded, then a sample dataset
-  will be used by default (see LINK for more). (forest plot???)")
+  fileInput("drugSensFile", "Upload Drug Sensitivity CSV:",
+            accept = c("text/csv", ".csv"), buttonLabel="Browse files")
 )
 
 
@@ -107,7 +97,7 @@ geneSetAnalysisBox <- box(
 
 
 waterfallPlotBox <- box(
-  width = 6,
+  width = 12,
   column(width = 4, uiOutput("wfXSelect")),
   column(width = 4, uiOutput("wfYSelect")),
   column(width = 4, uiOutput("wfColSelect")),
@@ -148,10 +138,7 @@ ui <- dashboardPage(
         tabName = "drugResponse",
         h2("Drug Response"),
         fluidRow(sensitivityFileUploadBox),
-        fluidRow(
-          waterfallPlotBox,
-          box(plotOutput("forestPlot"))
-        )
+        fluidRow(waterfallPlotBox)
       )
     )
 
