@@ -136,8 +136,7 @@ ui <- dashboardPage(
         fluidRow(filterBiomarkersBox),
         fluidRow(plotPropertiesBox),
         fluidRow(
-          box(plotOutput("manhattanPlot", click = "mouseClick")),
-          #box(plotOutput("volcanoPlot", click = "mouseClick", height = 350))
+          box(plotlyOutput("manhattanPlot")),
           box(plotlyOutput("volcanoPlot"))
         ),
         fluidRow(geneInfoBox),
@@ -215,14 +214,16 @@ server <- function(input, output) {
   })
 
   # Update plots based on experiment
-  output$manhattanPlot <- renderPlot({
+  output$manhattanPlot <- renderPlotly({
     result <- buildManhattanPlot(rv$biomarkerDf, rv$chromosomeDf, experiment(),
                                  pValCutoff = input$pValCutoff)
     rv$plottedBiomrkrs <- result$dt
-    result$plot
+    ggplotly(result$plot, source = "manhattan")
   })
 
-  #output$volcanoPlot <- renderPlot({
+  # TODO: improve styling by using %>% layout()
+  # https://plotly.com/ggplot2/getting-started/
+  # Styling options: https://plotly.com/r/font/
   output$volcanoPlot <- renderPlotly({
     p <- buildVolcanoPlot(
       rv$biomarkerDf, experiment(), pValCutoff = input$pValCutoff)$plot
@@ -230,17 +231,17 @@ server <- function(input, output) {
   })
 
   # Update selected gene when users click on plots
-  observeEvent(input$mouseClick, {
-    req(input$mouseClick)
-    req(rv$plottedBiomrkrs)
-    rv$selectedGene <- nearPoints(rv$plottedBiomrkrs, input$mouseClick,
-                                  threshold = 5, maxpoints = 1)
+  observeEvent(event_data("plotly_click", source = "manhattan"), {
+    d <- event_data("plotly_click", source = "manhattan")
+    rv$selectedGene <- rv$plottedBiomrkrs[abs_gene_seq_start == d$x,]
   })
 
   observeEvent(event_data("plotly_click", source = "volcano"), {
     d <- event_data("plotly_click", source = "volcano")
     rv$selectedGene <- rv$plottedBiomrkrs[estimate == d$x,]
   })
+
+  #TODO: I want the equivalent data points on the other plot to highlight
 
   # Update biomarker info box in response to new selected gene
   output$geneName <- renderText({
