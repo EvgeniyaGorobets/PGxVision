@@ -12,8 +12,11 @@ A data frame with 8187 rows and 2 variables:
 }
 }
 \source{
-\url{
-https://www.gsea-msigdb.org/gsea/msigdb/genesets.jsp?collection=GO:CC}
+Subramanian, A., Tamayo, P., Mootha, V. K., Mukherjee, S., Ebert, B.
+L., Gillette, M. A., … Mesirov, J. P. (2005). Gene set enrichment analysis:
+A knowledge-based approach for interpreting genome-wide expression profiles.
+_Proceedings of the National Academy of Sciences, 102_(43), 15545–15550.
+doi:10.1073/pnas.0506580102
 }
 \usage{
 TestGeneSets

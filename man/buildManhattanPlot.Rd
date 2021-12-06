@@ -7,9 +7,9 @@
 buildManhattanPlot(
   biomarkerDf = NULL,
   chromosomeDf = NULL,
-  tissue = NULL,
-  compound = NULL,
-  mDataType = NULL,
+  tissue = "",
+  compound = "",
+  mDataType = "",
   pValCutoff = 0.05,
   relativeGenomeCoords = TRUE,
   genomeName = "GRCh38.p13"

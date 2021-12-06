@@ -13,7 +13,8 @@ A data frame with 38 rows and 3 variables:
 }
 }
 \source{
-Xeva. R package version 1.10.0.
+Mer A, Haibe-Kains B (2021). Xeva: Analysis of patient-derived
+xenograft (PDX) data. R package version 1.10.0.
 }
 \usage{
 BRCA.PDXE.paxlitaxel.response

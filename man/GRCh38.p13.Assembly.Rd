@@ -13,7 +13,13 @@ A data frame with 25 rows and 3 variables:
 }
 }
 \source{
-\url{https://www.gencodegenes.org/pages/gencode.html}
+Frankish, A., Diekhans, M., Ferreira, A. M., Johnson, R., Jungreis,
+I. Loveland, J., Mudge, J. M., Sisu, C., Wright, J., Armstrong, J., Barnes,
+I., Berry, A., Bignell, A., Carbonell Sala, S., Chrast, J., Cunningham, F.,
+Di Domenico, T., Donaldson, S., Fiddes, I. T., García Girón, C., … Flicek, P.
+(2019). GENCODE reference annotation for the human and mouse genomes.
+_Nucleic acids research, 47_(D1), D766–D773.
+https://doi.org/10.1093/nar/gky955
 }
 \usage{
 GRCh38.p13.Assembly

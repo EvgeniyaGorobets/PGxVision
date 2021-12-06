@@ -4,7 +4,13 @@
 \alias{buildVolcanoPlot}
 \title{Build a volcano plot of biomarkers}
 \usage{
-buildVolcanoPlot(biomarkerDf, tissue, compound, mDataType, pValCutoff = 0.05)
+buildVolcanoPlot(
+  biomarkerDf,
+  tissue = "",
+  compound = "",
+  mDataType = "",
+  pValCutoff = 0.05
+)
 }
 \arguments{
 \item{biomarkerDf}{A data.frame of drug sensitivity biomarkers that you want

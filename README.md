@@ -195,10 +195,9 @@ transparency of in vitro pharmacogenomics analysis. *bioRxiv.*
 Frankish, A., Diekhans, M., Ferreira, A. M., Johnson, R., Jungreis, I.
 Loveland, J., Mudge, J. M., Sisu, C., Wright, J., Armstrong, J., Barnes,
 I., Berry, A., Bignell, A., Carbonell Sala, S., Chrast, J., Cunningham,
-F., Di  
-Domenico, T., Donaldson, S., Fiddes, I. T., García Girón, C., … Flicek,
-P. (2019). GENCODE reference annotation for the human and mouse genomes.
-*Nucleic acids research, 47*(D1), D766–D773.
+F., Di Domenico, T., Donaldson, S., Fiddes, I. T., García Girón, C., …
+Flicek, P. (2019). GENCODE reference annotation for the human and mouse
+genomes. *Nucleic acids research, 47*(D1), D766–D773.
 <https://doi.org/10.1093/nar/gky955>
 
 Mer A, Haibe-Kains B (2021). Xeva: Analysis of patient-derived xenograft

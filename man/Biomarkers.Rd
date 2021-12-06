@@ -24,7 +24,10 @@ A data frame with 7805 rows and 12 variables:
 }
 }
 \source{
-\url{https://pharmacodb.pmgenomics.ca/}
+Feizi, N., Nair, S. K., Smirnov, P., Beri, G., Eeles, C., Esfahani,
+P. N., … Haibe-Kains, B. (2021). PharmacoDB 2.0: Improving scalability and
+transparency of in vitro pharmacogenomics analysis. _bioRxiv._
+doi:10.1101/2021.09.21.461211
 }
 \usage{
 Biomarkers

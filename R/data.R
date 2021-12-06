@@ -9,7 +9,8 @@
 #'   \item{ODC1}{The transcript levels of the ODC1 gene in the tumour}
 #'   \item{angle}{The angle between the treatment and control}
 #' }
-#' @source Xeva. R package version 1.10.0.
+#' @source Mer A, Haibe-Kains B (2021). Xeva: Analysis of patient-derived
+#' xenograft (PDX) data. R package version 1.10.0.
 "BRCA.PDXE.paxlitaxel.response"
 
 
@@ -35,7 +36,10 @@
 #'   \item{chr}{the chromosome on which the gene is located}
 #'   \item{pvalue}{the p-value of the drug response}
 #' }
-#' @source \url{https://pharmacodb.pmgenomics.ca/}
+#' @source Feizi, N., Nair, S. K., Smirnov, P., Beri, G., Eeles, C., Esfahani,
+#' P. N., … Haibe-Kains, B. (2021). PharmacoDB 2.0: Improving scalability and
+#' transparency of in vitro pharmacogenomics analysis. _bioRxiv._
+#' doi:10.1101/2021.09.21.461211
 "Biomarkers"
 
 
@@ -50,7 +54,13 @@
 #'   \item{molecule-type/loc}{the molecule type ("chromosome" or "all")}
 #'   \item{chrLength}{the length of the chromosome (# nucleotides)}
 #' }
-#' @source \url{https://www.gencodegenes.org/pages/gencode.html}
+#' @source Frankish, A., Diekhans, M., Ferreira, A. M., Johnson, R., Jungreis,
+#' I. Loveland, J., Mudge, J. M., Sisu, C., Wright, J., Armstrong, J., Barnes,
+#' I., Berry, A., Bignell, A., Carbonell Sala, S., Chrast, J., Cunningham, F.,
+#' Di Domenico, T., Donaldson, S., Fiddes, I. T., García Girón, C., … Flicek, P.
+#' (2019). GENCODE reference annotation for the human and mouse genomes.
+#' _Nucleic acids research, 47_(D1), D766–D773.
+#' https://doi.org/10.1093/nar/gky955
 "GRCh38.p13.Assembly"
 
 #' A set of 10 'GO cellular compartment' gene sets
@@ -64,8 +74,11 @@
 #'   \item{gs_id}{GO gene set ID}
 #'   \item{ensembl_gene}{ENSEMBL gene ID}
 #' }
-#' @source \url{
-#' https://www.gsea-msigdb.org/gsea/msigdb/genesets.jsp?collection=GO:CC}
+#' @source Subramanian, A., Tamayo, P., Mootha, V. K., Mukherjee, S., Ebert, B.
+#' L., Gillette, M. A., … Mesirov, J. P. (2005). Gene set enrichment analysis:
+#' A knowledge-based approach for interpreting genome-wide expression profiles.
+#' _Proceedings of the National Academy of Sciences, 102_(43), 15545–15550.
+#' doi:10.1073/pnas.0506580102
 "TestGeneSets"
 
 # [END]

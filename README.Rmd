@@ -196,7 +196,7 @@ Feizi, N., Nair, S. K., Smirnov, P., Beri, G., Eeles, C., Esfahani, P. N., …
   
 Frankish, A., Diekhans, M., Ferreira, A. M., Johnson, R., Jungreis, I. 
   Loveland, J., Mudge, J. M., Sisu, C., Wright, J., Armstrong, J., Barnes, I., 
-  Berry, A., Bignell, A., Carbonell Sala, S., Chrast, J., Cunningham, F., Di \
+  Berry, A., Bignell, A., Carbonell Sala, S., Chrast, J., Cunningham, F., Di 
   Domenico, T., Donaldson, S., Fiddes, I. T., García Girón, C., … Flicek, P. 
   (2019). GENCODE reference annotation for the human and mouse genomes. 
   _Nucleic acids research, 47_(D1), D766–D773. 
