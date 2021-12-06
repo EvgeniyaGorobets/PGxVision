@@ -1,5 +1,6 @@
-library(shiny)
-library(shinydashboard)
+#library(shiny)
+#library(shinydashboard)
+#library(plotly)
 
 gsTypes <- unique(msigdbr::msigdbr_collections()$gs_subcat)
 
@@ -136,7 +137,8 @@ ui <- dashboardPage(
         fluidRow(plotPropertiesBox),
         fluidRow(
           box(plotOutput("manhattanPlot", click = "mouseClick", height = 350)),
-          box(plotOutput("volcanoPlot", click = "mouseClick", height = 350))
+          #box(plotOutput("volcanoPlot", click = "mouseClick", height = 350))
+          box(plotlyOutput("volcanoPlot", height = 350))
         ),
         fluidRow(geneInfoBox),
         fluidRow(geneSetAnalysisBox),
@@ -220,9 +222,11 @@ server <- function(input, output) {
     result$plot
   })
 
-  output$volcanoPlot <- renderPlot({
-    buildVolcanoPlot(
+  #output$volcanoPlot <- renderPlot({
+  output$volcanoPlot <- renderPlotly({
+    p <- buildVolcanoPlot(
       rv$biomarkerDf, experiment(), pValCutoff = input$pValCutoff)$plot
+    ggplotly(p, source = "volcano")
   })
 
   # Update selected gene when users click on plots
@@ -231,6 +235,11 @@ server <- function(input, output) {
     req(rv$plottedBiomrkrs)
     rv$selectedGene <- nearPoints(rv$plottedBiomrkrs, input$mouseClick,
                                   threshold = 5, maxpoints = 1)
+  })
+
+  observeEvent(event_data("plotly_click", source = "volcano"), {
+    d <- event_data("plotly_click", source = "volcano")
+    rv$selectedGene <- rv$plottedBiomrkrs[estimate == d$x,]
   })
 
   # Update biomarker info box in response to new selected gene
