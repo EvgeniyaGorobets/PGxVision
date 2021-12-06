@@ -10,6 +10,7 @@
 #' possible subcategories (use msigdbr::msigdbr_collections())
 #' @param similarityMetric The algorithm used to compute the similarity between
 #' gene sets. The default (and only option currently) is "overlap".
+#'
 #' @return TODO
 #'
 #' @examples
@@ -36,6 +37,7 @@ geneSetAnalysis <- function(geneId, queryType, similarityMetric="overlap") {
 #' @param geneId The ENSEMBL ID of the gene you want to query
 #' @param queryType The type of query you want to perform; see MSigDb for
 #' possible subcategories (use msigdbr::msigdbr_collections())
+#'
 #' @return A character vector containing the IDs of all gene sets this gene
 #' is part of.
 #'
@@ -75,6 +77,7 @@ queryGene <- function(geneId, queryType) {
 #' MSigDb for possible subcategories (use msigdbr::msigdbr_collections()). The
 #' geneSetNames alone are enough but providing the geneSetType may speed up
 #' computation because less data will be retrieved from MSigDb.
+#'
 #' @return A data.table mapping all gene sets to their component genes (2
 #' columns: "gs_id", "ensembl_gene")
 #'
@@ -124,6 +127,7 @@ expandGeneSets <- function(geneSetIds, geneSetType=NULL) {
 #' @param similarityMetric (optional) The type of similarity metric to compute.
 #' Currently, the only option is "overlap", which calculates the proportion of
 #' intersecting genes to total genes between each pair of gene sets.
+#'
 #' @return A data.frame that lists the similarity score between each pair of
 #' gene sets. There will be three columns: "gs1" (gene set 1), "gs2" (gene set
 #' 2), and "similarity".
@@ -175,6 +179,7 @@ computeGeneSetSimilarity <- function(geneSets, similarityMetric="overlap") {
 #' "ensembl_gene" (ENSEMBL gene ID) which lists the genes in each gene set
 #' @param gs1 The name of gene set 1
 #' @param gs2 The name of gene set 2
+#'
 #' @return The overlap distance, as defined in the description, between the two
 #' gene sets
 overlapDistance <- function(geneSets, gs1, gs2) {

@@ -26,6 +26,7 @@
 #' drugSensitivityCol.
 #' @param title (optional) The title for the plot. Defaults to
 #' 'drugSensitivityCol vs. xAxisCol'
+#'
 #' @return A ggplot2 plot object mapping the drug sensitivity metrics against
 #' the xAxisCol, sorted in descending order by drug sensitivity and colored by
 #' colorCol

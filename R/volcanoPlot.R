@@ -16,6 +16,7 @@
 #' @param pValCutoff A decimal number indicating the cutoff value for
 #' significant observations; any results with a higher p-value will be grayed
 #' out on the plot. Default value is 0.05.
+#'
 #' @return A ggplot2 plot object mapping the biomarkers of the experiment
 #' (x-axis = estimate; y-axis = -log10(p-value))
 #' #TODO: update

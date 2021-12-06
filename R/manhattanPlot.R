@@ -21,6 +21,7 @@
 #' relative to the entire genome (absolute, FALSE). Default is TRUE.
 #' @param genomeName The name of the reference genome (used in plot title).
 #' Default value is "GRCh28.p13"
+#'
 #' @return A ggplot2 plot object mapping the biomarkers of the experiment
 #' (x-axis = genome position; y-axis = -log10(p-value or fdr))
 #' TODO: update!

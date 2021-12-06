@@ -11,6 +11,7 @@
 #' will be.
 #' @param title (optional) A custom title for the network plot. Defaults to
 #' "Gene Set Similarity Plot"
+#'
 #' @return The igraph object containing the network plot of gene sets
 #'
 #' @examples
@@ -85,6 +86,7 @@ buildNetworkPlot <- function(gsSimilarityDf, similarityCutoff=0.5, title=NULL) {
 #' @param title (optional) A custom title for the network plot. Defaults to
 #' "querytype Gene Sets containing geneId (edge weights based on gene set
 #' overlap)".
+#'
 #' @return The igraph object containing the network plot of gene sets
 #'
 #' @examples
