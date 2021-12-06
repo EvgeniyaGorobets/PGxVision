@@ -22,13 +22,6 @@
 geneSetAnalysis <- function(geneId, queryType, similarityMetric="overlap") {
   # Perform gene set analysis
   geneSetIds <- queryGene(geneId, queryType)
-  if (length(geneSetIds) <= 1) {
-    stop(paste0("1 or fewer gene sets of type ", queryType, " and containing ",
-                geneId, " were found.\n",
-                "Further gene set analysis will not possible.\n",
-                "Try a different gene or a different query type."))
-  }
-
   geneSets <- expandGeneSets(geneSetIds, queryType)
   gsSimilarity <- computeGeneSetSimilarity(geneSets, similarityMetric)
   return(gsSimilarity)
@@ -151,21 +144,16 @@ computeGeneSetSimilarity <- function(geneSets, similarityMetric="overlap") {
                                                             "ensembl_gene"))
   checkmate::assertString(similarityMetric, pattern="overlap")
 
-  # Check that geneSets contains at least 2 different gene sets
-  geneSetIds <- unique(geneSets$gs_id)
-  if (length(geneSetIds) < 2) {
-    stop("geneSets must contain at least two different gene sets.")
-  }
-
   # Convert to data.table if data.frame given
   if (!data.table::is.data.table(geneSets)) {
     data.table::setDT(geneSets)
   }
 
   # Compute similarity score of each pair of gene sets
+  geneSetIds <- unique(geneSets$gs_id)
   similarityDf <- data.frame()
-  for (i in 1:(length(geneSetIds)-1)) {
-    for (j in (i+1):(length(geneSetIds))) {
+  for (i in 1:length(geneSetIds)) {
+    for (j in i:length(geneSetIds)) {
       gs1 <- geneSetIds[i]
       gs2 <- geneSetIds[j]
       similarity <- overlapDistance(geneSets, gs1, gs2)
