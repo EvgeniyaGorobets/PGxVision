@@ -95,7 +95,7 @@ geneSetAnalysisBox <- box(
     width = 3, br(),
     actionButton("runGsAnalysis", "Run Gene Set Analysis!")
   ),
-  column(width = 9, plotOutput("networkPlot", height = 400)),
+  column(width = 9, plotOutput("networkPlot")),
   # FIXME: plot doesn't always fully show, overflows
   column(
     width = 3, br(),
@@ -111,7 +111,7 @@ waterfallPlotBox <- box(
   column(width = 4, uiOutput("wfXSelect")),
   column(width = 4, uiOutput("wfYSelect")),
   column(width = 4, uiOutput("wfColSelect")),
-  plotOutput("waterfallPlot", height = 350)
+  plotOutput("waterfallPlot")
 )
 
 
@@ -136,9 +136,9 @@ ui <- dashboardPage(
         fluidRow(filterBiomarkersBox),
         fluidRow(plotPropertiesBox),
         fluidRow(
-          box(plotOutput("manhattanPlot", click = "mouseClick", height = 350)),
+          box(plotOutput("manhattanPlot", click = "mouseClick")),
           #box(plotOutput("volcanoPlot", click = "mouseClick", height = 350))
-          box(plotlyOutput("volcanoPlot", height = 350))
+          box(plotlyOutput("volcanoPlot"))
         ),
         fluidRow(geneInfoBox),
         fluidRow(geneSetAnalysisBox),
