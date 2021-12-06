@@ -3,6 +3,8 @@
 #library(plotly)
 
 gsTypes <- unique(msigdbr::msigdbr_collections()$gs_subcat)
+blankGene <- data.table::data.table(gene="", abs_gene_seq_start="", chr="",
+                                    pvalue="", estimate="", fdr="")
 
 
 biomarkerFileUploadBox <- box(
@@ -48,24 +50,6 @@ plotPropertiesBox <- box(
   # reducing range of slider
   column(width = 4, p("Color manipulation: under construction")),
   column(width = 4, p("Title/axis label manipulation: under construction"))
-)
-
-
-geneInfoBox <- box(width = 12,
-  column(
-    width = 9,
-    h3("Biomarker Info"),
-    div(tags$b("Gene: "), textOutput("geneName", inline = TRUE)),
-    div(tags$b("Genome Position: "), textOutput("geneStart", inline = TRUE)),
-    div(tags$b("Chromosome: "), textOutput("geneChr", inline = TRUE)),
-    div(tags$b("Estimate: "), textOutput("geneEstimate", inline = TRUE)),
-    div(tags$b("P-Value: "), textOutput("genePVal", inline = TRUE)),
-    div(tags$b("FDR: "), textOutput("geneFdr", inline = TRUE))
-  ),
-  column(
-    width = 3, br(), br(),
-    p("Click on any point to see more information about the gene."), br()
-  )
 )
 
 
@@ -129,7 +113,7 @@ ui <- dashboardPage(
           box(plotlyOutput("manhattanPlot")),
           box(plotlyOutput("volcanoPlot"))
         ),
-        fluidRow(geneInfoBox),
+        fluidRow(uiOutput("geneInfoBox")),
         fluidRow(geneSetAnalysisBox),
       ),
 
@@ -150,7 +134,7 @@ server <- function(input, output) {
   rv <- reactiveValues(biomarkerDf = Biomarkers,
                        chromosomeDf = GRCh38.p13.Assembly,
                        plottedBiomrkrs = NULL,
-                       selectedGene = NULL,
+                       selectedGene = blankGene,
                        gsSimilarityDf = NULL,
                        sensitivityDf = BRCA.PDXE.paxlitaxel.response)
 
@@ -249,29 +233,26 @@ server <- function(input, output) {
   #TODO: I want the equivalent data points on the other plot to highlight
 
   # Update biomarker info box in response to new selected gene
-  output$geneName <- renderText({
+  output$geneInfoBox <- renderUI({
     req(rv$selectedGene)
-    rv$selectedGene[1, gene]
-  })
-  output$geneStart <- renderText({
-    req(rv$selectedGene)
-    rv$selectedGene[1, abs_gene_seq_start]
-  })
-  output$geneChr <- renderText({
-    req(rv$selectedGene)
-    rv$selectedGene[1, chr]
-  })
-  output$geneEstimate <- renderText({
-    req(rv$selectedGene)
-    rv$selectedGene[1, estimate]
-  })
-  output$genePVal <- renderText({
-    req(rv$selectedGene)
-    rv$selectedGene[1, pvalue]
-  })
-  output$geneFdr <- renderText({
-    req(rv$selectedGene)
-    rv$selectedGene[1, fdr]
+
+    box(
+      width = 12,
+      column(
+        width = 9,
+        h3("Biomarker Info"),
+        div(tags$b("Gene: "), rv$selectedGene[1, gene]),
+        div(tags$b("Genome Position: "),rv$selectedGene[1, abs_gene_seq_start]),
+        div(tags$b("Chromosome: "), rv$selectedGene[1, chr]),
+        div(tags$b("Estimate: "), rv$selectedGene[1, estimate]),
+        div(tags$b("P-Value: "), rv$selectedGene[1, pvalue]),
+        div(tags$b("FDR: "), rv$selectedGene[1, fdr])
+      ),
+      column(
+        width = 3, br(), br(),
+        p("Click on any point to see more information about the gene."), br()
+      )
+    )
   })
 
   # Update & rerender network plot only when the runGsAnalysis button is pressed
