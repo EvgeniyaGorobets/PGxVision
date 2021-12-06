@@ -7,9 +7,12 @@
 #' @param chromosomeDf A data.frame of the reference genome, including the
 #' lengths of all the chromosomes. The row order should match the chromosome
 #' order in the reference genome. If there is an "all" row, it should be first.
-#' @param experiment A named character vector representing the experiment for
-#' which you want to plot biomarkers; an experiment is defined by a "tissue",
-#' "compound", and "mDataType" (molecular data type)
+#' @param tissue A string representing the tissue for which you want to plot
+#' biomarkers
+#' @param compound A string representing the compound for which you want to plot
+#' biomarkers
+#' @param mDataType A string representing the molecular data type for which you
+#' want to plot biomarkers
 #' @param pValCutoff A decimal number indicating the cutoff value for
 #' significant observations; any results with a higher p-value will be grayed
 #' out on the plot. Default value is 0.05.
@@ -25,10 +28,8 @@
 #' @examples
 #' data(Biomarkers)
 #' data(GRCh38.p13.Assembly)
-#' experiment <- c("Lung", "Trametinib", "rna")
-#' names(experiment) <- c("tissue", "compound", "mDataType")
-#' buildManhattanPlot(Biomarkers, GRCh38.p13.Assembly, experiment,
-#'                    pValCutoff=0.01, relativeGenomeCoords=TRUE)
+#' buildManhattanPlot(Biomarkers, GRCh38.p13.Assembly, "Lung", "Trametinib",
+#'                    "rna", pValCutoff=0.01, relativeGenomeCoords=TRUE)
 #'
 #' @importFrom data.table setDT copy :=
 #' @importFrom checkmate assertDataFrame assertNames assertNumber
@@ -37,11 +38,9 @@
 #' @importFrom ggprism guide_prism_minor
 #' @importFrom grDevices rainbow
 #' @export
-buildManhattanPlot <- function(biomarkerDf=NULL,
-                               chromosomeDf=NULL,
-                               experiment=NULL,
-                               pValCutoff=0.05,
-                               relativeGenomeCoords=TRUE,
+buildManhattanPlot <- function(biomarkerDf=NULL, chromosomeDf=NULL,
+                               tissue="", compound="", mDataType="",
+                               pValCutoff=0.05, relativeGenomeCoords=TRUE,
                                genomeName="GRCh38.p13") {
   # Local bindings to satisfy check() and DT syntax
   pvalue <- seq_start <- abs_gene_seq_start <- significant <- chrLength <-
@@ -62,7 +61,7 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
   data.table::setDT(chromosomeDf, keep.rownames=TRUE)
 
   # Select drug sensitivity results from the experiment
-  selectedBiomrks <- selectExperiment(biomarkerDf, experiment)
+  selectedBiomrks <- selectExperiment(biomarkerDf, tissue, compound, mDataType)
 
   # If there is an "all" row in the chromosomeDf, remove it
   if (chromosomeDf[1, chrName] == "all") {
@@ -90,8 +89,8 @@ buildManhattanPlot <- function(biomarkerDf=NULL,
     ggplot2::geom_point()
 
   # Add title and colors
-  title <- paste0(genomeName, " gene response to ", experiment["compound"],
-                  " in ", experiment["tissue"], " tissue")
+  title <- paste0(genomeName, " gene response to ", compound, " in ", tissue,
+                  " tissue")
   plot <- plot + ggplot2::ggtitle(title) +
     ggplot2::theme(legend.position = "none",
                    plot.title = ggplot2::element_text(hjust = 0.5)) +

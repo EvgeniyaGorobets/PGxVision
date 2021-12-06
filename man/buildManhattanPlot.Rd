@@ -7,7 +7,9 @@
 buildManhattanPlot(
   biomarkerDf = NULL,
   chromosomeDf = NULL,
-  experiment = NULL,
+  tissue = NULL,
+  compound = NULL,
+  mDataType = NULL,
   pValCutoff = 0.05,
   relativeGenomeCoords = TRUE,
   genomeName = "GRCh38.p13"
@@ -23,9 +25,14 @@ the resulting p-value/fdr}
 lengths of all the chromosomes. The row order should match the chromosome
 order in the reference genome. If there is an "all" row, it should be first.}
 
-\item{experiment}{A named character vector representing the experiment for
-which you want to plot biomarkers; an experiment is defined by a "tissue",
-"compound", and "mDataType" (molecular data type)}
+\item{tissue}{A string representing the tissue for which you want to plot
+biomarkers}
+
+\item{compound}{A string representing the compound for which you want to plot
+biomarkers}
+
+\item{mDataType}{A string representing the molecular data type for which you
+want to plot biomarkers}
 
 \item{pValCutoff}{A decimal number indicating the cutoff value for
 significant observations; any results with a higher p-value will be grayed
@@ -49,9 +56,7 @@ Build a Manhattan plot of biomarkers
 \examples{
 data(Biomarkers)
 data(GRCh38.p13.Assembly)
-experiment <- c("Lung", "Trametinib", "rna")
-names(experiment) <- c("tissue", "compound", "mDataType")
-buildManhattanPlot(Biomarkers, GRCh38.p13.Assembly, experiment,
-                   pValCutoff=0.01, relativeGenomeCoords=TRUE)
+buildManhattanPlot(Biomarkers, GRCh38.p13.Assembly, "Lung", "Trametinib",
+                   "rna", pValCutoff=0.01, relativeGenomeCoords=TRUE)
 
 }

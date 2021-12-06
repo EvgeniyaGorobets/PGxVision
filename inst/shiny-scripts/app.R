@@ -207,38 +207,56 @@ server <- function(input, output) {
                 selected = "")
   })
 
-  # Update experiment based on dropdown selections
-  experiment <- reactive({
-    setNames(c(input$tissue, input$compound, input$mDataType),
-             c("tissue", "compound", "mDataType"))
-  })
-
-  # Update plots based on experiment
+  # Update plots based on tissue, compound, mDataType selections
   output$manhattanPlot <- renderPlotly({
-    result <- buildManhattanPlot(rv$biomarkerDf, rv$chromosomeDf, experiment(),
-                                 pValCutoff = input$pValCutoff)
-    rv$plottedBiomrkrs <- result$dt
-    ggplotly(result$plot, source = "manhattan")
+    req(rv$biomarkerDf)
+
+    # Wait until everything renders and inputs are not NULL
+    if (typeof(input$tissue) == "character" &&
+        typeof(input$compound) == "character" &&
+        typeof(input$mDataType) == "character") {
+      result <- suppressWarnings(
+        buildManhattanPlot(rv$biomarkerDf, rv$chromosomeDf, input$tissue,
+                           input$compound, input$mDataType, input$pValCutoff))
+      rv$plottedBiomrkrs <- result$dt
+      ggplotly(result$plot, source = "manhattan")
+    }
   })
 
   # TODO: improve styling by using %>% layout()
   # https://plotly.com/ggplot2/getting-started/
   # Styling options: https://plotly.com/r/font/
   output$volcanoPlot <- renderPlotly({
-    p <- buildVolcanoPlot(
-      rv$biomarkerDf, experiment(), pValCutoff = input$pValCutoff)$plot
-    ggplotly(p, source = "volcano")
+    req(rv$biomarkerDf)
+
+    # Wait until everything renders and inputs are not NULL
+    if (typeof(input$tissue) == "character" &&
+        typeof(input$compound) == "character" &&
+        typeof(input$mDataType) == "character") {
+      p <- suppressWarnings(
+        buildVolcanoPlot(rv$biomarkerDf, input$tissue, input$compound,
+                         input$mDataType, pValCutoff = input$pValCutoff)$plot)
+      ggplotly(p, source = "volcano")
+    }
   })
 
   # Update selected gene when users click on plots
-  observeEvent(event_data("plotly_click", source = "manhattan"), {
-    d <- event_data("plotly_click", source = "manhattan")
-    rv$selectedGene <- rv$plottedBiomrkrs[abs_gene_seq_start == d$x,]
+  observe({
+    req(rv$plottedBiomrkrs)
+
+    if (!is.null(event_data("plotly_click", source = "manhattan"))) {
+      d <- event_data("plotly_click", source = "manhattan")
+      rv$selectedGene <- rv$plottedBiomrkrs[abs_gene_seq_start == d$x,]
+    }
   })
 
-  observeEvent(event_data("plotly_click", source = "volcano"), {
-    d <- event_data("plotly_click", source = "volcano")
-    rv$selectedGene <- rv$plottedBiomrkrs[estimate == d$x,]
+  observe({
+    req(rv$plottedBiomrkrs)
+
+    if (!is.null(event_data("plotly_click", source = "volcano"))) {
+      d <- event_data("plotly_click", source = "volcano")
+      rv$selectedGene <- rv$plottedBiomrkrs[estimate == d$x,]
+    }
   })
 
   #TODO: I want the equivalent data points on the other plot to highlight

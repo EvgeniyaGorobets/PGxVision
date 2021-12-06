@@ -4,7 +4,7 @@
 \alias{buildVolcanoPlot}
 \title{Build a volcano plot of biomarkers}
 \usage{
-buildVolcanoPlot(biomarkerDf, experiment, pValCutoff = 0.05)
+buildVolcanoPlot(biomarkerDf, tissue, compound, mDataType, pValCutoff = 0.05)
 }
 \arguments{
 \item{biomarkerDf}{A data.frame of drug sensitivity biomarkers that you want
@@ -12,9 +12,14 @@ to plot, including the compound, tissue, and molecular data type used in the
 experiment, the genomic coordinates of the genes which were tested on, and
 the resulting p-value/fdr and estimate}
 
-\item{experiment}{A named character vector representing the experiment for
-which you want to plot biomarkers; an experiment is defined by a "tissue",
-"compound", and "mDataType" (molecular data type)}
+\item{tissue}{A string representing the tissue for which you want to plot
+biomarkers}
+
+\item{compound}{A string representing the compound for which you want to plot
+biomarkers}
+
+\item{mDataType}{A string representing the molecular data type for which you
+want to plot biomarkers}
 
 \item{pValCutoff}{A decimal number indicating the cutoff value for
 significant observations; any results with a higher p-value will be grayed
@@ -31,8 +36,6 @@ expression analysis but is plotting the drug sensitivity signature
 }
 \examples{
 data(Biomarkers)
-experiment <- c("Lung", "Trametinib", "rna")
-names(experiment) <- c("tissue", "compound", "mDataType")
-buildVolcanoPlot(Biomarkers, experiment, 0.005)
+buildVolcanoPlot(Biomarkers, "Lung", "Trametinib", "rna", 0.005)
 
 }

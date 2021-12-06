@@ -7,9 +7,12 @@
 #' to plot, including the compound, tissue, and molecular data type used in the
 #' experiment, the genomic coordinates of the genes which were tested on, and
 #' the resulting p-value/fdr and estimate
-#' @param experiment A named character vector representing the experiment for
-#' which you want to plot biomarkers; an experiment is defined by a "tissue",
-#' "compound", and "mDataType" (molecular data type)
+#' @param tissue A string representing the tissue for which you want to plot
+#' biomarkers
+#' @param compound A string representing the compound for which you want to plot
+#' biomarkers
+#' @param mDataType A string representing the molecular data type for which you
+#' want to plot biomarkers
 #' @param pValCutoff A decimal number indicating the cutoff value for
 #' significant observations; any results with a higher p-value will be grayed
 #' out on the plot. Default value is 0.05.
@@ -19,16 +22,15 @@
 #'
 #' @examples
 #' data(Biomarkers)
-#' experiment <- c("Lung", "Trametinib", "rna")
-#' names(experiment) <- c("tissue", "compound", "mDataType")
-#' buildVolcanoPlot(Biomarkers, experiment, 0.005)
+#' buildVolcanoPlot(Biomarkers, "Lung", "Trametinib", "rna", 0.005)
 #'
 #' @importFrom data.table setDT copy :=
 #' @importFrom checkmate assertDataFrame assertNames assertNumber
 #' @importFrom ggplot2 ggplot geom_point scale_x_continuous theme aes
 #' scale_color_manual ggtitle element_text geom_hline
 #' @export
-buildVolcanoPlot <- function(biomarkerDf, experiment, pValCutoff=0.05) {
+buildVolcanoPlot <- function(biomarkerDf, tissue="", compound="", mDataType="",
+                             pValCutoff=0.05) {
   # Local bindings to satisfy check() and DT syntax
   significant <- pvalue <- estimate <- NULL
 
@@ -40,7 +42,7 @@ buildVolcanoPlot <- function(biomarkerDf, experiment, pValCutoff=0.05) {
 
   # Convert biomarkerDf to data.table and extract relevant biomarkers
   data.table::setDT(biomarkerDf, keep.rownames=TRUE)
-  selectedBiomrkrs <- selectExperiment(biomarkerDf, experiment)
+  selectedBiomrkrs <- selectExperiment(biomarkerDf, tissue, compound, mDataType)
 
   # Create a copy and add a column which indicates whether each result is
   # significant, based on the p-value cutoff given
@@ -55,8 +57,7 @@ buildVolcanoPlot <- function(biomarkerDf, experiment, pValCutoff=0.05) {
   plot <- plot + ggplot2::geom_point() +
     ggplot2::scale_color_manual(values=c("gray", "red")) +
     ggplot2::ggtitle(paste0("P-value vs. estimate of biomarkers in ",
-                            experiment["tissue"], " tissue in response to ",
-                            experiment["compound"])) +
+                            tissue, " tissue in response to ", compound)) +
     ggplot2::theme(legend.position = "none",
                    plot.title = ggplot2::element_text(hjust = 0.5)) +
     ggplot2::geom_hline(yintercept=-log10(pValCutoff), linetype='dotted',
