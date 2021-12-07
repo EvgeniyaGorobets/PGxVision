@@ -83,49 +83,4 @@ buildNetworkPlot <- function(gsSimilarityDf, similarityCutoff=0.5, title=NULL) {
   return(network)
 }
 
-
-#' Perform a gene set analysis on a gene
-#'
-#' Query MSigDb to find all gene sets that queryGene is in, then compute the
-#' similarity of the gene sets and plot them on a network graph. This is a
-#' wrapper function which performs the full gene set analysis pipeline and
-#' plots the result.
-#'
-#' @param geneId The ENSEMBL ID of the gene you want to query
-#' @param queryType The type of query you want to perform; see MSigDb for
-#' possible subcategories (use msigdbr::msigdbr_collections())
-#' @param similarityMetric The algorithm used to compute the similarity between
-#' gene sets. The default (and only option currently) is "overlap".
-#' @param similarityCutoff (optional) A number indicating the minimum
-#' similarity two gene sets must have in order for an edge to show up on the
-#' plot. Defaults to 0.5.
-#' @param title (optional) A custom title for the network plot. Defaults to
-#' "querytype Gene Sets containing geneId (edge weights based on gene set
-#' overlap)".
-#'
-#' @return The igraph object containing the network plot of gene sets
-#'
-#' @examples
-#' geneSetSimilarityPlot("ENSG00000000971", "GO:BP",
-#'                       similarityCutoff = 0.3, title = "Sample Network Plot")
-#'
-#' @importFrom checkmate assertDataFrame assertNames assertString
-#' @importFrom igraph graph_from_data_frame E
-#' @importFrom viridis magma
-#' @export
-geneSetSimilarityPlot <- function(geneId, queryType, similarityMetric="overlap",
-                                  similarityCutoff=NULL, title=NULL) {
-  # Perform gene set analysis
-  gsSimilarity <- geneSetAnalysis(geneId, queryType, similarityMetric)
-
-  # Plot results
-  if (is.null(title)) {
-    title <- paste0(queryType, " Gene Sets containing ", geneId)
-  }
-  graph <- buildNetworkPlot(gsSimilarity, similarityCutoff=similarityCutoff,
-                            title=title)
-  return(graph)
-}
-# TODO: consider deleting this function
-
 # [END]
