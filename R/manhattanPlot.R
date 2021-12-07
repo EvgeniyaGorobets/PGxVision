@@ -69,7 +69,7 @@ buildManhattanPlot <- function(biomarkerDf=NULL, chromosomeDf=NULL,
   }
   if (is.null(title)) {
     title <- paste("Significance of drug response in", tissue,
-                   "tissue in response to", compound)
+                   "\ntissue in response to", compound)
   }
 
   # Convert dfs to data.table by reference
@@ -102,6 +102,10 @@ buildManhattanPlot <- function(biomarkerDf=NULL, chromosomeDf=NULL,
   totalGenomeLen <- chromosomeDf[nrow(chromosomeDf), seq_start + chrLength]
   plot <- ggplot2::ggplot(selectedBiomrks, ggplot2::aes(
     x=abs_gene_seq_start, y=log10pValue, color=chr, alpha=significant)) +
+    # Add horizontal line to show significance cutoff
+    ggplot2::geom_hline(yintercept=-log10(pValCutoff), linetype='dotted',
+                        col = 'black', size=1) +
+    # Add scatter points
     ggplot2::geom_point()
 
   # Add title and colors
@@ -115,11 +119,8 @@ buildManhattanPlot <- function(biomarkerDf=NULL, chromosomeDf=NULL,
   chromosomeNames <- chromosomeDf$chrName
   plot <- plot + ggplot2::scale_x_continuous(
     "Chromosome", breaks=midChromosome, minor_breaks=c(1, chromosomeDf$seq_end),
-    labels=chromosomeNames, limits=c(1, totalGenomeLen), guide = guide_prism_minor()) #+ ggplot2::guides(x = guide_prism_minor())
-
-  # Add horizontal line to show significance cutoff
-  plot <- plot + ggplot2::geom_hline(yintercept=-log10(pValCutoff),
-                                     linetype='dotted', col = 'black', size=1)
+    labels=chromosomeNames, limits=c(1, totalGenomeLen),
+    guide = guide_prism_minor())
 
   result <- list("dt" = selectedBiomrks, "plot" = plot)
   return(result)

@@ -72,14 +72,16 @@ buildVolcanoPlot <- function(biomarkerDf, tissue="", compound="", mDataType="",
 
   # Build the volcano plot
   plot <- ggplot2::ggplot(selectedBiomrkrs, ggplot2::aes(
-    x=estimate, y=log10pValue, col=significant))
-  plot <- plot + ggplot2::geom_point() +
+    x=estimate, y=log10pValue, col=significant)) +
+    # Add horizontal line to show significance cutoff
+    ggplot2::geom_hline(yintercept=-log10(pValCutoff), linetype='dotted',
+                        col = 'black', size=1) +
+    # Add scatter points
+    ggplot2::geom_point() +
     ggplot2::scale_color_manual(values=c("gray", "red")) +
     ggplot2::ggtitle(title) + ggplot2::ylab(yLabel) + ggplot2::xlab(xLabel) +
     ggplot2::theme(legend.position = "none",
-                   plot.title = ggplot2::element_text(hjust = 0.5)) +
-    ggplot2::geom_hline(yintercept=-log10(pValCutoff), linetype='dotted',
-                        col = 'black', size=1)
+                   plot.title = ggplot2::element_text(hjust = 0.5))
 
   result <- list("dt" = selectedBiomrkrs, "plot" = plot)
   return(result)

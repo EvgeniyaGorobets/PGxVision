@@ -194,13 +194,14 @@ server <- function(input, output) {
         buildManhattanPlot(rv$biomarkerDf, rv$chromosomeDf, input$tissue,
                            input$compound, input$mDataType, input$pValCutoff))
       rv$plottedBiomrkrs <- result$dt
-      ggplotly(result$plot, source = "manhattan")
+      ggplotly(result$plot, source = "manhattan") %>%
+        # Modify aesthetics because ggplotly overrides aes from ggplot2
+        # NOTE: bottom padding doesn't work; idk why
+        layout(title=list(font=list(size = 16), pad = list(b = 25))) %>%
+        style(line = list(width = 1, color = "black", dash = "dot"), traces = 1)
     }
   })
 
-  # TODO: improve styling by using %>% layout()
-  # https://plotly.com/ggplot2/getting-started/
-  # Styling options: https://plotly.com/r/font/
   output$volcanoPlot <- renderPlotly({
     req(rv$biomarkerDf)
 
@@ -211,7 +212,10 @@ server <- function(input, output) {
       p <- suppressWarnings(
         buildVolcanoPlot(rv$biomarkerDf, input$tissue, input$compound,
                          input$mDataType, pValCutoff = input$pValCutoff)$plot)
-      ggplotly(p, source = "volcano")
+      ggplotly(p, source = "volcano") %>%
+        # Modify aesthetics because ggplotly overrides aes from ggplot2
+        layout(title = list(font = list(size = 16))) %>%
+        style(line = list(width = 1, color = "black", dash = "dot"), traces = 1)
     }
   })
 
