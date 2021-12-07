@@ -2,7 +2,8 @@ Package: PGxVision
 Type: Package
 Title: Visualize Biomarkers and Pharmacogenomic Data
 Version: 0.1.0
-Author: Evgeniya Gorobets
+Authors@R: person("E", "Gorobets", email = "evgeniya.gorobets@mail.utoronto.ca",
+            role = c("aut", "cre"))
 Maintainer: Evgeniya Gorobets <evgeniya.gorobets@mail.utoronto.ca>
 Description: This is a generic plotting package meant to provide an easy way 
     for bioinformaticists and clinicians to visualize pharmacogenomic data. The 
