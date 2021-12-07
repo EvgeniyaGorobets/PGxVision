@@ -72,7 +72,7 @@ geneSetAnalysisBox <- box(
     width = 3, br(),
     actionButton("runGsAnalysis", "Run Gene Set Analysis!")
   ),
-  column(width = 8, visNetworkOutput("networkPlot")),
+  column(width = 8, uiOutput("plotError"), visNetworkOutput("networkPlot")),
   column(
     width = 4, br(),
     sliderInput("simCutoff", "Similarity Cutoff",
@@ -139,7 +139,8 @@ server <- function(input, output) {
                        selectedGene = blankGene,
                        geneSets = NULL,
                        gsSimilarityDf = NULL,
-                       sensitivityDf = BRCA.PDXE.paxlitaxel.response)
+                       sensitivityDf = BRCA.PDXE.paxlitaxel.response,
+                       error = NULL)
 
   # ------------------ BIOMARKER TAB ------------------ #
 
@@ -260,14 +261,27 @@ server <- function(input, output) {
 
   # Update & rerender network plot only when the runGsAnalysis button is pressed
   observeEvent(input$runGsAnalysis, {
-    gsAnalysis <- geneSetAnalysis(input$gene, input$gsType, input$simAlgo)
-    rv$gsSimilarityDf <- gsAnalysis$similarityDf
-    rv$geneSets <- gsAnalysis$geneSets
+    tryCatch({
+      gsAnalysis <- geneSetAnalysis(input$gene, input$gsType, input$simAlgo)
+      rv$gsSimilarityDf <- gsAnalysis$similarityDf
+      rv$geneSets <- gsAnalysis$geneSets
+      rv$error <- NULL
+    },
+    error=function(e) {
+      rv$gsSimilarityDf <- NULL
+      rv$geneSets <- NULL
+      rv$error <- e$message
+    })
+  })
+
+  output$plotError <- renderUI({
+    req(rv$error)
+    p(rv$error)
   })
 
   output$networkPlot <- renderVisNetwork({
-    req(rv$geneSets)
-    req(rv$gsSimilarityDf)
+    req(rv$geneSets, rv$gsSimilarityDf)
+
     p <- buildNetworkPlot(rv$gsSimilarityDf, input$simCutoff) %>%
       # Add JS hook to react to node selection
       # Js code taken from xclotet:

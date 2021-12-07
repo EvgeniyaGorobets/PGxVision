@@ -22,6 +22,12 @@ geneSetAnalysis <- function(geneId, queryType, similarityMetric="overlap") {
   # TODO: user input check
   # Perform gene set analysis
   targetGeneSets <- getGeneSets(geneId, queryType)
+  if (nrow(targetGeneSets) == 0) {
+    stop(paste0("There were no gene sets in the ", queryType,
+               " category that contain ", geneId,
+               ". Try a different gene or a differnt gene set category."))
+  }
+
   geneSets <- expandGeneSets(targetGeneSets$gs_id, queryType)
   gsSimilarity <- computeGeneSetSimilarity(geneSets, similarityMetric)
   return(list(geneSets = targetGeneSets, similarityDf = gsSimilarity))
