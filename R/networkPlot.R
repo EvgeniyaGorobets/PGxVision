@@ -83,7 +83,7 @@ buildNetworkPlot <- function(gsSimilarityDf, similarityCutoff=0.5, title=NULL) {
     visNetwork::visEvents(stabilizationIterationsDone = "function () {
       network.setOptions( { physics: false } );}")  %>%
     # For now, avoid dragging nodes because it is weird after we disable physics
-    visInteraction(dragNodes = FALSE)
+    visInteraction(dragNodes = FALSE) #visOptions(highlightNearest = TRUE)
 
   return(network)
 }

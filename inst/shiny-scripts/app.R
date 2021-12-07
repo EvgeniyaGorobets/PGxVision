@@ -75,7 +75,7 @@ geneSetAnalysisBox <- box(
     width = 3, br(),
     sliderInput("simCutoff", "Similarity Cutoff",
                 min = 0, max = 1, value = 0.5),
-    br(), h4("Gene Set Info"), p("Under construction")
+    br(), h4("Gene Set Info"), uiOutput("gsInfo")
   ),
 )
 
@@ -263,9 +263,27 @@ server <- function(input, output) {
 
   output$networkPlot <- renderVisNetwork({
     req(rv$gsSimilarityDf)
-    p <- buildNetworkPlot(rv$gsSimilarityDf, input$simCutoff)
+    p <- buildNetworkPlot(rv$gsSimilarityDf, input$simCutoff) %>%
+      # Add JS hook to react to node selection
+      # Js code taken from xclotet:
+      # xclotet. (2016). Get selected Node data from visNetwork graph without
+      # actionButton. StackOverflow.
+      # https://stackoverflow.com/questions/41018899/get-selected-node-data-from-visnetwork-graph-without-actionbutton/41020222
+      visEvents(select = "function(nodes) {
+                Shiny.onInputChange('currentNodeId', nodes.nodes);}")
     p
   })
+
+  # React to node selection
+  output$gsInfo <- renderUI({
+    print(input$currentNodeId)
+    id <- ifelse(length(input$currentNodeId)>0, input$currentNodeId, "")
+    div(tags$b("ID: "), id)
+  })
+
+  #observeEvent(input$currentNodeId, {
+  #  print(input$currentNodeId)
+  #})
 
   # ------------------ END BIOMARKER TAB ------------------ #
 
