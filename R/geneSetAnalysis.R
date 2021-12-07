@@ -1,9 +1,9 @@
 #' Perform a gene set analysis on a gene
 #'
-#' Query MSigDb to find all gene sets that queryGene is in, then compute the
-#' similarity of the gene sets and return the result in a data frame. This is a
-#' wrapper function which performs the full gene set analysis pipeline, minus
-#' the network plot.
+#' Query MSigDb to find all gene sets that query gene (geneId) is in, then
+#' compute the similarity of the gene sets and return the result in a data
+#' frame. This is a wrapper function which performs the full gene set
+#' analysis pipeline, minus the network plot.
 #'
 #' @param geneId The ENSEMBL ID of the gene you want to query
 #' @param queryType The type of query you want to perform; see MSigDb for
@@ -17,19 +17,18 @@
 #' geneSetAnalysis("ENSG00000000971", "GO:BP")
 #'
 #' @importFrom checkmate assertDataFrame assertNames assertString
-#' @importFrom igraph graph_from_data_frame E
-#' @importFrom viridis magma
 #' @export
 geneSetAnalysis <- function(geneId, queryType, similarityMetric="overlap") {
+  # TODO: user input check
   # Perform gene set analysis
-  geneSetIds <- queryGene(geneId, queryType)
-  geneSets <- expandGeneSets(geneSetIds, queryType)
+  targetGeneSets <- getGeneSets(geneId, queryType)
+  geneSets <- expandGeneSets(targetGeneSets$gs_id, queryType)
   gsSimilarity <- computeGeneSetSimilarity(geneSets, similarityMetric)
-  return(gsSimilarity)
+  return(list(geneSets = targetGeneSets, similarityDf = gsSimilarity))
 }
 
 
-#' Query a gene
+#' Get gene sets based on a query gene
 #'
 #' Get all gene sets from MSigDb that contain the query gene. Gene sets can be
 #' based on biological process, cellular component, pathways, etc.
@@ -38,17 +37,18 @@ geneSetAnalysis <- function(geneId, queryType, similarityMetric="overlap") {
 #' @param queryType The type of query you want to perform; see MSigDb for
 #' possible subcategories (use msigdbr::msigdbr_collections())
 #'
-#' @return A character vector containing the IDs of all gene sets this gene
-#' is part of.
+#' @return A data.table containing all the gene sets in the category queryType
+#' and containing the query gene. data.table contains gene set ID, name, source,
+#' URL, and description.
 #'
 #' @examples
-#' queryGene("ENSG00000000971", "GO:BP")
+#' getGeneSets("ENSG00000000971", "GO:BP")
 #'
 #' @importFrom checkmate assertString
 #' @importFrom msigdbr msigdbr msigdbr_collections
 #' @importFrom data.table setDT
 #' @export
-queryGene <- function(geneId, queryType) {
+getGeneSets <- function(geneId, queryType) {
   # Local bindings to satisfy check() and DT syntax
   ensembl_gene <- NULL
 
@@ -58,13 +58,15 @@ queryGene <- function(geneId, queryType) {
   allQueryTypes <- msigdbr::msigdbr_collections()$gs_subcat
   checkmate::assertSubset(queryType, choices=allQueryTypes)
 
+  # Get all gene sets in the queryType category
   allGeneSets <- msigdbr::msigdbr(species = "Homo sapiens",
                                   subcategory = queryType)
   data.table::setDT(allGeneSets)
-  targetGeneSets <- allGeneSets[ensembl_gene == geneId]
-  geneSetIds <- targetGeneSets$gs_id
 
-  return(geneSetIds)
+  # Keep gene sets containing the query gene
+  targetGeneSets <- allGeneSets[ensembl_gene == geneId, ]
+  return(targetGeneSets[, list(gs_id, gs_name, gs_exact_source, gs_url,
+                               gs_description)])
 }
 
 
@@ -82,8 +84,8 @@ queryGene <- function(geneId, queryType) {
 #' columns: "gs_id", "ensembl_gene")
 #'
 #' @examples
-#' geneSetIds <- queryGene("ENSG00000000971", "GO:BP")
-#' expandGeneSets(geneSetIds, "GO:BP")
+#' geneSets <- getGeneSets("ENSG00000000971", "GO:BP")
+#' expandGeneSets(geneSets$gs_id, "GO:BP")
 #'
 #' @importFrom checkmate assertCharacter assertString assertSubset
 #' @importFrom msigdbr msigdbr
@@ -133,8 +135,8 @@ expandGeneSets <- function(geneSetIds, geneSetType=NULL) {
 #' 2), and "similarity".
 #'
 #' @examples
-#' geneSetIds <- queryGene("ENSG00000000971", "GO:BP")
-#' geneSets <- expandGeneSets(geneSetIds, "GO:BP")
+#' targetGeneSets <- getGeneSets("ENSG00000000971", "GO:BP")
+#' geneSets <- expandGeneSets(targetGeneSets$gs_id, "GO:BP")
 #' computeGeneSetSimilarity(geneSets)
 #'
 #' @importFrom checkmate assertDataFrame

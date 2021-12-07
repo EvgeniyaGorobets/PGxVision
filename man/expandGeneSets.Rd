@@ -22,7 +22,7 @@ columns: "gs_id", "ensembl_gene")
 Get all genes that are in the MSigDb gene sets corresponding to geneSetNames.
 }
 \examples{
-geneSetIds <- queryGene("ENSG00000000971", "GO:BP")
-expandGeneSets(geneSetIds, "GO:BP")
+geneSets <- getGeneSets("ENSG00000000971", "GO:BP")
+expandGeneSets(geneSets$gs_id, "GO:BP")
 
 }

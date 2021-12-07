@@ -19,10 +19,10 @@ gene sets. The default (and only option currently) is "overlap".}
 TODO
 }
 \description{
-Query MSigDb to find all gene sets that queryGene is in, then compute the
-similarity of the gene sets and return the result in a data frame. This is a
-wrapper function which performs the full gene set analysis pipeline, minus
-the network plot.
+Query MSigDb to find all gene sets that query gene (geneId) is in, then
+compute the similarity of the gene sets and return the result in a data
+frame. This is a wrapper function which performs the full gene set
+analysis pipeline, minus the network plot.
 }
 \examples{
 geneSetAnalysis("ENSG00000000971", "GO:BP")

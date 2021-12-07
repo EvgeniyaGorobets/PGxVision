@@ -24,8 +24,8 @@ gene sets. There will be three columns: "gs1" (gene set 1), "gs2" (gene set
 Compute the similarity between gene sets
 }
 \examples{
-geneSetIds <- queryGene("ENSG00000000971", "GO:BP")
-geneSets <- expandGeneSets(geneSetIds, "GO:BP")
+targetGeneSets <- getGeneSets("ENSG00000000971", "GO:BP")
+geneSets <- expandGeneSets(targetGeneSets$gs_id, "GO:BP")
 computeGeneSetSimilarity(geneSets)
 
 }

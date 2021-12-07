@@ -6,6 +6,8 @@ library(visNetwork)
 gsTypes <- unique(msigdbr::msigdbr_collections()$gs_subcat)
 blankGene <- data.table::data.table(gene="", abs_gene_seq_start="", chr="",
                                     pvalue="", estimate="", fdr="")
+blankGeneSet <- data.table::data.table(gs_id="", gs_name="", gs_exact_source="",
+                                       gs_url="", gs_description="")
 
 
 biomarkerFileUploadBox <- box(
@@ -70,9 +72,9 @@ geneSetAnalysisBox <- box(
     width = 3, br(),
     actionButton("runGsAnalysis", "Run Gene Set Analysis!")
   ),
-  column(width = 9, visNetworkOutput("networkPlot")),
+  column(width = 8, visNetworkOutput("networkPlot")),
   column(
-    width = 3, br(),
+    width = 4, br(),
     sliderInput("simCutoff", "Similarity Cutoff",
                 min = 0, max = 1, value = 0.5),
     br(), h4("Gene Set Info"), uiOutput("gsInfo")
@@ -135,6 +137,7 @@ server <- function(input, output) {
                        chromosomeDf = GRCh38.p13.Assembly,
                        plottedBiomrkrs = NULL,
                        selectedGene = blankGene,
+                       geneSets = NULL,
                        gsSimilarityDf = NULL,
                        sensitivityDf = BRCA.PDXE.paxlitaxel.response)
 
@@ -257,11 +260,13 @@ server <- function(input, output) {
 
   # Update & rerender network plot only when the runGsAnalysis button is pressed
   observeEvent(input$runGsAnalysis, {
-    rv$gsSimilarityDf <- geneSetAnalysis(
-      input$gene, input$gsType, input$simAlgo)
+    gsAnalysis <- geneSetAnalysis(input$gene, input$gsType, input$simAlgo)
+    rv$gsSimilarityDf <- gsAnalysis$similarityDf
+    rv$geneSets <- gsAnalysis$geneSets
   })
 
   output$networkPlot <- renderVisNetwork({
+    req(rv$geneSets)
     req(rv$gsSimilarityDf)
     p <- buildNetworkPlot(rv$gsSimilarityDf, input$simCutoff) %>%
       # Add JS hook to react to node selection
@@ -276,15 +281,22 @@ server <- function(input, output) {
 
   # React to node selection
   output$gsInfo <- renderUI({
-    print(input$currentNodeId)
-    id <- ifelse(length(input$currentNodeId)>0, input$currentNodeId, "")
-    div(tags$b("ID: "), id)
+    if (length(input$currentNodeId) > 0) {
+      gsInfo <- rv$geneSets[gs_id == input$currentNodeId,]
+      link <- p("Learn more at", a(gsInfo$gs_url, href=gsInfo$gs_url))
+    } else {
+      gsInfo <- blankGeneSet
+      link <- ""
+    }
+
+    div(div(tags$b("ID: "), gsInfo$gs_id),
+        div(tags$b("Name: "), gsInfo$gs_name),
+        div(tags$b("Source: "), gsInfo$gs_exact_source),
+        div(tags$b("Description: ")),
+        p(gsInfo$gs_description),
+        link
+    )
   })
-
-  #observeEvent(input$currentNodeId, {
-  #  print(input$currentNodeId)
-  #})
-
   # ------------------ END BIOMARKER TAB ------------------ #
 
   # ------------------ DRUG RESPONSE TAB ------------------ #
