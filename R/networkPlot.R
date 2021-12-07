@@ -39,8 +39,11 @@ buildNetworkPlot <- function(gsSimilarityDf, similarityCutoff=0.5, title=NULL) {
 
   # Create nodes
   geneSets <- unique(c(gsSimilarityDf$gs1, gsSimilarityDf$gs2))
-  nodes <- data.frame(id = geneSets, label = geneSets, shape = "circle",
-                      color="orange", font = "24px times black")
+  nodes <- data.frame(
+    id = geneSets, label = geneSets, shape = "circle",
+    color=list(background = "orange", border = "#CC5500",
+               highlight = list(background = "#F7D527", border = "#EBBA18")),
+    font = "24px times black", borderWidthSelected = 3)
 
   # Remove edges between a node & itself and edges with similarity below cutoff
   networkDf <- gsSimilarityDf[gsSimilarityDf$gs1 != gsSimilarityDf$gs2,]
@@ -78,7 +81,9 @@ buildNetworkPlot <- function(gsSimilarityDf, similarityCutoff=0.5, title=NULL) {
     # drag-able nodes. StackOverflow.
     # https://stackoverflow.com/questions/32403578/stop-vis-js-physics-after-nodes-load-but-allow-drag-able-nodes
     visNetwork::visEvents(stabilizationIterationsDone = "function () {
-      network.setOptions( { physics: false } );}")
+      network.setOptions( { physics: false } );}")  %>%
+    # For now, avoid dragging nodes because it is weird after we disable physics
+    visInteraction(dragNodes = FALSE)
 
   return(network)
 }
