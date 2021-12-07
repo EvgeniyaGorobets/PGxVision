@@ -12,7 +12,7 @@
 #' @param title (optional) A custom title for the network plot. Defaults to
 #' "Gene Set Similarity Plot"
 #'
-#' @return The igraph object containing the network plot of gene sets
+#' @return The visNetwork object containing the network plot of gene sets
 #'
 #' @examples
 #' geneSetIds <- queryGene("ENSG00000000971", "GO:BP")
@@ -21,7 +21,7 @@
 #' buildNetworkPlot(gsSimilarityDf, similarityCutoff=0.3)
 #'
 #' @importFrom checkmate assertDataFrame assertNames assertString
-#' @importFrom igraph graph_from_data_frame E
+#' @importFrom visNetwork visNetwork visPhysics visEvents
 #' @importFrom viridis magma
 #' @export
 buildNetworkPlot <- function(gsSimilarityDf, similarityCutoff=0.5, title=NULL) {
@@ -37,34 +37,50 @@ buildNetworkPlot <- function(gsSimilarityDf, similarityCutoff=0.5, title=NULL) {
     title <- "Gene Set Similarity Plot"
   }
 
-  # Prune edges with similarity below the cutoff
-  networkDf <- gsSimilarityDf[gsSimilarityDf$similarity >= similarityCutoff, ]
-  if (nrow(networkDf) == 0) {
-    stop(paste0("No edges were left in the network plot after applying a ",
-                "similarity cutoff of ", similarityCutoff, ".\n",
-                "Try a lower cutoff value (note that the max similarity in ",
-                "this data.frame is ", max(gsSimilarityDf$similarity), ")."))
+  # Create nodes
+  geneSets <- unique(c(gsSimilarityDf$gs1, gsSimilarityDf$gs2))
+  nodes <- data.frame(id = geneSets, label = geneSets, shape = "circle",
+                      color="orange", font = "24px times black")
+
+  # Remove edges between a node & itself and edges with similarity below cutoff
+  networkDf <- gsSimilarityDf[gsSimilarityDf$gs1 != gsSimilarityDf$gs2,]
+  networkDf <- networkDf[networkDf$similarity >= similarityCutoff, ]
+  if (nrow(networkDf) == 0 && length(geneSets) > 1) {
+    warning(paste0("No edges were left in the network plot after applying a ",
+                   "similarity cutoff of ", similarityCutoff, ".\n",
+                   "Try a lower cutoff value (note that the max similarity in ",
+                   "this data.frame is ", max(gsSimilarityDf$similarity), ")."))
   }
 
-  # Create network plot
-  networkGraph <- igraph::graph_from_data_frame(networkDf, directed = F)
-  igraph::E(networkGraph)$weight <- networkDf$similarity
-
-  # Create color scale based on edge weights
-  # Using magma color scale but removing the lighter (yellow) colors
-  # for better edge visibility
+  # Create color palette for edges
   scaleColors <- colorRamp(rev(viridis::magma(10))[3:10])
-  edgeRGBColors <- scaleColors(igraph::E(networkGraph)$weight)
+  edgeRGBColors <- scaleColors(networkDf$similarity)
   edgeHexColors <- apply(edgeRGBColors, MARGIN=1,
     FUN=function(x) {rgb(x[1], x[2], x[3], maxColorValue=255)})
-  igraph::E(networkGraph)$color <- edgeHexColors
 
-  # Convert to a plot
-  plot(networkGraph, arrow.mode="-", vertex.label.color="black", vertex.size=20,
-       edge.width=igraph::E(networkGraph)$weight*10,
-       edge.color=igraph::E(networkGraph)$color)
-  title(title)
-  return(networkGraph)
+  # Create edges
+  edges <- data.frame(from = networkDf$gs1, to = networkDf$gs2,
+                      value = networkDf$similarity, color = edgeHexColors)
+  if (nrow(edges) > 0) {
+    edges["smooth"] = F
+  }
+
+  # Build network
+  network <- visNetwork::visNetwork(nodes, edges, main = title) %>%
+    # Use physics to create proper layout
+    visNetwork::visPhysics(
+      solver = "forceAtlas2Based",
+      forceAtlas2Based = list(gravitationalConstant = -255, avoidOverlap=1)) %>%
+    # Once network has stabilized, disable physics so that users can drag
+    # nodes around
+    # Used JS code by Perry and YakovL:
+    # Perry & YakovL. (2017). Stop vis.js physics after nodes load but allow
+    # drag-able nodes. StackOverflow.
+    # https://stackoverflow.com/questions/32403578/stop-vis-js-physics-after-nodes-load-but-allow-drag-able-nodes
+    visNetwork::visEvents(stabilizationIterationsDone = "function () {
+      network.setOptions( { physics: false } );}")
+
+  return(network)
 }
 
 

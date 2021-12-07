@@ -1,6 +1,7 @@
-#library(shiny)
-#library(shinydashboard)
-#library(plotly)
+library(shiny)
+library(shinydashboard)
+library(plotly)
+library(visNetwork)
 
 gsTypes <- unique(msigdbr::msigdbr_collections()$gs_subcat)
 blankGene <- data.table::data.table(gene="", abs_gene_seq_start="", chr="",
@@ -69,8 +70,7 @@ geneSetAnalysisBox <- box(
     width = 3, br(),
     actionButton("runGsAnalysis", "Run Gene Set Analysis!")
   ),
-  column(width = 9, plotOutput("networkPlot")),
-  # FIXME: plot doesn't always fully show, overflows
+  column(width = 9, visNetworkOutput("networkPlot")),
   column(
     width = 3, br(),
     sliderInput("simCutoff", "Similarity Cutoff",
@@ -261,9 +261,10 @@ server <- function(input, output) {
       input$gene, input$gsType, input$simAlgo)
   })
 
-  output$networkPlot <- renderPlot({
+  output$networkPlot <- renderVisNetwork({
     req(rv$gsSimilarityDf)
-    buildNetworkPlot(rv$gsSimilarityDf, input$simCutoff)
+    p <- buildNetworkPlot(rv$gsSimilarityDf, input$simCutoff)
+    p
   })
 
   # ------------------ END BIOMARKER TAB ------------------ #
