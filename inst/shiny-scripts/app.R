@@ -72,7 +72,11 @@ geneSetAnalysisBox <- box(
     width = 3, br(),
     actionButton("runGsAnalysis", "Run Gene Set Analysis!")
   ),
-  column(width = 8, uiOutput("plotError"), visNetworkOutput("networkPlot")),
+  column(
+    width = 8,
+    uiOutput("plotError"),
+    use_busy_spinner(spin = "fading-circle"),
+    visNetworkOutput("networkPlot")),
   column(
     width = 4, br(),
     sliderInput("simCutoff", "Similarity Cutoff",
@@ -103,6 +107,16 @@ ui <- dashboardPage(
   ),
 
   dashboardBody(
+    # Custom CSS to put shinybusy spinner in center of network plot
+    tags$head(
+      tags$style(HTML("
+      .shinybusy {
+        position: relative !important;
+      }
+      .shinybusy-busy {
+        margin: auto;
+      }"))
+    ),
     tabItems(
       # Biomarkers tab
       tabItem(
@@ -265,15 +279,21 @@ server <- function(input, output) {
 
   # Update & rerender network plot only when the runGsAnalysis button is pressed
   observeEvent(input$runGsAnalysis, {
+    rv$gsSimilarityDf <- NULL
+    rv$geneSets <- NULL
     tryCatch({
+      # Gene set analysis can take a while, so show a spinner in the meantime
+      show_spinner()
+
       gsAnalysis <- geneSetAnalysis(input$gene, input$gsType, input$simAlgo)
       rv$gsSimilarityDf <- gsAnalysis$similarityDf
       rv$geneSets <- gsAnalysis$geneSets
       rv$error <- NULL
+
+      hide_spinner()
     },
     error=function(e) {
-      rv$gsSimilarityDf <- NULL
-      rv$geneSets <- NULL
+      hide_spinner()
       rv$error <- e$message
     })
   })
