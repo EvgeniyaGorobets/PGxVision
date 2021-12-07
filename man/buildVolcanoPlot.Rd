@@ -9,7 +9,10 @@ buildVolcanoPlot(
   tissue = "",
   compound = "",
   mDataType = "",
-  pValCutoff = 0.05
+  pValCutoff = 0.05,
+  xLabel = NULL,
+  yLabel = NULL,
+  title = NULL
 )
 }
 \arguments{
@@ -30,6 +33,14 @@ want to plot biomarkers}
 \item{pValCutoff}{A decimal number indicating the cutoff value for
 significant observations; any results with a higher p-value will be grayed
 out on the plot. Default value is 0.05.}
+
+\item{xLabel}{(optional) The label for the x-axis. Defaults to "Estimate".}
+
+\item{yLabel}{(optional) The label for the y-axis. Defaults to
+"Log10 P-Value".}
+
+\item{title}{(optional) The title for the plot. Defaults to "Drug
+sensitivity in <tissueName> tissue in response to <compoundName>}
 }
 \value{
 A ggplot2 plot object mapping the biomarkers of the experiment

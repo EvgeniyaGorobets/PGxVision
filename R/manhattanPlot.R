@@ -13,14 +13,17 @@
 #' biomarkers
 #' @param mDataType A string representing the molecular data type for which you
 #' want to plot biomarkers
-#' @param pValCutoff A decimal number indicating the cutoff value for
+#' @param pValCutoff (optional) A decimal number indicating the cutoff value for
 #' significant observations; any results with a higher p-value will be grayed
 #' out on the plot. Default value is 0.05.
-#' @param relativeGenomeCoords A boolean that indicates whether the genomic
-#' coordinates given in biomarkerDf are relative to the chromosome (TRUE) or
-#' relative to the entire genome (absolute, FALSE). Default is TRUE.
-#' @param genomeName The name of the reference genome (used in plot title).
-#' Default value is "GRCh28.p13"
+#' @param relativeGenomeCoords (optional) A boolean that indicates whether the
+#' genomic coordinates given in biomarkerDf are relative to the chromosome
+#' (TRUE) or relative to the entire genome (absolute, FALSE). Default is TRUE.
+#' @param xLabel (optional) The label for the x-axis. Defaults to "Estimate".
+#' @param yLabel (optional) The label for the y-axis. Defaults to
+#' "Log10 P-Value".
+#' @param title (optional) The title for the plot. Defaults to "Drug
+#' sensitivity in <tissueName> tissue in response to <compoundName>
 #'
 #' @return A ggplot2 plot object mapping the biomarkers of the experiment
 #' (x-axis = genome position; y-axis = -log10(p-value or fdr))
@@ -42,7 +45,7 @@
 buildManhattanPlot <- function(biomarkerDf=NULL, chromosomeDf=NULL,
                                tissue="", compound="", mDataType="",
                                pValCutoff=0.05, relativeGenomeCoords=TRUE,
-                               genomeName="GRCh38.p13") {
+                               xLabel=NULL, yLabel=NULL, title=NULL) {
   # Local bindings to satisfy check() and DT syntax
   pvalue <- seq_start <- abs_gene_seq_start <- significant <- chrLength <-
     chrName <- chr <- NULL
@@ -56,6 +59,18 @@ buildManhattanPlot <- function(biomarkerDf=NULL, chromosomeDf=NULL,
   checkmate::assertNames(colnames(chromosomeDf),
                          must.include=c("chrName", "chrLength"))
   checkmate::assertNumber(pValCutoff, lower=0, upper=1)
+
+  # Assign axis labels and title, if needed
+  if (is.null(xLabel)) {
+    xLabel <- "Chromosome"
+  }
+  if (is.null(yLabel)) {
+    yLabel <- "Log10 P-Value"
+  }
+  if (is.null(title)) {
+    title <- paste("Significance of drug response in", tissue,
+                   "tissue in response to", compound)
+  }
 
   # Convert dfs to data.table by reference
   data.table::setDT(biomarkerDf, keep.rownames=TRUE)
@@ -90,8 +105,6 @@ buildManhattanPlot <- function(biomarkerDf=NULL, chromosomeDf=NULL,
     ggplot2::geom_point()
 
   # Add title and colors
-  title <- paste0(genomeName, " gene response to ", compound, " in ", tissue,
-                  " tissue")
   plot <- plot + ggplot2::ggtitle(title) +
     ggplot2::theme(legend.position = "none",
                    plot.title = ggplot2::element_text(hjust = 0.5)) +

@@ -16,6 +16,11 @@
 #' @param pValCutoff A decimal number indicating the cutoff value for
 #' significant observations; any results with a higher p-value will be grayed
 #' out on the plot. Default value is 0.05.
+#' @param xLabel (optional) The label for the x-axis. Defaults to "Estimate".
+#' @param yLabel (optional) The label for the y-axis. Defaults to
+#' "Log10 P-Value".
+#' @param title (optional) The title for the plot. Defaults to "Drug
+#' sensitivity in <tissueName> tissue in response to <compoundName>
 #'
 #' @return A ggplot2 plot object mapping the biomarkers of the experiment
 #' (x-axis = estimate; y-axis = -log10(p-value))
@@ -28,10 +33,11 @@
 #' @importFrom data.table setDT copy :=
 #' @importFrom checkmate assertDataFrame assertNames assertNumber
 #' @importFrom ggplot2 ggplot geom_point scale_x_continuous theme aes
-#' scale_color_manual ggtitle element_text geom_hline
+#' scale_color_manual ggtitle element_text geom_hline ylab xlab
 #' @export
 buildVolcanoPlot <- function(biomarkerDf, tissue="", compound="", mDataType="",
-                             pValCutoff=0.05) {
+                             pValCutoff=0.05, xLabel=NULL, yLabel=NULL,
+                             title=NULL) {
   # Local bindings to satisfy check() and DT syntax
   significant <- pvalue <- estimate <- NULL
 
@@ -40,6 +46,18 @@ buildVolcanoPlot <- function(biomarkerDf, tissue="", compound="", mDataType="",
   checkmate::assertNames(colnames(biomarkerDf), must.include=c("tissue",
     "compound", "mDataType", "pvalue", "estimate"))
   checkmate::assertNumber(pValCutoff, lower=0, upper=1)
+
+  # Assign axis labels and title, if needed
+  if (is.null(xLabel)) {
+    xLabel <- "Estimate" #FIXME: more descriptive
+  }
+  if (is.null(yLabel)) {
+    yLabel <- "Log10 P-Value"
+  }
+  if (is.null(title)) {
+    title <- paste("Drug sensitivity in", tissue, "tissue in response to",
+                   compound)
+  }
 
   # Convert biomarkerDf to data.table and extract relevant biomarkers
   data.table::setDT(biomarkerDf, keep.rownames=TRUE)
@@ -57,8 +75,7 @@ buildVolcanoPlot <- function(biomarkerDf, tissue="", compound="", mDataType="",
     x=estimate, y=log10pValue, col=significant))
   plot <- plot + ggplot2::geom_point() +
     ggplot2::scale_color_manual(values=c("gray", "red")) +
-    ggplot2::ggtitle(paste0("P-value vs. estimate of biomarkers in ",
-                            tissue, " tissue in response to ", compound)) +
+    ggplot2::ggtitle(title) + ggplot2::ylab(yLabel) + ggplot2::xlab(xLabel) +
     ggplot2::theme(legend.position = "none",
                    plot.title = ggplot2::element_text(hjust = 0.5)) +
     ggplot2::geom_hline(yintercept=-log10(pValCutoff), linetype='dotted',

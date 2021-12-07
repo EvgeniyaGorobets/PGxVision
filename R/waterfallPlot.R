@@ -64,7 +64,7 @@ buildWaterfallPlot <- function(drugResponseDf, xAxisCol, drugSensitivityCol,
   # Check that the dataframe actually has the data cols specified by the user
   checkmate::assertNames(colnames(drugResponseDf), must.include=requiredCols)
 
-  # Assign axes labels, if needed
+  # Assign axis labels and title, if needed
   if (is.null(xLabel)) {
     xLabel <- xAxisCol
     message(paste0("You have not provided a custom label for the x-axis.\n",
