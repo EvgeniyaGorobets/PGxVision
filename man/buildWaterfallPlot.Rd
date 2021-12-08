@@ -19,14 +19,19 @@ buildWaterfallPlot(
 different tumours, subtypes, or replicates}
 
 \item{xAxisCol}{The name of the column in biomarkerDf that will be mapped
-on the x-axis}
+on the x-axis. Since this is a discrete axis, drugResponseDf$xAxisCol should
+be a vector of type "character".}
 
 \item{drugSensitivityCol}{The name of the column in biomarkerDf that has the
-drug sensitivity metrics; will be mapped on the y-axis}
+drug sensitivity metrics; will be mapped on the y-axis. Since this is a
+continuous axis, drugResponseDf$drugSensitivityCol should be a vector of
+type "numeric".}
 
 \item{colorCol}{(optional) The name of the column that will determine the
-color of the bars (such as statistical significance). If no column is
-provided, it will default to the drugSensitivityCol.}
+color of the bars (such as statistical significance). Since this is a
+continuous axis, drugResponseDf$colorCol should be a vector of type
+"numeric". If no column is provided, it will default to the
+drugSensitivityCol.}
 
 \item{xLabel}{(optional) The label for the x-axis. Defaults to <xAxisCol>.}
 

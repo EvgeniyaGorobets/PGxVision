@@ -15,12 +15,17 @@
 #' @param drugResponseDf A data.frame of drug sensitivity measurements in
 #' different tumours, subtypes, or replicates
 #' @param xAxisCol The name of the column in biomarkerDf that will be mapped
-#' on the x-axis
+#' on the x-axis. Since this is a discrete axis, drugResponseDf$xAxisCol should
+#' be a vector of type "character".
 #' @param drugSensitivityCol The name of the column in biomarkerDf that has the
-#' drug sensitivity metrics; will be mapped on the y-axis
+#' drug sensitivity metrics; will be mapped on the y-axis. Since this is a
+#' continuous axis, drugResponseDf$drugSensitivityCol should be a vector of
+#' type "numeric".
 #' @param colorCol (optional) The name of the column that will determine the
-#' color of the bars (such as statistical significance). If no column is
-#' provided, it will default to the drugSensitivityCol.
+#' color of the bars (such as statistical significance). Since this is a
+#' continuous axis, drugResponseDf$colorCol should be a vector of type
+#' "numeric". If no column is provided, it will default to the
+#' drugSensitivityCol.
 #' @param xLabel (optional) The label for the x-axis. Defaults to <xAxisCol>.
 #' @param yLabel (optional) The label for the y-axis. Defaults to
 #' <drugSensitivityCol>.
@@ -40,6 +45,7 @@
 #'                    title="Paclitaxel Response in BRCA Tumours")
 #'
 #' @importFrom checkmate assertDataFrame assertNames assertString testString
+#' assertCharacter assertNumeric
 #' @importFrom ggplot2 ggplot geom_bar scale_fill_continuous theme aes
 #' theme_classic ggtitle element_text ylab xlab
 #' @export
@@ -80,6 +86,12 @@ buildWaterfallPlot <- function(drugResponseDf, xAxisCol, drugSensitivityCol,
   }
   # Check that the dataframe actually has the data cols specified by the user
   checkmate::assertNames(colnames(drugResponseDf), must.include=requiredCols)
+  # Check that the columns specified by the user have the correct types
+  checkmate::assertCharacter(drugResponseDf[, xAxisCol])
+  checkmate::assertNumeric(drugResponseDf[, drugSensitivityCol])
+  if (!is.null(colorCol)) {
+    checkmate::assertNumeric(drugResponseDf[, colorCol])
+  }
 
   # Order the x-axis data points based on their drug sensitivity
   sortedDf <- drugResponseDf[order(drugResponseDf[,drugSensitivityCol],
