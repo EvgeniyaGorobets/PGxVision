@@ -17,22 +17,22 @@ buildVolcanoPlot(
 }
 \arguments{
 \item{biomarkerDf}{A data.frame of drug sensitivity biomarkers that you want
-to plot, including the compound, tissue, and molecular data type used in the
-experiment, the genomic coordinates of the genes which were tested on, and
-the resulting p-value/fdr and estimate}
+to plot, including the compound, tissue, molecular data type ("mDataType"),
+drug sensitivity estimate ("estimate") and p-value ("pvalue")}
 
 \item{tissue}{A string representing the tissue for which you want to plot
-biomarkers}
+biomarker drug sensitivity signatures}
 
 \item{compound}{A string representing the compound for which you want to plot
-biomarkers}
+biomarker drug sensitivity signatures}
 
 \item{mDataType}{A string representing the molecular data type for which you
-want to plot biomarkers}
+want to plot biomarker drug sensitivity signatures}
 
-\item{pValCutoff}{A decimal number indicating the cutoff value for
-significant observations; any results with a higher p-value will be grayed
-out on the plot. Default value is 0.05.}
+\item{pValCutoff}{(optional) A number between 0 and 1 indicating the maximum
+p-value that an experimental result can have to be considered significant.
+Any results with a higher p-value will be grayed out on the plot. Default
+value is 0.05.}
 
 \item{xLabel}{(optional) The label for the x-axis. Defaults to "Estimate".}
 
@@ -43,16 +43,22 @@ out on the plot. Default value is 0.05.}
 sensitivity in <tissueName> tissue in response to <compoundName>}
 }
 \value{
-A ggplot2 plot object mapping the biomarkers of the experiment
-(x-axis = estimate; y-axis = -log10(p-value))
-#TODO: update
+A named list with two fields: "dt" and "plot". The "plot" field
+contains a ggplot2 plot object (the volcano plot) and the "dt" field
+contains a data.table with all the biomarkers that were plotted on "plot"
 }
 \description{
 Note that this volcano plot is NOT plotting results of differential gene
-expression analysis but is plotting the drug sensitivity signature
+expression analysis but is plotting the drug sensitivity signature (drug
+sensitivity estimate on x-axis and log10(p-value) on y-axis). Points are
+colored based on significance (red = significant; gray = not significant).
+Currently, only a single experiment (one tissue, one compound, one molecular
+data type) can be plotted at once.
 }
 \examples{
 data(Biomarkers)
-buildVolcanoPlot(Biomarkers, "Lung", "Trametinib", "rna", 0.005)
+result <- buildVolcanoPlot(Biomarkers, "Lung", "Trametinib", "rna", 0.005)
+result$dt
+result$plot
 
 }

@@ -9,20 +9,27 @@ geneSetAnalysis(geneId, queryType, similarityMetric = "overlap")
 \arguments{
 \item{geneId}{The ENSEMBL ID of the gene you want to query}
 
-\item{queryType}{The type of query you want to perform; see MSigDb for
-possible subcategories (use msigdbr::msigdbr_collections())}
+\item{queryType}{The type of gene sets you want to retrieve; see MSigDb for
+possible subcategories (use \code{msigdbr::msigdbr_collections()})}
 
 \item{similarityMetric}{The algorithm used to compute the similarity between
 gene sets. The default (and only option currently) is "overlap".}
 }
 \value{
-TODO
+A named list with two fields: "geneSets" and "similarityDf".
+"geneSets" contains a data.table of all the gene sets containing the query
+gene and belonging to the queryType category (see
+\code{?PGxVision::getGeneSets} for more info). "similarityDf" contains a
+data.frame with the similarity scores for each pair of gene sets (see
+\code{?PGxVision::computeGeneSetSimilarity} for more info).
 }
 \description{
-Query MSigDb to find all gene sets that query gene (geneId) is in, then
-compute the similarity of the gene sets and return the result in a data
-frame. This is a wrapper function which performs the full gene set
-analysis pipeline, minus the network plot.
+Query MSigDb to find all gene sets that query gene is in, then compute the
+similarity of the gene sets. Return both the similarity scores and the gene
+set information that was retrieved. This is a wrapper function which
+performs the full gene set analysis pipeline (not including
+buildNetworkPlot). Note that this function is computationally heavy and may
+take a while to run (this is mostly due to large, slow MSigDb API  queries).
 }
 \examples{
 geneSetAnalysis("ENSG00000000971", "GO:BP")

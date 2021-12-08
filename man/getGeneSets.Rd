@@ -2,24 +2,28 @@
 % Please edit documentation in R/geneSetAnalysis.R
 \name{getGeneSets}
 \alias{getGeneSets}
-\title{Get gene sets based on a query gene}
+\title{Get gene set info based on a query gene}
 \usage{
 getGeneSets(geneId, queryType)
 }
 \arguments{
 \item{geneId}{The ENSEMBL ID of the gene you want to query}
 
-\item{queryType}{The type of query you want to perform; see MSigDb for
-possible subcategories (use msigdbr::msigdbr_collections())}
+\item{queryType}{The type of query you want to perform, i.e., the category
+of the gene sets you are retrieving. See MSigDb for possible subcategories
+(use \code{msigdbr::msigdbr_collections()})}
 }
 \value{
 A data.table containing all the gene sets in the category queryType
-and containing the query gene. data.table contains gene set ID, name, source,
-URL, and description.
+and containing the query gene. The data.table contains gene set ID (gs_id),
+name (gs_name), source (gs_exact_source), URL (gs_url), and description
+(gs_description).
 }
 \description{
-Get all gene sets from MSigDb that contain the query gene. Gene sets can be
-based on biological process, cellular component, pathways, etc.
+Get all gene sets from MSigDb that contain the query gene and belong to the
+queryType category. Examples of gene set categories are biological
+processes, cellular components, pathways, molecular functions, etc. Return
+information about all retrieved gene sets.
 }
 \examples{
 getGeneSets("ENSG00000000971", "GO:BP")

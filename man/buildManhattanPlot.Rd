@@ -5,8 +5,8 @@
 \title{Build a Manhattan plot of biomarkers}
 \usage{
 buildManhattanPlot(
-  biomarkerDf = NULL,
-  chromosomeDf = NULL,
+  biomarkerDf,
+  chromosomeDf,
   tissue = "",
   compound = "",
   mDataType = "",
@@ -19,26 +19,28 @@ buildManhattanPlot(
 }
 \arguments{
 \item{biomarkerDf}{A data.frame of drug sensitivity biomarkers that you want
-to plot, including the compound, tissue, and molecular data type used in the
-experiment, the genomic coordinates of the genes which were tested on, and
-the resulting p-value/fdr}
+to plot, including the compound, tissue, molecular data type ("mDataType"),
+genomic coordinates and chromosome of each gene ("gene_seq_start", "chr"),
+and p-values ("pvalue")}
 
 \item{chromosomeDf}{A data.frame of the reference genome, including the
-lengths of all the chromosomes. The row order should match the chromosome
-order in the reference genome. If there is an "all" row, it should be first.}
+names and lengths of all chromosomes ("chrName", "chrLength"). The row order
+should match the chromosome order in the reference genome. If there is an
+"all" row (with the total genome length), it should be first.}
 
 \item{tissue}{A string representing the tissue for which you want to plot
-biomarkers}
+biomarker drug sensitivity}
 
 \item{compound}{A string representing the compound for which you want to plot
-biomarkers}
+biomarker drug sensitivity}
 
 \item{mDataType}{A string representing the molecular data type for which you
-want to plot biomarkers}
+want to plot biomarker drug sensitivity}
 
-\item{pValCutoff}{(optional) A decimal number indicating the cutoff value for
-significant observations; any results with a higher p-value will be grayed
-out on the plot. Default value is 0.05.}
+\item{pValCutoff}{(optional) A number between 0 and 1 indicating the maximum
+p-value that an experimental result can have to be considered significant.
+Any results with a higher p-value will be translucent (opacity = 0.5) on the
+plot. Default value is 0.05.}
 
 \item{relativeGenomeCoords}{(optional) A boolean that indicates whether the
 genomic coordinates given in biomarkerDf are relative to the chromosome
@@ -49,21 +51,30 @@ genomic coordinates given in biomarkerDf are relative to the chromosome
 \item{yLabel}{(optional) The label for the y-axis. Defaults to
 "Log10 P-Value".}
 
-\item{title}{(optional) The title for the plot. Defaults to "Drug
-sensitivity in <tissueName> tissue in response to <compoundName>}
+\item{title}{(optional) The title for the plot. Defaults to "Significance of
+drug response in <tissueName> tissue in response to <compoundName>"}
 }
 \value{
-A ggplot2 plot object mapping the biomarkers of the experiment
-(x-axis = genome position; y-axis = -log10(p-value or fdr))
-TODO: update!
+A named list with two fields: "dt" and "plot". The "plot" field
+contains a ggplot2 plot object (the Manhattan plot) and the "dt" field
+contains a data.table with all the biomarkers that were plotted on "plot"
 }
 \description{
-Build a Manhattan plot of biomarkers
+Note that this Manhattan plot is NOT plotting a GWAS study. It is plotting
+the significance of drug responses of potential biomarkers (y-axis =
+log10(pvalue)). Biomarkers are plotted in order of their genomic coordinates
+(x-axis = gene sequence start) and colored by chromosome. Points that are
+significant are fully opaque; points that are not significant are
+translucent. Currently, only a single experiment (one tissue, one compound,
+one molecular data type) can be plotted at once.
 }
 \examples{
 data(Biomarkers)
 data(GRCh38.p13.Assembly)
-buildManhattanPlot(Biomarkers, GRCh38.p13.Assembly, "Lung", "Trametinib",
-                   "rna", pValCutoff=0.01, relativeGenomeCoords=TRUE)
+result <- buildManhattanPlot(
+  Biomarkers, GRCh38.p13.Assembly, "Lung", "Trametinib", "rna",
+  pValCutoff=0.01, relativeGenomeCoords=TRUE, title="Sample Plot")
+result$dt
+result$plot
 
 }

@@ -1,8 +1,10 @@
 library(shiny)
 library(shinybusy)
 library(shinydashboard)
+library(shinybusy)
 library(plotly)
 library(visNetwork)
+library(magrittr)
 
 gsTypes <- unique(msigdbr::msigdbr_collections()$gs_subcat)
 blankGene <- data.table::data.table(gene="", abs_gene_seq_start="", chr="",
@@ -92,7 +94,7 @@ waterfallPlotBox <- box(
   column(width = 4, uiOutput("wfXSelect")),
   column(width = 4, uiOutput("wfYSelect")),
   column(width = 4, uiOutput("wfColSelect")),
-  plotOutput("waterfallPlot")
+  column(width = 12, plotOutput("waterfallPlot"))
 )
 
 
@@ -212,6 +214,7 @@ server <- function(input, output) {
       ggplotly(result$plot, source = "manhattan") %>%
         # Modify aesthetics because ggplotly overrides aes from ggplot2
         # NOTE: bottom padding doesn't work; idk why
+        # TODO: cite https://plotly-r.com/improving-ggplotly.html
         layout(title=list(font=list(size = 16), pad = list(b = 25))) %>%
         style(line = list(width = 1, color = "black", dash = "dot"), traces = 1)
     }
@@ -229,6 +232,7 @@ server <- function(input, output) {
                          input$mDataType, pValCutoff = input$pValCutoff)$plot)
       ggplotly(p, source = "volcano") %>%
         # Modify aesthetics because ggplotly overrides aes from ggplot2
+        # TODO: cite https://plotly-r.com/improving-ggplotly.html
         layout(title = list(font = list(size = 16))) %>%
         style(line = list(width = 1, color = "black", dash = "dot"), traces = 1)
     }
@@ -348,25 +352,38 @@ server <- function(input, output) {
 
   # Create waterfall plot dropdowns based on file upload
   output$wfXSelect <- renderUI({
-    selectInput("wfX", "x-Axis", colnames(rv$sensitivityDf), selectize = F)
+    columns <- colnames(rv$sensitivityDf)
+    columnClasses <- sapply(rv$sensitivityDf, class)
+    discreteColumns <- columns[columnClasses == "character"]
+    selectInput("wfX", "x-Axis", discreteColumns, selectize = F)
   })
 
   output$wfYSelect <- renderUI({
-    selectInput("wfY", "y-Axis", colnames(rv$sensitivityDf), selectize = F)
+    columns <- colnames(rv$sensitivityDf)
+    columnClasses <- sapply(rv$sensitivityDf, class)
+    numericColumns <- columns[columnClasses == "numeric"]
+    selectInput("wfY", "y-Axis", numericColumns, selectize = F)
   })
 
   output$wfColSelect <- renderUI({
-    selectInput("wfCol", "Color", colnames(rv$sensitivityDf), selectize = F)
+    columns <- colnames(rv$sensitivityDf)
+    columnClasses <- sapply(rv$sensitivityDf, class)
+    numericColumns <- columns[columnClasses == "numeric"]
+    selectInput("wfCol", "Color", numericColumns, selectize = F)
   })
 
 
   # Update plots based on file upload
   output$waterfallPlot <- renderPlot({
-    buildWaterfallPlot(
-      rv$sensitivityDf, xAxisCol=input$wfX, drugSensitivityCol=input$wfY,
-      colorCol=input$wfCol, xLabel="Tumour",
-      yLabel="Angle Between Treatment and Control",
-      title="Paclitaxel Response in BRCA Tumours")
+    if (typeof(input$wfX) == "character" &&
+        typeof(input$wfY) == "character" &&
+        typeof(input$wfCol) == "character") {
+      buildWaterfallPlot(
+        rv$sensitivityDf, xAxisCol=input$wfX, drugSensitivityCol=input$wfY,
+        colorCol=input$wfCol, xLabel="Tumour",
+        yLabel="Angle Between Treatment and Control",
+        title="Paclitaxel Response in BRCA Tumours")
+    }
   })
 
   # ------------------ END DRUG RESPONSE TAB ------------------ #

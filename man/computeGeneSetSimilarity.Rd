@@ -2,18 +2,19 @@
 % Please edit documentation in R/geneSetAnalysis.R
 \name{computeGeneSetSimilarity}
 \alias{computeGeneSetSimilarity}
-\title{Compute the similarity between gene sets}
+\title{Compute the similarity/overlap between gene sets}
 \usage{
 computeGeneSetSimilarity(geneSets, similarityMetric = "overlap")
 }
 \arguments{
 \item{geneSets}{A data.table or data.frame with columns "gs_id" (gene set
 ID) and "ensembl_gene" (ENSEMBL gene ID) which lists the genes in each
-gene set}
+gene set (one row per gene)}
 
 \item{similarityMetric}{(optional) The type of similarity metric to compute.
 Currently, the only option is "overlap", which calculates the proportion of
-intersecting genes to total genes between each pair of gene sets.}
+intersecting genes to total genes between each pair of gene sets
+(size(intersection(gs1, gs2)) / size(union(gs1, gs2))).}
 }
 \value{
 A data.frame that lists the similarity score between each pair of
@@ -21,7 +22,11 @@ gene sets. There will be three columns: "gs1" (gene set 1), "gs2" (gene set
 2), and "similarity".
 }
 \description{
-Compute the similarity between gene sets
+Given a table mapping gene sets to their component genes, compute the
+similarity between each pair of gene sets based on how many genes they share.
+Currently, only one similarity algorithm is implemented, which computes the
+ratio between the size of the intersection and the size of the union of a
+pair of gene sets.
 }
 \examples{
 targetGeneSets <- getGeneSets("ENSG00000000971", "GO:BP")

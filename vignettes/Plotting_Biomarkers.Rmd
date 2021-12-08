@@ -114,11 +114,10 @@ lymphoid tissues responded to Nvp-tae 684 treatment. We use the default
 `pValueCutoff=0.05`.
 
 ``` {r, fig.width = 8, fig.height = 6}
- experiment <- setNames(c("Lymphoid", "Nvp-tae 684", "rna"), 
-                        c("tissue", "compound", "mDataType"))
- PGxVision::buildManhattanPlot(biomarkerDf=PGxVision::Biomarkers,
-                               chromosomeDf=PGxVision::GRCh38.p13.Assembly,
-                               experiment=experiment)
+ PGxVision::buildManhattanPlot(biomarkerDf = PGxVision::Biomarkers,
+                               chromosomeDf = PGxVision::GRCh38.p13.Assembly,
+                               tissue = "Lymphoid", compound = "Nvp-tae 684", 
+                               mDataType = "rna")
 
 ```
 
@@ -147,10 +146,9 @@ lymphoid tissues exposed to Nvp-tae 684. We use the default
 `pValueCutoff=0.05`, to match the significance cutoff in the Manhattan plot.
 
 ``` {r, fig.width = 8, fig.height = 6}
- experiment <- setNames(c("Lymphoid", "Nvp-tae 684", "rna"), 
-                        c("tissue", "compound", "mDataType"))
  PGxVision::buildVolcanoPlot(biomarkerDf=PGxVision::Biomarkers,
-                             experiment=experiment)
+                             tissue = "Lymphoid", compound = "Nvp-tae 684", 
+                             mDataType = "rna")
 
 ```
 
@@ -230,9 +228,9 @@ by using the __*queryGene*__ function. We use `queryType="GO:BP"` to indicate
 that we want to explore gene sets that correspond to GO biological pathways.
 
 ``` {r}
- geneSetIds <- PGxVision::queryGene(geneId = "ENSG00000000971", 
-                                    queryType ="GO:BP")
- geneSetIds
+ geneSetInfo <- PGxVision::getGeneSets(geneId = "ENSG00000000971", 
+                                       queryType ="GO:BP")
+ head(geneSetInfo)
 
 ```
 The result is a vector of gene set IDs from MSigDb. For example, M15770 refers 
@@ -259,7 +257,7 @@ unique genes). Future versions of **PGxVision** will support more complex
 similiarity metrics.
 
 ``` {r}
- geneSets <- PGxVision::expandGeneSets(geneSetIds = geneSetIds, 
+ geneSets <- PGxVision::expandGeneSets(geneSetIds = geneSetInfo$gs_id, 
                                        geneSetType = "GO:BP")
  similarityScores <- PGxVision::computeGeneSetSimilarity(geneSets)
  head(similarityScores)
@@ -275,8 +273,8 @@ be. For now, we override the default cutoff and set `similarityCutoff=0` to
 plot all the edges.
 
 ``` {r, fig.width = 8, fig.height = 6}
- graph <- PGxVision::buildNetworkPlot(gsSimilarityDf = similarityScores, 
-                                     similarityCutoff = 0)
+ result <- PGxVision::buildNetworkPlot(gsSimilarityDf = similarityScores, 
+                                       similarityCutoff = 0)
 
 ```
 
@@ -286,7 +284,7 @@ makes it difficult to distinguish the gene set groupings. For this reason, the
 default `similarityCutoff` is set to 0.5.
 
 ``` {r, fig.width = 8, fig.height = 6}
- graph <- PGxVision::buildNetworkPlot(gsSimilarityDf = similarityScores)
+ result <- PGxVision::buildNetworkPlot(gsSimilarityDf = similarityScores)
 
 ```
 In this graph, we can clearly see that gene sets M15770 and M16351 have 
@@ -303,8 +301,7 @@ GO cellular components that gene ENSG00000020577 is in.
 
 ``` {r, fig.width = 8, fig.height = 6}
  graph <- PGxVision::geneSetAnalysis(geneId="ENSG00000020577", 
-                                     queryType="GO:CC", 
-                                     similarityCutoff=0.2)
+                                     queryType="GO:CC")
 
 ```
 
