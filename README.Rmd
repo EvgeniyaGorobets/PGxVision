@@ -124,12 +124,10 @@ It is divided into two tabs: "Biomarkers", which lets you look at gene-level
 cell-line drug sensitivity data, and "Treatment Response", which lets you 
 examine and compare treatment responses of different tumours and compounds.
 
-```{r image_grobs, fig.show = "hold", out.width = "33%", fig.align = "default"}
+```{r image_grobs, fig.show = "hold", out.width = "33%", fig.align = "default", echo=FALSE}
 
 knitr::include_graphics("./inst/extdata/figures/app-1.png")
-
 knitr::include_graphics("./inst/extdata/figures/app-2.png")
-
 knitr::include_graphics("./inst/extdata/figures/app-3.png")
 
 ```
