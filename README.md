@@ -120,6 +120,12 @@ at gene-level cell-line drug sensitivity data, and “Treatment Response”,
 which lets you examine and compare treatment responses of different
 tumours and compounds.
 
+<!-- The code for placing images inline was taken from jdlong's comment on 
+ a post in RStudio Community: 
+ jdlong. (2018). How to stack two images horizontally in R Markdown. RStudio 
+ Community. 
+ https://community.rstudio.com/t/how-to-stack-two-images-horizontally-in-r-markdown/18941 -->
+
 <img src="./inst/extdata/figures/app-1.png" width="33%" /><img src="./inst/extdata/figures/app-2.png" width="33%" /><img src="./inst/extdata/figures/app-3.png" width="33%" />
 
 ### Sample Data
@@ -171,6 +177,8 @@ enhance the colors on the network plot (*buildNetworkPlot*).
 ## References
 
 ### Package References
+
+These references describe any and all packages used in PGxVision.
 
 Almende B.V., Thieurmel, B., & Robert, T. (2021). visNetwork: Network
 Visualization using ‘vis.js’ Library. R package version 2.1.0.
@@ -225,6 +233,9 @@ Springer-Verlag New York. <https://ggplot2.tidyverse.org>.
 
 ### Data References
 
+These references indicate the source for all datasets available in
+PGxVision.
+
 Feizi, N., Nair, S. K., Smirnov, P., Beri, G., Eeles, C., Esfahani, P.
 N., … Haibe-Kains, B. (2021). PharmacoDB 2.0: Improving scalability and
 transparency of in vitro pharmacogenomics analysis. *bioRxiv.*
@@ -246,6 +257,20 @@ Gillette, M. A., … Mesirov, J. P. (2005). Gene set enrichment analysis:
 A knowledge-based approach for interpreting genome-wide expression
 profiles. *Proceedings of the National Academy of Sciences, 102*(43),
 15545–15550. <doi:10.1073/pnas.0506580102>
+
+### Code References
+
+These references indicate the source for any code in PGxVision that was
+taken directly from a website (not including documentation & vignettes
+for packages).
+
+jdlong. (2018). How to stack two images horizontally in R Markdown.
+*RStudio Community.*
+<https://community.rstudio.com/t/how-to-stack-two-images-horizontally-in-r-markdown/18941>
+
+Perry & YakovL. (2017). Stop vis.js physics after nodes load but allow
+drag-able nodes. *StackOverflow.*
+<https://stackoverflow.com/questions/32403578/stop-vis-js-physics-after-nodes-load-but-allow-drag-able-nodes>
 
 ## Acknowledgements
 

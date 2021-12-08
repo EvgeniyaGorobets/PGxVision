@@ -124,6 +124,11 @@ It is divided into two tabs: "Biomarkers", which lets you look at gene-level
 cell-line drug sensitivity data, and "Treatment Response", which lets you 
 examine and compare treatment responses of different tumours and compounds.
 
+<!-- The code for placing images inline was taken from jdlong's comment on 
+ a post in RStudio Community: 
+ jdlong. (2018). How to stack two images horizontally in R Markdown. RStudio 
+ Community. 
+ https://community.rstudio.com/t/how-to-stack-two-images-horizontally-in-r-markdown/18941 -->
 ```{r image_grobs, fig.show = "hold", out.width = "33%", echo=FALSE}
 
 knitr::include_graphics("./inst/extdata/figures/app-1.png")
@@ -180,6 +185,8 @@ on the network plot (_buildNetworkPlot_).
 
 ### Package References
 
+These references describe any and all packages used in PGxVision.
+
 Almende B.V., Thieurmel, B., & Robert, T. (2021). visNetwork: Network 
   Visualization using 'vis.js' Library. R package version 2.1.0. 
   https://CRAN.R-project.org/package=visNetwork
@@ -231,6 +238,8 @@ Wickham, H. (2016). ggplot2: Elegant Graphics for Data Analysis.
   
 ### Data References
 
+These references indicate the source for all datasets available in PGxVision.
+
 Feizi, N., Nair, S. K., Smirnov, P., Beri, G., Eeles, C., Esfahani, P. N., … 
   Haibe-Kains, B. (2021). PharmacoDB 2.0: Improving scalability and 
   transparency of in vitro pharmacogenomics analysis. _bioRxiv._ 
@@ -252,6 +261,19 @@ Subramanian, A., Tamayo, P., Mootha, V. K., Mukherjee, S., Ebert, B. L.,
   A knowledge-based approach for interpreting genome-wide expression profiles. 
   _Proceedings of the National Academy of Sciences, 102_(43), 15545–15550. 
   doi:10.1073/pnas.0506580102
+  
+### Code References
+
+These references indicate the source for any code in PGxVision that was taken 
+directly from a website (not including documentation & vignettes for packages).
+
+jdlong. (2018). How to stack two images horizontally in R Markdown. _RStudio 
+ Community._ 
+ https://community.rstudio.com/t/how-to-stack-two-images-horizontally-in-r-markdown/18941
+ 
+Perry & YakovL. (2017). Stop vis.js physics after nodes load but allow 
+  drag-able nodes. _StackOverflow._ 
+  https://stackoverflow.com/questions/32403578/stop-vis-js-physics-after-nodes-load-but-allow-drag-able-nodes
 
 
 ## Acknowledgements
