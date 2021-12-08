@@ -29,11 +29,14 @@ Imports:
     data.table,
     ggplot2,
     ggprism,
-    igraph,
     msigdbr,
+    plotly,
     qpdf,
+    shiny,
+    shinybusy,
     shinydashboard,
-    viridis
+    viridis,
+    visNetwork
 Suggests: 
     rmarkdown,
     knitr,
