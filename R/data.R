@@ -1,7 +1,8 @@
 #' Paxlitaxel response in BRCA PDXs
 #'
-#' A dataset containing the response of different BRCA tumours to paxlitaxel.
-#' The experiment tumours are patient-derived xenographs.
+#' A dataset containing the response of different BRCA tumours to paxlitaxel,
+#' as well as the levels of ODC1 transcripts in each tumour. The tumours are
+#' patient-derived xenographs.
 #'
 #' @format A data frame with 38 rows and 3 variables:
 #' \describe{
@@ -16,8 +17,10 @@
 
 #' Drug sensitivity data for genes in the GRCh38.p13 genome assembly
 #'
-#' A dataset containing the prices and other attributes of almost 54,000
-#' diamonds.???
+#' A dataset containing drug sensitivity signatures for cancer cell-line
+#' experiments. Each row contains the computed drug sensitivity signature
+#' (estimate, p-value, fdr, n) of a single gene in a single experiment (an
+#' experiment is defined by a tissue, compound/drug, and molecular data type).
 #'
 #' @format A data frame with 7805 rows and 12 variables:
 #' \describe{
@@ -27,7 +30,7 @@
 #'   \item{estimate}{The drug sensitivity estimate}
 #'   \item{n}{The number of trials}
 #'   \item{fdr}{false discovery rate (adjusted p-value)}
-#'   \item{mDataType}{the molecular data type, i.e., rna, etc.}
+#'   \item{mDataType}{the molecular data type, i.e., rna, cnv, etc.}
 #'   \item{gene_seq_start}{the relative starting position of the gene within
 #'   the chromosome}
 #'   \item{gene_seq_end}{the relative ending position of the gene within
