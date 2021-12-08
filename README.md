@@ -120,9 +120,9 @@ at gene-level cell-line drug sensitivity data, and “Treatment Response”,
 which lets you examine and compare treatment responses of different
 tumours and compounds.
 
-<img src="./inst/extdata/figures/app-1.png" style="width:10.0%" />
-<img src="./inst/extdata/figures/app-2.png" style="width:10.0%" />
-<img src="./inst/extdata/figures/app-3.png" style="width:10.0%" />
+<img src="./inst/extdata/figures/app-1.png" width="250" />
+<img src="./inst/extdata/figures/app-2.png" width="250" />
+<img src="./inst/extdata/figures/app-3.png" width="250" />
 
 ### Sample Data
 
