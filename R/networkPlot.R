@@ -30,6 +30,7 @@
 #' @importFrom visNetwork visNetwork visPhysics visEvents
 #' @importFrom viridis magma
 #' @importFrom grDevices colorRamp rgb
+#' @importFrom magrittr %>%
 #' @export
 buildNetworkPlot <- function(gsSimilarityDf, similarityCutoff=0.5, title=NULL) {
   # Check user input
