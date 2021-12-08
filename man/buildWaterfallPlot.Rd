@@ -28,13 +28,13 @@ drug sensitivity metrics; will be mapped on the y-axis}
 color of the bars (such as statistical significance). If no column is
 provided, it will default to the drugSensitivityCol.}
 
-\item{xLabel}{(optional) The label for the x-axis. Defaults to xAxisCol.}
+\item{xLabel}{(optional) The label for the x-axis. Defaults to <xAxisCol>.}
 
 \item{yLabel}{(optional) The label for the y-axis. Defaults to
-drugSensitivityCol.}
+<drugSensitivityCol>.}
 
 \item{title}{(optional) The title for the plot. Defaults to
-'drugSensitivityCol vs. xAxisCol'}
+'<drugSensitivityCol> vs. <xAxisCol>'}
 }
 \value{
 A ggplot2 plot object mapping the drug sensitivity metrics against

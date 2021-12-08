@@ -7,7 +7,7 @@
 #'
 #' @param geneId The ENSEMBL ID of the gene you want to query
 #' @param queryType The type of query you want to perform; see MSigDb for
-#' possible subcategories (use msigdbr::msigdbr_collections())
+#' possible subcategories (use \code{msigdbr::msigdbr_collections()})
 #' @param similarityMetric The algorithm used to compute the similarity between
 #' gene sets. The default (and only option currently) is "overlap".
 #'

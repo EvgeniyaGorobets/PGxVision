@@ -211,6 +211,7 @@ server <- function(input, output) {
       ggplotly(result$plot, source = "manhattan") %>%
         # Modify aesthetics because ggplotly overrides aes from ggplot2
         # NOTE: bottom padding doesn't work; idk why
+        # TODO: cite https://plotly-r.com/improving-ggplotly.html
         layout(title=list(font=list(size = 16), pad = list(b = 25))) %>%
         style(line = list(width = 1, color = "black", dash = "dot"), traces = 1)
     }
@@ -228,6 +229,7 @@ server <- function(input, output) {
                          input$mDataType, pValCutoff = input$pValCutoff)$plot)
       ggplotly(p, source = "volcano") %>%
         # Modify aesthetics because ggplotly overrides aes from ggplot2
+        # TODO: cite https://plotly-r.com/improving-ggplotly.html
         layout(title = list(font = list(size = 16))) %>%
         style(line = list(width = 1, color = "black", dash = "dot"), traces = 1)
     }

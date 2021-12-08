@@ -1,35 +1,42 @@
 #' Build a network plot of gene sets
 #'
 #' Create a network plot where each node corresponds to a gene set and edge
-#' weights correspond to the similarity score between two gene sets.
+#' weights and lengths correspond to the similarity score between two gene sets.
+#' The purpose is to visualize which gene sets share the most genes. Edges
+#' with low similarity scores can be pruned to help naturally divide gene sets
+#' into groups.
 #'
-#' @param gsSimilarityDf A data.frame listing the similarity score for each
-#' pair of gene sets. Must have columns "gs1", "gs2", "similarity"
-#' @param similarityCutoff (optional) A number indicating the minimum
-#' similarity two gene sets must have in order for an edge to show up on the
-#' plot. Defaults to 0.5. The higher this value is, the more legible the plot
-#' will be.
+#' @param gsSimilarityDf A non-empty data.frame listing the similarity score
+#' for each pair of gene sets (essentially a table of edges). Must have columns
+#' "gs1", "gs2", "similarity". It is ok to provide edges between a node and
+#' itself, e.g., in the case of network plots with a single node. Such edges
+#' will be removed.
+#' @param similarityCutoff (optional) A number between 0 and 1 indicating the
+#' minimum similarity two gene sets must have in order for an edge to show up
+#' on the plot. Defaults to 0.5. Very low values will cause a highly connected,
+#' possibly confusing plot. Very high values may remove or mask natural gene set
+#' groupings.
 #' @param title (optional) A custom title for the network plot. Defaults to
 #' "Gene Set Similarity Plot"
 #'
-#' @return The visNetwork object containing the network plot of gene sets
+#' @return An interactive visNetwork object containing the network plot of
+#' gene sets.
 #'
 #' @examples
-#' geneSetIds <- queryGene("ENSG00000000971", "GO:BP")
-#' geneSets <- expandGeneSets(geneSetIds, "GO:BP")
-#' gsSimilarityDf <- computeGeneSetSimilarity(geneSets)
-#' buildNetworkPlot(gsSimilarityDf, similarityCutoff=0.3)
+#' result <- geneSetAnalysis("ENSG00000000971", "GO:BP")
+#' buildNetworkPlot(result$similarityDf, similarityCutoff = 0.3)
 #'
 #' @importFrom checkmate assertDataFrame assertNames assertString
 #' @importFrom visNetwork visNetwork visPhysics visEvents
 #' @importFrom viridis magma
+#' @importFrom grDevices colorRamp rgb
 #' @export
 buildNetworkPlot <- function(gsSimilarityDf, similarityCutoff=0.5, title=NULL) {
   # Check user input
   checkmate::assertDataFrame(gsSimilarityDf, min.rows=1)
   checkmate::assertNames(colnames(gsSimilarityDf),
                          must.include=c("gs1", "gs2", "similarity"))
-  checkmate::assertNumber(similarityCutoff)
+  checkmate::assertNumber(similarityCutoff, lower=0, upper=1)
 
   if (!is.null(title)) {
     checkmate::assertString(title)
