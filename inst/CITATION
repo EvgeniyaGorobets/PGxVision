@@ -1,0 +1,13 @@
+citHeader("To cite PGxVision in publications use:")
+
+citEntry(
+  entry    = "Unpublished",
+  title    = "PGxVision: Pharmacogenomic Vision and Interpretation",
+  author   = "Evgeniya Gorobets",
+  note     = "Unpublished",
+  year     = "2021",
+  url      = "https://github.com/EvgeniyaGorobets/PGxVision",
+  textVersion = paste(
+"Gorobets, E. (2021). PGxVision: Pharmacogenomic Vision and Interpretation. Unpublished. URL https://github.com/EvgeniyaGorobets/PGxVision"
+  )
+)
