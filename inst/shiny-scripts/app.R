@@ -3,6 +3,7 @@ library(shinydashboard)
 library(shinybusy)
 library(plotly)
 library(visNetwork)
+library(magrittr)
 
 gsTypes <- unique(msigdbr::msigdbr_collections()$gs_subcat)
 blankGene <- data.table::data.table(gene="", abs_gene_seq_start="", chr="",

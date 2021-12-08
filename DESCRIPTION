@@ -29,6 +29,7 @@ Imports:
     data.table,
     ggplot2,
     ggprism,
+    magrittr,
     msigdbr,
     plotly,
     qpdf,
