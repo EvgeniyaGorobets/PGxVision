@@ -53,8 +53,6 @@ plotPropertiesBox <- box(
     sliderInput("pValCutoff", "P-Value Cutoff", min=0, max=1, value=0.05)),
   # TODO: something funny happens when pval >= 0.39 ?? consider
   # reducing range of slider
-  column(width = 4, p("Color manipulation: under construction")),
-  column(width = 4, p("Title/axis label manipulation: under construction"))
 )
 
 
