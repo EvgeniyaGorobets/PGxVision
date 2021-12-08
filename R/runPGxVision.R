@@ -24,3 +24,5 @@ runPGxVision <- function() {
   shiny::runApp(appDir, display.mode = "normal")
   return(invisible(NULL))
 }
+
+# [END]

@@ -2,7 +2,7 @@
 % Please edit documentation in R/geneSetAnalysis.R
 \name{expandGeneSets}
 \alias{expandGeneSets}
-\title{Expand gene sets}
+\title{Retrieve genes in each gene set}
 \usage{
 expandGeneSets(geneSetIds, geneSetType = NULL)
 }
@@ -10,16 +10,21 @@ expandGeneSets(geneSetIds, geneSetType = NULL)
 \item{geneSetIds}{A character vector containing gene set IDs from MSigDb}
 
 \item{geneSetType}{(optional) The types of gene sets in geneSetNames; see
-MSigDb for possible subcategories (use msigdbr::msigdbr_collections()). The
-geneSetNames alone are enough but providing the geneSetType may speed up
-computation because less data will be retrieved from MSigDb.}
+MSigDb for possible subcategories (use
+\code{msigdbr::msigdbr_collections()}). This parameter is not required but
+may speed up computation because less data will be retrieved from MSigDb
+(smaller queries = faster queries).}
 }
 \value{
-A data.table mapping all gene sets to their component genes (2
-columns: "gs_id", "ensembl_gene")
+A data.table mapping all gene sets to their component genes. The
+data.table has two columns: "gs_id", which is the ID of the gene set, and
+"ensembl_gene", which is ENSEMBL ID of one of the genes in that gene set.
 }
 \description{
-Get all genes that are in the MSigDb gene sets corresponding to geneSetNames.
+Given a list of gene set IDs, query MSigDb to retrieve all genes that
+compose those gene sets, and return the result in a data.table. Since each
+gene set ID is mapped to a wide array of genes, each gene set is being
+"expanded".
 }
 \examples{
 geneSets <- getGeneSets("ENSG00000000971", "GO:BP")

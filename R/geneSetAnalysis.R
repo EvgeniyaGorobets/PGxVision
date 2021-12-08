@@ -1,26 +1,33 @@
 #' Perform a gene set analysis on a gene
 #'
-#' Query MSigDb to find all gene sets that query gene (geneId) is in, then
-#' compute the similarity of the gene sets and return the result in a data
-#' frame. This is a wrapper function which performs the full gene set
-#' analysis pipeline, minus the network plot.
+#' Query MSigDb to find all gene sets that query gene is in, then compute the
+#' similarity of the gene sets. Return both the similarity scores and the gene
+#' set information that was retrieved. This is a wrapper function which
+#' performs the full gene set analysis pipeline (not including
+#' buildNetworkPlot). Note that this function is computationally heavy and may
+#' take a while to run (this is mostly due to large, slow MSigDb API  queries).
 #'
 #' @param geneId The ENSEMBL ID of the gene you want to query
-#' @param queryType The type of query you want to perform; see MSigDb for
+#' @param queryType The type of gene sets you want to retrieve; see MSigDb for
 #' possible subcategories (use \code{msigdbr::msigdbr_collections()})
 #' @param similarityMetric The algorithm used to compute the similarity between
 #' gene sets. The default (and only option currently) is "overlap".
 #'
-#' @return TODO
+#' @return A named list with two fields: "geneSets" and "similarityDf".
+#' "geneSets" contains a data.table of all the gene sets containing the query
+#' gene and belonging to the queryType category (see
+#' \code{?PGxVision::getGeneSets} for more info). "similarityDf" contains a
+#' data.frame with the similarity scores for each pair of gene sets (see
+#' \code{?PGxVision::computeGeneSetSimilarity} for more info).
 #'
 #' @examples
 #' geneSetAnalysis("ENSG00000000971", "GO:BP")
 #'
-#' @importFrom checkmate assertDataFrame assertNames assertString
 #' @export
 geneSetAnalysis <- function(geneId, queryType, similarityMetric="overlap") {
-  # TODO: user input check
-  # Perform gene set analysis
+  # User input will be checked in getGeneSets; no need to duplicate the check
+
+  # Retrieve gene set info and stop if none were found
   targetGeneSets <- getGeneSets(geneId, queryType)
   if (nrow(targetGeneSets) == 0) {
     stop(paste0("There were no gene sets in the ", queryType,
@@ -28,29 +35,35 @@ geneSetAnalysis <- function(geneId, queryType, similarityMetric="overlap") {
                ". Try a different gene or a differnt gene set category."))
   }
 
+  # Compute similarity scores for gene sets
   geneSets <- expandGeneSets(targetGeneSets$gs_id, queryType)
   gsSimilarity <- computeGeneSetSimilarity(geneSets, similarityMetric)
+
   return(list(geneSets = targetGeneSets, similarityDf = gsSimilarity))
 }
 
 
-#' Get gene sets based on a query gene
+#' Get gene set info based on a query gene
 #'
-#' Get all gene sets from MSigDb that contain the query gene. Gene sets can be
-#' based on biological process, cellular component, pathways, etc.
+#' Get all gene sets from MSigDb that contain the query gene and belong to the
+#' queryType category. Examples of gene set categories are biological
+#' processes, cellular components, pathways, molecular functions, etc. Return
+#' information about all retrieved gene sets.
 #'
 #' @param geneId The ENSEMBL ID of the gene you want to query
-#' @param queryType The type of query you want to perform; see MSigDb for
-#' possible subcategories (use msigdbr::msigdbr_collections())
+#' @param queryType The type of query you want to perform, i.e., the category
+#' of the gene sets you are retrieving. See MSigDb for possible subcategories
+#' (use \code{msigdbr::msigdbr_collections()})
 #'
 #' @return A data.table containing all the gene sets in the category queryType
-#' and containing the query gene. data.table contains gene set ID, name, source,
-#' URL, and description.
+#' and containing the query gene. The data.table contains gene set ID (gs_id),
+#' name (gs_name), source (gs_exact_source), URL (gs_url), and description
+#' (gs_description).
 #'
 #' @examples
 #' getGeneSets("ENSG00000000971", "GO:BP")
 #'
-#' @importFrom checkmate assertString
+#' @importFrom checkmate assertString assertSubset
 #' @importFrom msigdbr msigdbr msigdbr_collections
 #' @importFrom data.table setDT
 #' @export
@@ -76,18 +89,23 @@ getGeneSets <- function(geneId, queryType) {
 }
 
 
-#' Expand gene sets
+#' Retrieve genes in each gene set
 #'
-#' Get all genes that are in the MSigDb gene sets corresponding to geneSetNames.
+#' Given a list of gene set IDs, query MSigDb to retrieve all genes that
+#' compose those gene sets, and return the result in a data.table. Since each
+#' gene set ID is mapped to a wide array of genes, each gene set is being
+#' "expanded".
 #'
 #' @param geneSetIds A character vector containing gene set IDs from MSigDb
 #' @param geneSetType (optional) The types of gene sets in geneSetNames; see
-#' MSigDb for possible subcategories (use msigdbr::msigdbr_collections()). The
-#' geneSetNames alone are enough but providing the geneSetType may speed up
-#' computation because less data will be retrieved from MSigDb.
+#' MSigDb for possible subcategories (use
+#' \code{msigdbr::msigdbr_collections()}). This parameter is not required but
+#' may speed up computation because less data will be retrieved from MSigDb
+#' (smaller queries = faster queries).
 #'
-#' @return A data.table mapping all gene sets to their component genes (2
-#' columns: "gs_id", "ensembl_gene")
+#' @return A data.table mapping all gene sets to their component genes. The
+#' data.table has two columns: "gs_id", which is the ID of the gene set, and
+#' "ensembl_gene", which is ENSEMBL ID of one of the genes in that gene set.
 #'
 #' @examples
 #' geneSets <- getGeneSets("ENSG00000000971", "GO:BP")
@@ -127,14 +145,21 @@ expandGeneSets <- function(geneSetIds, geneSetType=NULL) {
 }
 
 
-#' Compute the similarity between gene sets
+#' Compute the similarity/overlap between gene sets
+#'
+#' Given a table mapping gene sets to their component genes, compute the
+#' similarity between each pair of gene sets based on how many genes they share.
+#' Currently, only one similarity algorithm is implemented, which computes the
+#' ratio between the size of the intersection and the size of the union of a
+#' pair of gene sets.
 #'
 #' @param geneSets A data.table or data.frame with columns "gs_id" (gene set
 #' ID) and "ensembl_gene" (ENSEMBL gene ID) which lists the genes in each
-#' gene set
+#' gene set (one row per gene)
 #' @param similarityMetric (optional) The type of similarity metric to compute.
 #' Currently, the only option is "overlap", which calculates the proportion of
-#' intersecting genes to total genes between each pair of gene sets.
+#' intersecting genes to total genes between each pair of gene sets
+#' (size(intersection(gs1, gs2)) / size(union(gs1, gs2))).
 #'
 #' @return A data.frame that lists the similarity score between each pair of
 #' gene sets. There will be three columns: "gs1" (gene set 1), "gs2" (gene set
@@ -145,8 +170,7 @@ expandGeneSets <- function(geneSetIds, geneSetType=NULL) {
 #' geneSets <- expandGeneSets(targetGeneSets$gs_id, "GO:BP")
 #' computeGeneSetSimilarity(geneSets)
 #'
-#' @importFrom checkmate assertDataFrame
-#' @importFrom msigdbr msigdbr
+#' @importFrom checkmate assertDataFrame assertNames assertString
 #' @importFrom data.table setDT is.data.table
 #' @export
 computeGeneSetSimilarity <- function(geneSets, similarityMetric="overlap") {
