@@ -120,6 +120,16 @@ at gene-level cell-line drug sensitivity data, and “Treatment Response”,
 which lets you examine and compare treatment responses of different
 tumours and compounds.
 
+``` r
+knitr::include_graphics("./inst/extdata/figures/app-1.png")
+
+knitr::include_graphics("./inst/extdata/figures/app-2.png")
+
+knitr::include_graphics("./inst/extdata/figures/app-3.png")
+```
+
+<img src="./inst/extdata/figures/app-1.png" width="33%" /><img src="./inst/extdata/figures/app-2.png" width="33%" /><img src="./inst/extdata/figures/app-3.png" width="33%" />
+
 <img src="./inst/extdata/figures/app-1.png" width="250" />
 <img src="./inst/extdata/figures/app-2.png" width="250" />
 <img src="./inst/extdata/figures/app-3.png" width="250" />
