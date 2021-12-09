@@ -164,15 +164,23 @@ computeGeneSetSimilarity*). The `data.table` vignettes were used to
 create cleaner syntax and optimize table manipulation.
 
 `ggplot2` is used to create non-network plots (*buildVolcanoPlot,
-buildManhattanPlot, buildWaterfallPlot*), and `igraph` is used to create
-network plots (*buildNetworkPlot*). `ggprism` is used to enhance the
-axes on the Manhattan plot (*buildManhattanPlot*). `viridis` is used to
-enhance the colors on the network plot (*buildNetworkPlot*).
+buildManhattanPlot, buildWaterfallPlot*), and `viwNetwork` is used to
+create network plots (*buildNetworkPlot*). `ggprism` is used to enhance
+the axes on the Manhattan plot (*buildManhattanPlot*). `viridis` is used
+to enhance the colors on the network plot (*buildNetworkPlot*).
 
 `checkmate` is used to succinctly check user input in all functions.
 
 `msigdbr` is used to query the MSigDb in gene set analysis functions
 (*queryGene, expandGeneSets*).
+
+`shiny`, `shinydashboard`, and `shinybusy` are used to create the Shiny
+app and generate UI elements in the app. `plotly` is used to add
+interactivity to ggplots that are rendered in the Shiny app.
+`visNetwork` is used to add interactivity to visNetwork graphs that are
+generated in the Shiny app.
+
+`magrittr` is used to pipe between functions.
 
 ## References
 
