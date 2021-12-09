@@ -148,7 +148,8 @@ ui <- dashboardPage(
         tabName = "drugResponse",
         h2("Drug Response"),
         fluidRow(sensitivityFileUploadBox),
-        fluidRow(waterfallPlotBox)
+        fluidRow(waterfallPlotBox),
+        fluidRow(uiOutput("wfLabels"))
       )
     )
 
@@ -382,17 +383,34 @@ server <- function(input, output) {
     selectInput("wfCol", "Color", numericColumns, selectize = F)
   })
 
+  # Create text input elements for custom labeling
+  output$wfLabels <- renderUI({
+    box(width = 12, title = "Plot Labels",
+      column(
+        width = 4,
+        textInput("wfTitle", "Title", value = "")
+      ),
+      column(
+        width = 4,
+        textInput("wfXLabel", "x-Axis Label", value = input$wfX)
+      ),
+      column(
+        width = 4,
+        textInput("wfYLabel", "y-Axis Label", value = input$wfY)
+      )
+    )
 
-  # Update plots based on file upload
+  })
+
+  # Update plots based on selected columns
   output$waterfallPlot <- renderPlot({
     if (typeof(input$wfX) == "character" &&
         typeof(input$wfY) == "character" &&
         typeof(input$wfCol) == "character") {
       PGxVision::buildWaterfallPlot(
         rv$sensitivityDf, xAxisCol=input$wfX, drugSensitivityCol=input$wfY,
-        colorCol=input$wfCol, xLabel="Tumour",
-        yLabel="Angle Between Treatment and Control",
-        title="Paclitaxel Response in BRCA Tumours")
+        colorCol=input$wfCol, xLabel=input$wfXLabel, yLabel=input$wfYLabel,
+        title=input$wfTitle)
     }
   })
 
