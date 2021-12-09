@@ -17,6 +17,3 @@ test_that("buildVolcanoPlot doesn't accept faulty user input", {
 
 })
 
-
-# TODO: Test the plot of buildVolcanoPlot? test line placement? IDK
-

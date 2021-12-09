@@ -10,34 +10,30 @@ test_that("buildNetworkPlot doesn't accept faulty user input", {
   names(badDf) <- c("gs1", "gs2", "Similarity")
   expect_error(buildNetworkPlot(badDf))
 
-  badCutoff <- "3"
+  badCutoff <- "1"
+  expect_error(buildNetworkPlot(gsSimilarityDf, similarityCutoff=badCutoff))
+
+  badCutoff <- 3
   expect_error(buildNetworkPlot(gsSimilarityDf, similarityCutoff=badCutoff))
 
   badTitle <- 123
   expect_error(buildNetworkPlot(gsSimilarityDf, title=badTitle))
 })
 
-test_that("buildNetworkPlot doesn't plot empty network graph", {
-  df <- data.frame("gs1" = c("a", "b", "c"), "gs2" = c("b", "c", "a"),
-                   "similarity" = c(0.1, 0.2, 0.3))
-  expect_error(buildNetworkPlot(df))
-})
 
 test_that("buildNetworkPlot sets edge weights to gene set similarity", {
   similarityScores <- c(0.1, 0.2, 0.3)
   df <- data.frame("gs1" = c("a", "b", "c"), "gs2" = c("b", "c", "a"),
                    "similarity" = similarityScores)
   graph <- buildNetworkPlot(df, similarityCutoff=0)
-  expect_equal(igraph::E(graph)$weight, similarityScores)
+  expect_equal(graph$x$edges$value, similarityScores)
 })
+
 
 # Test geneSetAnalysis function
 # Since this is a wrapper around other functions which are already thoroughly
 # tested, I only test that errors are handled correctly
-test_that("geneSetAnalysis aborts if queryGene returns 1 or 0 gene sets", {
-  # queryGene("ENSG00000043143", "GO:MF") returns empty gene set
+test_that("geneSetAnalysis aborts if getGeneSets returns 0 gene sets", {
+  # getGeneSets("ENSG00000043143", "GO:MF") returns empty data.table
   expect_error(geneSetAnalysis("ENSG00000043143", "GO:MF"))
-
-  # queryGene("ENSG00000000003", "GO:CC") returns a single gene set ID
-  expect_error(geneSetAnalysis("ENSG00000000003", "GO:CC"))
 })

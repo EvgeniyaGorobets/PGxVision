@@ -1,17 +1,22 @@
-# Test queryGene function
-test_that("queryGene doesn't accept faulty user input", {
+# Test getGeneSets function
+test_that("getGeneSets doesn't accept faulty user input", {
   badGene <- 100
-  expect_error(queryGene(badGene, "GO:CC"))
+  expect_error(getGeneSets(badGene, "GO:CC"))
 
   badSubtype <- "GO:BF"
-  expect_error(queryGene("geneId", badSubtype))
+  expect_error(getGeneSets("geneId", badSubtype))
 })
 
-test_that("queryGene returns corrects gene set IDs", {
-  geneSetIds <- queryGene("ENSG00000012124", "GO:CC")
-  expected <- c("M17635", "M25848", "M11182", "M9432", "M5343", "M2251",
-                "M9232", "M17771", "M17514", "M17678")
-  expect_equal(geneSetIds, expected)
+test_that("getGeneSets returns correct gene set IDs and columns", {
+  geneSets <- getGeneSets("ENSG00000012124", "GO:CC")
+
+  expectedCols <- c("gs_id", "gs_name", "gs_exact_source", "gs_url",
+                    "gs_description")
+  expect_equal(colnames(geneSets), expectedCols)
+
+  expectedGeneSets <- c("M17635", "M25848", "M11182", "M9432", "M5343", "M2251",
+                        "M9232", "M17771", "M17514", "M17678")
+  expect_equal(geneSets$gs_id, expectedGeneSets)
 })
 
 
@@ -21,12 +26,12 @@ test_that("expandGeneSets doesn't accept faulty user input", {
   expect_error(expandGeneSets(badIds))
 
   badSubtype <- "GO:BF"
-  expect_error(queryGene("geneId", badSubtype))
+  expect_error(getGeneSets("geneId", badSubtype))
 })
 
 test_that("expandGeneSets correctly expands gene sets", {
   testGene <- "ENSG00000012124"
-  geneSetIds <- queryGene(testGene, "GO:CC")
+  geneSetIds <- getGeneSets(testGene, "GO:CC")$gs_id
   geneSets <- expandGeneSets(geneSetIds)
   # This test may need to be updated if the MSigDb changes
   expect_equal(geneSets, TestGeneSets)

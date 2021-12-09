@@ -1,21 +1,30 @@
 # Test selectExperiment function
-test_that("selectExperiment doesn't accept faulty experiment vector", {
+test_that("selectExperiment doesn't accept faulty user input", {
+  # Accepts data.table only, not data.frame
+  expect_error(selectExperiment(data.frame(a=c(1, 2), b=c(3, 4))))
+
   df <- copy(Biomarkers)
   dt <- setDT(df)
-  notVector <- list("Lung", "Panobinostat", "rna")
-  expect_error(selectExperiment(dt, experiment=notVector))
 
-  badVector <- setNames(c("Lung", "Panobinostat", "rna"),
-                        c("tissue", "drug", "mDataType"))
-  expect_error(selectExperiment(dt, experiment=badVector))
+  # only accepts strings for other params
+  expect_error(selectExperiment(dt, tissue = 3))
+  expect_error(selectExperiment(dt, compound = list("notAString")))
+  expect_error(selectExperiment(dt, mDataType = F))
 })
 
 test_that("selectExperiment warns when it returns empty data.table", {
   df <- copy(Biomarkers)
   dt <- setDT(df)
-  experiment <- setNames(c("Lung", "unknownDrug", "rna"),
-                         c("tissue", "compound", "mDataType"))
-  expect_warning(selectExperiment(dt, experiment))
+  expect_warning(selectExperiment(dt, "Lung", "unknownDrug", "rna"))
 })
 
-# TODO: write a test that checks proper subsetting occurs
+test_that("selectExperiment returns correct rows", {
+  df <- copy(Biomarkers)
+  dt <- setDT(df)
+  result <- selectExperiment(dt, "Lung", "Trametinib", "rna")
+
+  expect_true(all(result$tissue == "Lung"))
+  expect_true(all(result$compound == "Trametinib"))
+  expect_true(all(result$mDataType == "rna"))
+  expect_equal(nrow(result), 1106)
+})

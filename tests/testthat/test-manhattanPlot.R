@@ -13,7 +13,7 @@ test_that("buildManhattanPlot doesn't accept faulty user input", {
 
   chrDf <- GRCh38.p13.Assembly
   badDf <- data.frame(GRCh38.p13.Assembly)
-  names(badDf)[2] <- "chromosomeName"
+  names(badDf)[1] <- "chromosomeName"
   expect_error(buildManhattanPlot(biomarkerDf=df, chromosomeDf=badDf))
 
   experiment <- setNames(c("Lung", "Panobinostat", "rna"),
