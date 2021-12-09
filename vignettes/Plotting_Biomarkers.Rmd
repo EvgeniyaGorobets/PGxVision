@@ -73,7 +73,7 @@ patient's data and will identify biomarkers found in preclinical trials within
 the patient's genome, to further inform predictions and prognoses.
 
 The Shiny implementation of **PGxVision** is available as __*runPGxVision*__. 
-For more information, see the [Shiny App](#shiny) subsection.. 
+For more information, see the [Shiny App](#shiny) subsection. 
 
 **This document gives a tour of PGxVision (version 0.1.0) functionalities.** 
 It was written in R Markdown, using the 
@@ -344,6 +344,7 @@ Users can upload biomarker, genome, and drug sensitivity data through the file
 upload boxes located at the top of each tab.
 
 The Shiny app has several advantages over traditional use of **PGxVision**:
+
 * [Easier Plotting](#easier-plotting)
 * [Interactivity](#interactivity)
 * [Fewer Errors](#fewer-errors)
