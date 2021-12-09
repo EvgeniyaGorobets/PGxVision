@@ -11,7 +11,7 @@ biomarkerFile <- system.file(paste0(sampleDataDir, "sampleBiomarkers.csv"),
                              package="PGxVision")
 Biomarkers <- read.csv(biomarkerFile)
 genomeFile <- system.file(paste0(sampleDataDir, "sampleGenome.csv"),
-                             package="PGxVision")
+                          package="PGxVision")
 GRCh38p13Assembly <- read.csv(genomeFile)
 pdxFile <- system.file(paste0(sampleDataDir, "sampleTreatmentResponse.csv"),
                               package="PGxVision")
@@ -217,8 +217,9 @@ server <- function(input, output) {
         typeof(input$compound) == "character" &&
         typeof(input$mDataType) == "character") {
       result <- suppressWarnings(
-        buildManhattanPlot(rv$biomarkerDf, rv$chromosomeDf, input$tissue,
-                           input$compound, input$mDataType, input$pValCutoff))
+        PGxVision::buildManhattanPlot(
+          rv$biomarkerDf, rv$chromosomeDf, input$tissue,
+          input$compound, input$mDataType, input$pValCutoff))
       rv$plottedBiomrkrs <- result$dt
       ggplotly(result$plot, source = "manhattan") %>%
         # Modify aesthetics because ggplotly overrides aes from ggplot2
@@ -237,8 +238,9 @@ server <- function(input, output) {
         typeof(input$compound) == "character" &&
         typeof(input$mDataType) == "character") {
       p <- suppressWarnings(
-        buildVolcanoPlot(rv$biomarkerDf, input$tissue, input$compound,
-                         input$mDataType, pValCutoff = input$pValCutoff)$plot)
+        PGxVision::buildVolcanoPlot(
+          rv$biomarkerDf, input$tissue, input$compound,
+          input$mDataType, pValCutoff = input$pValCutoff)$plot)
       ggplotly(p, source = "volcano") %>%
         # Modify aesthetics because ggplotly overrides aes from ggplot2
         # TODO: cite https://plotly-r.com/improving-ggplotly.html
@@ -299,7 +301,8 @@ server <- function(input, output) {
       # Gene set analysis can take a while, so show a spinner in the meantime
       show_spinner()
 
-      gsAnalysis <- geneSetAnalysis(input$gene, input$gsType, input$simAlgo)
+      gsAnalysis <- PGxVision::geneSetAnalysis(
+        input$gene, input$gsType, input$simAlgo)
       rv$gsSimilarityDf <- gsAnalysis$similarityDf
       rv$geneSets <- gsAnalysis$geneSets
       rv$error <- NULL
@@ -320,7 +323,7 @@ server <- function(input, output) {
   output$networkPlot <- renderVisNetwork({
     req(rv$geneSets, rv$gsSimilarityDf)
 
-    p <- buildNetworkPlot(rv$gsSimilarityDf, input$simCutoff) %>%
+    p <- PGxVision::buildNetworkPlot(rv$gsSimilarityDf, input$simCutoff) %>%
       # Add JS hook to react to node selection
       # Js code taken from xclotet:
       # xclotet. (2016). Get selected Node data from visNetwork graph without
@@ -387,7 +390,7 @@ server <- function(input, output) {
     if (typeof(input$wfX) == "character" &&
         typeof(input$wfY) == "character" &&
         typeof(input$wfCol) == "character") {
-      buildWaterfallPlot(
+      PGxVision::buildWaterfallPlot(
         rv$sensitivityDf, xAxisCol=input$wfX, drugSensitivityCol=input$wfY,
         colorCol=input$wfCol, xLabel="Tumour",
         yLabel="Angle Between Treatment and Control",
