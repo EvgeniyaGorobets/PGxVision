@@ -69,7 +69,8 @@ geneSetAnalysis <- function(geneId, queryType, similarityMetric="overlap") {
 #' @export
 getGeneSets <- function(geneId, queryType) {
   # Local bindings to satisfy check() and DT syntax
-  ensembl_gene <- NULL
+  ensembl_gene <- gs_id <- gs_name <- gs_exact_source <- gs_url <-
+    gs_description <- NULL
 
   # Check user inputs
   checkmate::assertString(geneId)
