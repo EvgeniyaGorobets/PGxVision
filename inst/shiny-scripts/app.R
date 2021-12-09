@@ -1,8 +1,6 @@
 library(shiny)
 library(shinydashboard)
-library(shinybusy)
 library(plotly)
-library(visNetwork)
 library(magrittr)
 
 # Load sample data
@@ -87,8 +85,8 @@ geneSetAnalysisBox <- box(
   column(
     width = 8,
     uiOutput("plotError"),
-    use_busy_spinner(spin = "fading-circle"),
-    visNetworkOutput("networkPlot")),
+    shinybusy::use_busy_spinner(spin = "fading-circle"),
+    visNetwork::visNetworkOutput("networkPlot")),
   column(
     width = 4, br(),
     sliderInput("simCutoff", "Similarity Cutoff",
@@ -299,7 +297,7 @@ server <- function(input, output) {
     rv$geneSets <- NULL
     tryCatch({
       # Gene set analysis can take a while, so show a spinner in the meantime
-      show_spinner()
+      shinybusy::show_spinner()
 
       gsAnalysis <- PGxVision::geneSetAnalysis(
         input$gene, input$gsType, input$simAlgo)
@@ -307,7 +305,7 @@ server <- function(input, output) {
       rv$geneSets <- gsAnalysis$geneSets
       rv$error <- NULL
 
-      hide_spinner()
+      shinybusy::hide_spinner()
     },
     error=function(e) {
       hide_spinner()
@@ -320,7 +318,7 @@ server <- function(input, output) {
     p(rv$error)
   })
 
-  output$networkPlot <- renderVisNetwork({
+  output$networkPlot <- visNetwork::renderVisNetwork({
     req(rv$geneSets, rv$gsSimilarityDf)
 
     p <- PGxVision::buildNetworkPlot(rv$gsSimilarityDf, input$simCutoff) %>%
@@ -329,8 +327,8 @@ server <- function(input, output) {
       # xclotet. (2016). Get selected Node data from visNetwork graph without
       # actionButton. StackOverflow.
       # https://stackoverflow.com/questions/41018899/get-selected-node-data-from-visnetwork-graph-without-actionbutton/41020222
-      visEvents(select = "function(nodes) {
-                Shiny.onInputChange('currentNodeId', nodes.nodes);}")
+      visNetwork::visEvents(select = "function(nodes) {
+        Shiny.onInputChange('currentNodeId', nodes.nodes);}")
     p
   })
 
