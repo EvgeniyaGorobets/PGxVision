@@ -45,7 +45,7 @@ buildVolcanoPlot <- function(biomarkerDf, tissue="", compound="", mDataType="",
                              pValCutoff=0.05, xLabel=NULL, yLabel=NULL,
                              title=NULL) {
   # Local bindings to satisfy check() and DT syntax
-  significant <- pvalue <- estimate <- NULL
+  significant <- pvalue <- estimate <- log10pValue <- NULL
 
   # Assign axis labels and title, if user did not provide any
   if (is.null(xLabel)) {
@@ -76,7 +76,7 @@ buildVolcanoPlot <- function(biomarkerDf, tissue="", compound="", mDataType="",
   # significant, based on the p-value cutoff given
   selectedBiomrkrs <- data.table::copy(selectedBiomrkrs)
   selectedBiomrkrs[, significant := (pvalue <= pValCutoff)]
-  selectedBiomrkrs[, log10pValue := -log10(pvalue)] #FIXME: these can be combined into one statement
+  selectedBiomrkrs[, log10pValue := -log10(pvalue)]
 
   # Build the volcano plot
   plot <- ggplot2::ggplot(selectedBiomrkrs, ggplot2::aes(

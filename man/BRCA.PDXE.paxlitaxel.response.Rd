@@ -20,7 +20,8 @@ xenograft (PDX) data. R package version 1.10.0.
 BRCA.PDXE.paxlitaxel.response
 }
 \description{
-A dataset containing the response of different BRCA tumours to paxlitaxel.
-The experiment tumours are patient-derived xenographs.
+A dataset containing the response of different BRCA tumours to paxlitaxel,
+as well as the levels of ODC1 transcripts in each tumour. The tumours are
+patient-derived xenographs.
 }
 \keyword{datasets}

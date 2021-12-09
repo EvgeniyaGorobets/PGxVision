@@ -33,7 +33,7 @@ library("PGxVision")
 To run the shinyApp:
 
 ``` r
-Under construction
+runPGxVision()
 ```
 
 ## Overview
@@ -44,10 +44,11 @@ data(package = "PGxVision")
 browseVignettes("PGxVision")
 ```
 
-`PGxVision` contains eight functions and four sample data sets. Of the
-eight functions, three are plotting functions for visualizing drug
-sensitivity data, and five are gene set analysis functions that help
-provide biological context for genes of interest.
+`PGxVision` contains nine functions and four sample data sets. Of the
+nine functions, one is to run the Shiny app for this package, three are
+plotting functions for visualizing drug sensitivity data, and five are
+gene set analysis functions that help provide biological context for
+genes of interest.
 
 An overview of the package is illustrated below.
 
@@ -80,11 +81,12 @@ Biomarkers vignette.
 
 The gene set analysis in this package is broken down into four steps:
 
-1.  *queryGene*: Given a gene ID, find all gene sets that contain that
-    gene. Users can examine different types of gene sets, such as those
-    based on biological pathways, cellular components, molecular
-    function, etc.
-2.  *expandGeneSets*: Using the gene set IDs retrieved in *queryGene*,
+1.  *getGeneSets*: Given an ENSEMBL gene ID, find all gene sets that
+    contain that gene and return information about those gene sets.
+    Users can examine different types of gene sets, such as those based
+    on biological pathways, cellular components, molecular function,
+    etc.
+2.  *expandGeneSets*: Using the gene set IDs retrieved in *getGeneSets*,
     get all other genes in those gene sets.
 3.  *computeGeneSetSimilarity*: Using the fully expanded gene sets from
     *expandGeneSets*, compute the overlap between the gene sets. All
@@ -93,16 +95,38 @@ The gene set analysis in this package is broken down into four steps:
     similarity metrics based on the proportion of intersecting genes to
     total genes.
 4.  *buildNetworkPlot*: Plot the gene sets that were retrieved in
-    *queryGene*, using their similarity scores from
+    *getGeneSets*, using their similarity scores from
     *computeGeneSetSimilarity* as edge weights. Gene sets that have high
     overlap will be in closer proximity and will have thicker and darker
     edges between them.
 
 In addition to these four functions, the *geneSetAnalysis* function is
-provided to run the entire analysis described above. You can learn more
-about how to use these gene set analysis functions in the Gene Set
-Analysis section of the Visualizing and Interpreting Biomarkers
+provided to run the first three steps of the above pipeline. You can
+learn more about how to use these gene set analysis functions in the
+Gene Set Analysis section of the Visualizing and Interpreting Biomarkers
 vignette.
+
+### Shiny Dashboard
+
+The *runPGxVision* lets you perform the functions described above by
+interacting with UI elements. The dashboard layout of the app lets you
+see multiple plots side by side, to facilitate analysis. Additionally,
+the Shiny app lets you interact with the plots (hovering over and
+selecting points), making it easier to extract useful information.
+
+The screenshots below illustrate what the main features and layout of
+the app. It is divided into two tabs: “Biomarkers”, which lets you look
+at gene-level cell-line drug sensitivity data, and “Treatment Response”,
+which lets you examine and compare treatment responses of different
+tumours and compounds.
+
+<!-- The code for placing images inline was taken from jdlong's comment on 
+ a post in RStudio Community: 
+ jdlong. (2018). How to stack two images horizontally in R Markdown. RStudio 
+ Community. 
+ https://community.rstudio.com/t/how-to-stack-two-images-horizontally-in-r-markdown/18941 -->
+
+<img src="./inst/extdata/figures/app-1.png" width="33%" /><img src="./inst/extdata/figures/app-2.png" width="33%" /><img src="./inst/extdata/figures/app-3.png" width="33%" />
 
 ### Sample Data
 
@@ -140,23 +164,46 @@ computeGeneSetSimilarity*). The `data.table` vignettes were used to
 create cleaner syntax and optimize table manipulation.
 
 `ggplot2` is used to create non-network plots (*buildVolcanoPlot,
-buildManhattanPlot, buildWaterfallPlot*), and `igraph` is used to create
-network plots (*buildNetworkPlot*). `ggprism` is used to enhance the
-axes on the Manhattan plot (*buildManhattanPlot*). `viridis` is used to
-enhance the colors on the network plot (*buildNetworkPlot*).
+buildManhattanPlot, buildWaterfallPlot*), and `viwNetwork` is used to
+create network plots (*buildNetworkPlot*). `ggprism` is used to enhance
+the axes on the Manhattan plot (*buildManhattanPlot*). `viridis` is used
+to enhance the colors on the network plot (*buildNetworkPlot*).
 
 `checkmate` is used to succinctly check user input in all functions.
 
 `msigdbr` is used to query the MSigDb in gene set analysis functions
 (*queryGene, expandGeneSets*).
 
+`shiny`, `shinydashboard`, and `shinybusy` are used to create the Shiny
+app and generate UI elements in the app. `plotly` is used to add
+interactivity to ggplots that are rendered in the Shiny app.
+`visNetwork` is used to add interactivity to visNetwork graphs that are
+generated in the Shiny app.
+
+`magrittr` is used to pipe between functions.
+
 ## References
 
 ### Package References
 
-Csardi, G., Nepusz, T. (2006). The igraph software package for complex
-network research, *InterJournal, Complex Systems 1695.*
-<https://igraph.org>
+These references describe any and all packages used in PGxVision.
+
+Almende B.V., Thieurmel, B., & Robert, T. (2021). visNetwork: Network
+Visualization using ‘vis.js’ Library. R package version 2.1.0.
+<https://CRAN.R-project.org/package=visNetwork>
+
+Bache, S. M., and Wickham, H. (2020). magrittr: A Forward-Pipe Operator
+for R. R package version 2.0.1.
+<https://CRAN.R-project.org/package=magrittr>
+
+Chang, W. and Borges Ribeiro, B. (2021). shinydashboard: Create
+Dashboards with ‘Shiny’. R package version 0.7.2.
+<https://CRAN.R-project.org/package=shinydashboard>
+
+Chang, W., Cheng, J., Allaire, J., Sievert, C., Schloerke, B., Xie, Y.,
+Allen, J., McPherson, J., Dipert, A., and Borges, B. (2021). shiny: Web
+Application Framework for R. R package version 1.7.1.
+<https://CRAN.R-project.org/package=shiny>
 
 Dawson, C. (2021). ggprism: A ‘ggplot2’ Extension Inspired by ‘GraphPad
 Prism’. R package version 1.0.3.
@@ -178,14 +225,24 @@ Lang, M. (2017). “checkmate: Fast Argument Checks for Defensive R
 Programming.” *The R Journal 9*(1), 437-445.
 <https://journal.r-project.org/archive/2017/RJ-2017-028/index.html>.
 
+Meyer, F. and Perrier, V. (2020). shinybusy: Busy Indicator for ‘Shiny’
+Applications. R package version 0.2.2.
+<https://CRAN.R-project.org/package=shinybusy>
+
 R Core Team. (2021). R: A language and environment for statistical
 computing. R Foundation for Statistical Computing, Vienna, Austria.
 <https://www.R-project.org/>.
+
+Sievert, C. (2020). *Interactive Web-Based Data Visualization with R,
+plotly, and shiny*. Chapman and Hall/CRC.
 
 Wickham, H. (2016). ggplot2: Elegant Graphics for Data Analysis.
 Springer-Verlag New York. <https://ggplot2.tidyverse.org>.
 
 ### Data References
+
+These references indicate the source for all datasets available in
+PGxVision.
 
 Feizi, N., Nair, S. K., Smirnov, P., Beri, G., Eeles, C., Esfahani, P.
 N., … Haibe-Kains, B. (2021). PharmacoDB 2.0: Improving scalability and
@@ -208,6 +265,20 @@ Gillette, M. A., … Mesirov, J. P. (2005). Gene set enrichment analysis:
 A knowledge-based approach for interpreting genome-wide expression
 profiles. *Proceedings of the National Academy of Sciences, 102*(43),
 15545–15550. <doi:10.1073/pnas.0506580102>
+
+### Code References
+
+These references indicate the source for any code in PGxVision that was
+taken directly from a website (not including documentation & vignettes
+for packages).
+
+jdlong. (2018). How to stack two images horizontally in R Markdown.
+*RStudio Community.*
+<https://community.rstudio.com/t/how-to-stack-two-images-horizontally-in-r-markdown/18941>
+
+Perry & YakovL. (2017). Stop vis.js physics after nodes load but allow
+drag-able nodes. *StackOverflow.*
+<https://stackoverflow.com/questions/32403578/stop-vis-js-physics-after-nodes-load-but-allow-drag-able-nodes>
 
 ## Acknowledgements
 

@@ -52,7 +52,7 @@
 #' @importFrom checkmate assertDataFrame assertNames assertNumber assertString
 #' assertSubset
 #' @importFrom ggplot2 ggplot geom_point scale_x_continuous guides theme aes
-#' scale_color_manual ggtitle element_text geom_hline xlim
+#' scale_color_manual ggtitle element_text geom_hline xlim ylab xlab
 #' @importFrom ggprism guide_prism_minor
 #' @importFrom grDevices rainbow
 #' @export
@@ -62,7 +62,7 @@ buildManhattanPlot <- function(biomarkerDf, chromosomeDf,
                                xLabel=NULL, yLabel=NULL, title=NULL) {
   # Local bindings to satisfy check() and DT syntax
   pvalue <- seq_start <- abs_gene_seq_start <- significant <- chrLength <-
-    chrName <- chr <- NULL
+    chrName <- chr <- log10pValue <- NULL
 
   # Assign axis labels and title, if user doesn't provide any
   if (is.null(xLabel)) {
@@ -112,9 +112,8 @@ buildManhattanPlot <- function(biomarkerDf, chromosomeDf,
 
   # Add a column which indicates whether each result is significant, based on
   # the p-value cutoff given
-  # TODO: cutoff should be <= or < ?
   selectedBiomrks[, significant := (pvalue <= pValCutoff)]
-  selectedBiomrks[, log10pValue := -log10(pvalue)] #FIXME: these can be combined into one statement
+  selectedBiomrks[, log10pValue := -log10(pvalue)]
 
   # Build the Manhattan plot
   totalGenomeLen <- chromosomeDf[nrow(chromosomeDf), seq_start + chrLength]
@@ -128,6 +127,7 @@ buildManhattanPlot <- function(biomarkerDf, chromosomeDf,
 
   # Add title and colors
   plot <- plot + ggplot2::ggtitle(title) +
+    ggplot2::ylab(yLabel) + ggplot2::xlab(xLabel) +
     ggplot2::theme(legend.position = "none",
                    plot.title = ggplot2::element_text(hjust = 0.5)) +
     ggplot2::scale_color_manual(values=rainbow(nrow(chromosomeDf)))

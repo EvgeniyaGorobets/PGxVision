@@ -1,10 +1,21 @@
 library(shiny)
 library(shinybusy)
 library(shinydashboard)
-library(shinybusy)
 library(plotly)
-library(visNetwork)
 library(magrittr)
+
+# Load sample data
+sampleDataDir <- "extdata/sample_data/"
+biomarkerFile <- system.file(paste0(sampleDataDir, "sampleBiomarkers.csv"),
+                             package="PGxVision")
+Biomarkers <- read.csv(biomarkerFile)
+genomeFile <- system.file(paste0(sampleDataDir, "sampleGenome.csv"),
+                          package="PGxVision")
+GRCh38p13Assembly <- read.csv(genomeFile)
+pdxFile <- system.file(paste0(sampleDataDir, "sampleTreatmentResponse.csv"),
+                              package="PGxVision")
+brcaPdxePaxlitaxelResponse <- read.csv(pdxFile)
+
 
 gsTypes <- unique(msigdbr::msigdbr_collections()$gs_subcat)
 blankGene <- data.table::data.table(gene="", abs_gene_seq_start="", chr="",
@@ -26,9 +37,8 @@ biomarkerFileUploadBox <- box(
               accept = c("text/csv", ".csv"), buttonLabel="Browse files")
   ),
   p("NOTE: If no biomarker file is uploaded, then a sample biomarker dataset
-  will be used by default (see LINK for more). If no genome file is uploaded,
-  then the GRCh38.p13.Assembly genome will be used automatically (see LINK for
-  more).")
+  will be used by default. If no genome file is uploaded,
+  then the GRCh38.p13 genome will be used automatically.")
 )
 
 
@@ -54,8 +64,6 @@ plotPropertiesBox <- box(
     sliderInput("pValCutoff", "P-Value Cutoff", min=0, max=1, value=0.05)),
   # TODO: something funny happens when pval >= 0.39 ?? consider
   # reducing range of slider
-  column(width = 4, p("Color manipulation: under construction")),
-  column(width = 4, p("Title/axis label manipulation: under construction"))
 )
 
 
@@ -78,8 +86,8 @@ geneSetAnalysisBox <- box(
   column(
     width = 8,
     uiOutput("plotError"),
-    use_busy_spinner(spin = "fading-circle"),
-    visNetworkOutput("networkPlot")),
+    shinybusy::use_busy_spinner(spin = "fading-circle"),
+    visNetwork::visNetworkOutput("networkPlot")),
   column(
     width = 4, br(),
     sliderInput("simCutoff", "Similarity Cutoff",
@@ -141,7 +149,8 @@ ui <- dashboardPage(
         tabName = "drugResponse",
         h2("Drug Response"),
         fluidRow(sensitivityFileUploadBox),
-        fluidRow(waterfallPlotBox)
+        fluidRow(waterfallPlotBox),
+        fluidRow(uiOutput("wfLabels"))
       )
     )
 
@@ -151,12 +160,12 @@ ui <- dashboardPage(
 server <- function(input, output) {
   # Define reactive values
   rv <- reactiveValues(biomarkerDf = Biomarkers,
-                       chromosomeDf = GRCh38.p13.Assembly,
+                       chromosomeDf = GRCh38p13Assembly,
                        plottedBiomrkrs = NULL,
                        selectedGene = blankGene,
                        geneSets = NULL,
                        gsSimilarityDf = NULL,
-                       sensitivityDf = BRCA.PDXE.paxlitaxel.response,
+                       sensitivityDf = brcaPdxePaxlitaxelResponse,
                        error = NULL)
 
   # ------------------ BIOMARKER TAB ------------------ #
@@ -208,8 +217,9 @@ server <- function(input, output) {
         typeof(input$compound) == "character" &&
         typeof(input$mDataType) == "character") {
       result <- suppressWarnings(
-        buildManhattanPlot(rv$biomarkerDf, rv$chromosomeDf, input$tissue,
-                           input$compound, input$mDataType, input$pValCutoff))
+        PGxVision::buildManhattanPlot(
+          rv$biomarkerDf, rv$chromosomeDf, input$tissue,
+          input$compound, input$mDataType, input$pValCutoff))
       rv$plottedBiomrkrs <- result$dt
       ggplotly(result$plot, source = "manhattan") %>%
         # Modify aesthetics because ggplotly overrides aes from ggplot2
@@ -228,8 +238,9 @@ server <- function(input, output) {
         typeof(input$compound) == "character" &&
         typeof(input$mDataType) == "character") {
       p <- suppressWarnings(
-        buildVolcanoPlot(rv$biomarkerDf, input$tissue, input$compound,
-                         input$mDataType, pValCutoff = input$pValCutoff)$plot)
+        PGxVision::buildVolcanoPlot(
+          rv$biomarkerDf, input$tissue, input$compound,
+          input$mDataType, pValCutoff = input$pValCutoff)$plot)
       ggplotly(p, source = "volcano") %>%
         # Modify aesthetics because ggplotly overrides aes from ggplot2
         # TODO: cite https://plotly-r.com/improving-ggplotly.html
@@ -288,14 +299,15 @@ server <- function(input, output) {
     rv$geneSets <- NULL
     tryCatch({
       # Gene set analysis can take a while, so show a spinner in the meantime
-      show_spinner()
+      shinybusy::show_spinner()
 
-      gsAnalysis <- geneSetAnalysis(input$gene, input$gsType, input$simAlgo)
+      gsAnalysis <- PGxVision::geneSetAnalysis(
+        input$gene, input$gsType, input$simAlgo)
       rv$gsSimilarityDf <- gsAnalysis$similarityDf
       rv$geneSets <- gsAnalysis$geneSets
       rv$error <- NULL
 
-      hide_spinner()
+      shinybusy::hide_spinner()
     },
     error=function(e) {
       hide_spinner()
@@ -308,17 +320,17 @@ server <- function(input, output) {
     p(rv$error)
   })
 
-  output$networkPlot <- renderVisNetwork({
+  output$networkPlot <- visNetwork::renderVisNetwork({
     req(rv$geneSets, rv$gsSimilarityDf)
 
-    p <- buildNetworkPlot(rv$gsSimilarityDf, input$simCutoff) %>%
+    p <- PGxVision::buildNetworkPlot(rv$gsSimilarityDf, input$simCutoff) %>%
       # Add JS hook to react to node selection
       # Js code taken from xclotet:
       # xclotet. (2016). Get selected Node data from visNetwork graph without
       # actionButton. StackOverflow.
       # https://stackoverflow.com/questions/41018899/get-selected-node-data-from-visnetwork-graph-without-actionbutton/41020222
-      visEvents(select = "function(nodes) {
-                Shiny.onInputChange('currentNodeId', nodes.nodes);}")
+      visNetwork::visEvents(select = "function(nodes) {
+        Shiny.onInputChange('currentNodeId', nodes.nodes);}")
     p
   })
 
@@ -372,17 +384,34 @@ server <- function(input, output) {
     selectInput("wfCol", "Color", numericColumns, selectize = F)
   })
 
+  # Create text input elements for custom labeling
+  output$wfLabels <- renderUI({
+    box(width = 12, title = "Plot Labels",
+      column(
+        width = 4,
+        textInput("wfTitle", "Title", value = "")
+      ),
+      column(
+        width = 4,
+        textInput("wfXLabel", "x-Axis Label", value = input$wfX)
+      ),
+      column(
+        width = 4,
+        textInput("wfYLabel", "y-Axis Label", value = input$wfY)
+      )
+    )
 
-  # Update plots based on file upload
+  })
+
+  # Update plots based on selected columns
   output$waterfallPlot <- renderPlot({
     if (typeof(input$wfX) == "character" &&
         typeof(input$wfY) == "character" &&
         typeof(input$wfCol) == "character") {
-      buildWaterfallPlot(
+      PGxVision::buildWaterfallPlot(
         rv$sensitivityDf, xAxisCol=input$wfX, drugSensitivityCol=input$wfY,
-        colorCol=input$wfCol, xLabel="Tumour",
-        yLabel="Angle Between Treatment and Control",
-        title="Paclitaxel Response in BRCA Tumours")
+        colorCol=input$wfCol, xLabel=input$wfXLabel, yLabel=input$wfYLabel,
+        title=input$wfTitle)
     }
   })
 
