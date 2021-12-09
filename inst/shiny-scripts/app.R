@@ -5,6 +5,11 @@ library(plotly)
 library(visNetwork)
 library(magrittr)
 
+# Load data
+biomarkerFile <- system.file("extdata/sample_data/sampleBiomarkers.csv",
+                             package="PGxVision")
+Biomarkers <- read.csv(biomarkerFile)
+
 gsTypes <- unique(msigdbr::msigdbr_collections()$gs_subcat)
 blankGene <- data.table::data.table(gene="", abs_gene_seq_start="", chr="",
                                     pvalue="", estimate="", fdr="")
