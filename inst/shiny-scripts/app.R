@@ -5,10 +5,18 @@ library(plotly)
 library(visNetwork)
 library(magrittr)
 
-# Load data
-biomarkerFile <- system.file("extdata/sample_data/sampleBiomarkers.csv",
+# Load sample data
+sampleDataDir <- "extdata/sample_data/"
+biomarkerFile <- system.file(paste0(sampleDataDir, "sampleBiomarkers.csv"),
                              package="PGxVision")
 Biomarkers <- read.csv(biomarkerFile)
+genomeFile <- system.file(paste0(sampleDataDir, "sampleGenome.csv"),
+                             package="PGxVision")
+GRCh38p13Assembly <- read.csv(genomeFile)
+pdxFile <- system.file(paste0(sampleDataDir, "sampleTreatmentResponse.csv"),
+                              package="PGxVision")
+brcaPdxePaxlitaxelResponse <- read.csv(pdxFile)
+
 
 gsTypes <- unique(msigdbr::msigdbr_collections()$gs_subcat)
 blankGene <- data.table::data.table(gene="", abs_gene_seq_start="", chr="",
@@ -30,9 +38,8 @@ biomarkerFileUploadBox <- box(
               accept = c("text/csv", ".csv"), buttonLabel="Browse files")
   ),
   p("NOTE: If no biomarker file is uploaded, then a sample biomarker dataset
-  will be used by default (see LINK for more). If no genome file is uploaded,
-  then the GRCh38.p13.Assembly genome will be used automatically (see LINK for
-  more).")
+  will be used by default. If no genome file is uploaded,
+  then the GRCh38.p13 genome will be used automatically.")
 )
 
 
@@ -153,12 +160,12 @@ ui <- dashboardPage(
 server <- function(input, output) {
   # Define reactive values
   rv <- reactiveValues(biomarkerDf = Biomarkers,
-                       chromosomeDf = GRCh38.p13.Assembly,
+                       chromosomeDf = GRCh38p13Assembly,
                        plottedBiomrkrs = NULL,
                        selectedGene = blankGene,
                        geneSets = NULL,
                        gsSimilarityDf = NULL,
-                       sensitivityDf = BRCA.PDXE.paxlitaxel.response,
+                       sensitivityDf = brcaPdxePaxlitaxelResponse,
                        error = NULL)
 
   # ------------------ BIOMARKER TAB ------------------ #
