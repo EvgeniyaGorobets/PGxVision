@@ -256,12 +256,15 @@ server <- function(input, output) {
   output$pdbBiomarkerDfFiltered <- renderDataTable({
     print(rv$pdbBiomarkersDf)
     df_ <- if (input$feature != "") {
-      rv$pdbBiomarkersDf[symbol == input$feature, ]
+      rv$pdbBiomarkersDf[gene_symbol == input$feature]
     } else {
       rv$pdbBiomarkersDf
     }
-
-    df_[order(-pvalue), ]
+    df_[
+      order(-pvalue, abs(estimate)),
+      .(compound_name, correlation=estimate, pvalue, inchikey, pubchem,
+        chembl_id)
+    ]
   })
 
   output$tissueSelect <- renderUI({
