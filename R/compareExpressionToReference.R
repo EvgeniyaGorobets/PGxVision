@@ -6,19 +6,18 @@
 #'   as the data in `reference`.
 #' @param reference `data.frame` or `matrix` where rows are features, columns
 #'   are samples, and values are a measurement on each feature for each sample.
+#'   Rownames must match the specified `feature` value.
 #'
-#' @examples
+#' @return `numeric(1)` Percentile of `value` relative to the distrubtion of
+#'   `feature` in the `reference` population. Computed using `stats::ecdf`.
+#'
+#' @seealso `stats::ecdf`
 #'
 #' @importFrom checkmate checkCharacter checkNumeric checkDataFrame
+#' @export
 computeBiomarkerPercentile <- function(feature, value, reference) {
-    reference_ecdf <- ecdf(reference[feature, ])
+    suppressWarnings({
+        reference_ecdf <- ecdf(reference[feature, ])
+    })
     return(reference_ecdf(value))
-}
-
-#'
-#'
-#'
-#'
-rectangularToLongFormat <- function(object) {
-
 }

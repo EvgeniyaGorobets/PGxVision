@@ -4,6 +4,11 @@ library(shinydashboard)
 library(plotly)
 library(magrittr)
 
+# Change options for this session
+opts <- options()
+options(shiny.maxRequestSize=250*1024^2) # max upload of 250 MB
+on.exit(options(opts))
+
 # Load sample data
 sampleDataDir <- "extdata/sample_data/"
 biomarkerFile <- system.file(paste0(sampleDataDir, "sampleBiomarkers.csv"),
@@ -39,6 +44,38 @@ biomarkerFileUploadBox <- box(
   p("NOTE: If no biomarker file is uploaded, then a sample biomarker dataset
   will be used by default. If no genome file is uploaded,
   then the GRCh38.p13 genome will be used automatically.")
+)
+
+
+clinicalBiomarkerFileUploadBox <- box(
+  width=12,
+  column(
+    width=6,
+    fileInput("patientFile", "Upload Patient Molecular Profile CSV:",
+      accept=c("text/csv", ".csv"), buttonLabel="Browse files"
+    )
+  ),
+  column(
+    width=6,
+    fileInput("referencePopulationFile",
+      "Upload Reference Population CSV:",
+      accept=c("text/csv", ".csv"), buttonLabel="Browse files"
+    )
+  )
+)
+
+filterClinicalBiomarkersBox <- box(
+  width=12,
+  column(width=4,
+    uiOutput("featureSelect")
+  ),
+)
+
+clinicalBiomarkerDensityPlot <- box(
+    width=12,
+    column(width=2),
+    column(width=8, plotOutput("clinicalDensity")),
+    column(width=2)
 )
 
 
@@ -111,12 +148,13 @@ ui <- dashboardPage(
 
   dashboardSidebar(
     sidebarMenu(
-      menuItem("Biomarkers", tabName = "biomarkers", icon = icon("dna")),
+      menuItem("Clinical Biomarkers", tabName="clinical",
+        icon=icon("stethoscope")),
+      menuItem("Biomarker Analysis", tabName = "biomarkers", icon = icon("dna")),
       menuItem("Treatment Response", tabName = "drugResponse",
               icon = icon("capsules"))
     )
   ),
-
   dashboardBody(
     # Custom CSS to put shinybusy spinner in center of network plot
     tags$head(
@@ -129,6 +167,15 @@ ui <- dashboardPage(
       }"))
     ),
     tabItems(
+      # Clinical tab
+      tabItem(
+        tabName = "clinical",
+        h2("Single Sample Predictor"),
+        fluidRow(clinicalBiomarkerFileUploadBox),
+        fluidRow(filterClinicalBiomarkersBox),
+        fluidRow(clinicalBiomarkerDensityPlot),
+        fluidRow()
+      ),
       # Biomarkers tab
       tabItem(
         tabName = "biomarkers",
@@ -160,13 +207,15 @@ ui <- dashboardPage(
 server <- function(input, output) {
   # Define reactive values
   rv <- reactiveValues(biomarkerDf = Biomarkers,
-                       chromosomeDf = GRCh38p13Assembly,
-                       plottedBiomrkrs = NULL,
-                       selectedGene = blankGene,
-                       geneSets = NULL,
-                       gsSimilarityDf = NULL,
-                       sensitivityDf = brcaPdxePaxlitaxelResponse,
-                       error = NULL)
+    chromosomeDf = GRCh38p13Assembly,
+    plottedBiomrkrs = NULL,
+    selectedGene = blankGene,
+    geneSets = NULL,
+    gsSimilarityDf = NULL,
+    sensitivityDf = brcaPdxePaxlitaxelResponse,
+    patientDf = NULL,
+    referenceDf = NULL,
+    error = NULL)
 
   # ------------------ BIOMARKER TAB ------------------ #
 
@@ -181,6 +230,18 @@ server <- function(input, output) {
     rv$chromosomeDf <- read.csv(input$genomeFile$datapath)
   })
 
+  observeEvent(input$patientFile, {
+    req(input$patientFile)
+    df_ <- data.table::fread(input$patientFile$datapath)
+    rv$patientDf <- data.frame(df_[, -1], row.names=df_[[1]])
+  })
+
+  observeEvent(input$referencePopulationFile, {
+    req(input$referencePopulationFile)
+    df_ <- data.table::fread(input$referencePopulationFile$datapath)
+    rv$referenceDf <- data.frame(df_[, -1], row.names=df_[[1]])
+  })
+
   # Get all gene, tissues, compounds, and mDataTypes from biomarkerDf
   # and update dropdown elements accordingly
   output$geneSelect <- renderUI({
@@ -193,6 +254,12 @@ server <- function(input, output) {
     tissueChoices <- unique(rv$biomarkerDf$tissue) #FIXME: unsafe
     selectInput("tissue", "Tissue", c("Select a tissue..." = "", tissueChoices),
                 selected = "")
+  })
+
+  output$featureSelect <- renderUI({
+    featureChoices <- unique(row.names(rv$patientDf))
+    selectInput("feature", "Feature", c("Select a feature..." = "",
+      featureChoices), selected="ERBB2")
   })
 
   output$compoundSelect <- renderUI({
@@ -255,7 +322,7 @@ server <- function(input, output) {
 
     if (!is.null(event_data("plotly_click", source = "manhattan"))) {
       d <- event_data("plotly_click", source = "manhattan")
-      rv$selectedGene <- rv$plottedBiomrkrs[abs_gene_seq_start == d$x,]
+      rv$selectedGene <- rv$plottedBiomrkrs[abs_gene_seq_start == d$x, ]
     }
   })
 
@@ -264,7 +331,7 @@ server <- function(input, output) {
 
     if (!is.null(event_data("plotly_click", source = "volcano"))) {
       d <- event_data("plotly_click", source = "volcano")
-      rv$selectedGene <- rv$plottedBiomrkrs[estimate == d$x,]
+      rv$selectedGene <- rv$plottedBiomrkrs[estimate == d$x, ]
     }
   })
 
@@ -280,7 +347,7 @@ server <- function(input, output) {
         width = 9,
         h3("Biomarker Info"),
         div(tags$b("Gene: "), rv$selectedGene[1, gene]),
-        div(tags$b("Genome Position: "),rv$selectedGene[1, abs_gene_seq_start]),
+        div(tags$b("Genome Position: "), rv$selectedGene[1, abs_gene_seq_start]),
         div(tags$b("Chromosome: "), rv$selectedGene[1, chr]),
         div(tags$b("Estimate: "), rv$selectedGene[1, estimate]),
         div(tags$b("P-Value: "), rv$selectedGene[1, pvalue]),
@@ -333,6 +400,13 @@ server <- function(input, output) {
         Shiny.onInputChange('currentNodeId', nodes.nodes);}")
     p
   })
+
+  output$clinicalDensity <- renderPlot(
+    PGxVision::densityPlotBiomarkerPercentile(
+      input$feature,
+      rv$patientDf[input$feature, ],
+      rv$referenceDf)
+  )
 
   # React to node selection
   output$gsInfo <- renderUI({
@@ -400,7 +474,6 @@ server <- function(input, output) {
         textInput("wfYLabel", "y-Axis Label", value = input$wfY)
       )
     )
-
   })
 
   # Update plots based on selected columns
