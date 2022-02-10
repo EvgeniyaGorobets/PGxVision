@@ -78,13 +78,16 @@ clinicalBiomarkerDensityPlot <- box(
     column(width=2)
 )
 
+pharmacodbBiomarkersTable <- box(
+  width=12,
+  column(width=8, dataTableOutput("pdbBiomarkerDfFiltered"))
+)
 
 sensitivityFileUploadBox <- box(
   width = 12,
   fileInput("drugSensFile", "Upload Drug Sensitivity CSV:",
             accept = c("text/csv", ".csv"), buttonLabel="Browse files")
 )
-
 
 filterBiomarkersBox <- box(
   width = 12, title = "Filter Biomarkers",
@@ -174,7 +177,7 @@ ui <- dashboardPage(
         fluidRow(clinicalBiomarkerFileUploadBox),
         fluidRow(filterClinicalBiomarkersBox),
         fluidRow(clinicalBiomarkerDensityPlot),
-        fluidRow()
+        fluidRow(pharmacodbBiomarkersTable)
       ),
       # Biomarkers tab
       tabItem(
@@ -200,7 +203,6 @@ ui <- dashboardPage(
         fluidRow(uiOutput("wfLabels"))
       )
     )
-
   )
 )
 
@@ -215,6 +217,7 @@ server <- function(input, output) {
     sensitivityDf = brcaPdxePaxlitaxelResponse,
     patientDf = NULL,
     referenceDf = NULL,
+    pdbBiomarkersDf=PGxVision::fetchPharmacoDbBiomarkers(),
     error = NULL)
 
   # ------------------ BIOMARKER TAB ------------------ #
@@ -248,6 +251,12 @@ server <- function(input, output) {
     geneChoices <- unique(rv$biomarkerDf$gene) #FIXME: unsafe
     selectInput("gene", "Gene", c("Select a gene..." = "", geneChoices),
                 selected = "")
+  })
+
+  output$pdbBiomarkerDfFiltered <- renderDataTable({
+    df_ <- if (rv$feature != "") rv$pdbBiomarkersDf[symbol == rv$feature, ] else
+      rv$pdbBiomarkersDf
+    df_[order(-p_value, estimate), ]
   })
 
   output$tissueSelect <- renderUI({

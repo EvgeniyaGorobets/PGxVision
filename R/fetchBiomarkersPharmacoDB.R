@@ -68,7 +68,7 @@ fetchPharmacoDbBiomarkers <- function(mysql=file.path("~", ".mysql"),
         select(gene_id, compound_id, tissue_id, estimate, pvalue) |>
         inner_join(gene_df, by="gene_id") |>
         inner_join(compound_df, by="compound_id") |>
-        inner_join(tissue, by=c("tissue_id"="id")) |>
+        inner_join(tissue_df, by=c("tissue_id"="id")) |>
         select(-gene_id, -compound_id, -tissue_id) |>
         collect()
 
