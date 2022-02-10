@@ -80,7 +80,7 @@ clinicalBiomarkerDensityPlot <- box(
 
 pharmacodbBiomarkersTable <- box(
   width=12,
-  column(width=8, dataTableOutput("pdbBiomarkerDfFiltered"))
+  column(width=8, dataTableOutput("pdbBiomarkerDfFiltered"), align="center")
 )
 
 sensitivityFileUploadBox <- box(
