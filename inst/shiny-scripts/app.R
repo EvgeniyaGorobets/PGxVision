@@ -254,9 +254,14 @@ server <- function(input, output) {
   })
 
   output$pdbBiomarkerDfFiltered <- renderDataTable({
-    df_ <- if (rv$feature != "") rv$pdbBiomarkersDf[symbol == rv$feature, ] else
+    print(rv$pdbBiomarkersDf)
+    df_ <- if (input$feature != "") {
+      rv$pdbBiomarkersDf[symbol == input$feature, ]
+    } else {
       rv$pdbBiomarkersDf
-    df_[order(-p_value, estimate), ]
+    }
+
+    df_[order(-pvalue), ]
   })
 
   output$tissueSelect <- renderUI({
