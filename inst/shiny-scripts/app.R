@@ -74,13 +74,13 @@ filterClinicalBiomarkersBox <- box(
 clinicalBiomarkerDensityPlot <- box(
     width=12,
     column(width=2),
-    column(width=8, plotOutput("clinicalDensity")),
+    column(width=8, align="center", plotOutput("clinicalDensity")),
     column(width=2)
 )
 
 pharmacodbBiomarkersTable <- box(
   width=12,
-  column(width=8, dataTableOutput("pdbBiomarkerDfFiltered"), align="center")
+  column(width=8, align="center", dataTableOutput("pdbBiomarkerDfFiltered"))
 )
 
 sensitivityFileUploadBox <- box(
@@ -254,16 +254,15 @@ server <- function(input, output) {
   })
 
   output$pdbBiomarkerDfFiltered <- renderDataTable({
-    print(rv$pdbBiomarkersDf)
     df_ <- if (input$feature != "") {
       rv$pdbBiomarkersDf[gene_symbol == input$feature]
     } else {
       rv$pdbBiomarkersDf
     }
     df_[
-      order(-pvalue, abs(estimate)),
+      order(pvalue, -abs(estimate)),
       .(compound_name, correlation=estimate, pvalue, inchikey, pubchem,
-        chembl_id)
+        chembl_id, tissue)
     ]
   })
 
