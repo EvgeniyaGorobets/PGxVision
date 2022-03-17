@@ -8,25 +8,16 @@
 
 ## Description
 
-PGxVision (PharmacoGenomic Vision & Interpretation) helps identify and
-visualize RNA-based cancer biomarkers for drug response. This package is
-intended to be used in conjunction with the Roche-PharmacoGx pipeline.
-PGxVision is intended to guide cancer treatment decisions in molecular
-tumour boards.
-
-``` r
-R version 4.1.1 (2021-08-10)
-Platform: x86_64-w64-mingw32/x64 (64-bit)
-Running under: Windows 10 x64 (build 19043)
-```
+PGxVision (PharmacoGenomics VISualization & InterpretatiON) helps identify and
+visualize RNA-based cancer biomarkers for drug response. PGxVision is intended to 
+guide cancer treatment decisions in molecular tumour boards.
 
 ## Installation
 
 To download the package:
 
 ``` r
-require("devtools")
-devtools::install_github("EvgeniyaGorobets/PGxVision", build_vignettes=TRUE)
+remotes::install_github("EvgeniyaGorobets/PGxVision", build_vignettes=TRUE)
 library("PGxVision")
 ```
 
