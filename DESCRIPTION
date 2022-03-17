@@ -5,26 +5,26 @@ Version: 0.1.0
 Authors@R: person("E", "Gorobets", email = "evgeniya.gorobets@mail.utoronto.ca",
             role = c("aut", "cre"))
 Maintainer: Evgeniya Gorobets <evgeniya.gorobets@mail.utoronto.ca>
-Description: This is a generic plotting package meant to provide an easy way 
-    for bioinformaticists and clinicians to visualize pharmacogenomic data. The 
-    package provides some of the most commonly used graphs for visualizing drug 
-    response data: waterfall plots, volcano plots, and Manhattan plots. A 
+Description: This is a generic plotting package meant to provide an easy way
+    for bioinformaticists and clinicians to visualize pharmacogenomic data. The
+    package provides some of the most commonly used graphs for visualizing drug
+    response data: waterfall plots, volcano plots, and Manhattan plots. A
     forest plotting function is available for visualizing metadata.
-    These graphs are intended to help clinicians spot promising biomarkers. To 
-    further analyze biomarker genes, this package additionally provides some 
-    gene set analyis functions. These functions (wrapped in the geneSetAnalysis 
-    pipeline) allow clinicians to find all gene sets that a query gene belongs 
-    to, and then evaluate overlap in those gene sets. The gene sets that a 
-    query gene is found in are mapped on a network plot, to help visualize the 
-    most notable biological roles of a gene. This gene set analysis puts 
-    biomarkers into their biological context, which can help clinicians 
-    understand why some genes are more responsive to certain compounds than 
+    These graphs are intended to help clinicians spot promising biomarkers. To
+    further analyze biomarker genes, this package additionally provides some
+    gene set analyis functions. These functions (wrapped in the geneSetAnalysis
+    pipeline) allow clinicians to find all gene sets that a query gene belongs
+    to, and then evaluate overlap in those gene sets. The gene sets that a
+    query gene is found in are mapped on a network plot, to help visualize the
+    most notable biological roles of a gene. This gene set analysis puts
+    biomarkers into their biological context, which can help clinicians
+    understand why some genes are more responsive to certain compounds than
     others, etc.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2
-Imports: 
+Imports:
     checkmate,
     data.table,
     ggplot2,
@@ -37,12 +37,13 @@ Imports:
     shinybusy,
     shinydashboard,
     viridis,
-    visNetwork
-Suggests: 
+    visNetwork,
+    jsonlite
+Suggests:
     rmarkdown,
     knitr,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
-Depends: 
+Depends:
     R (>= 3.1.0)
 Config/testthat/edition: 3
