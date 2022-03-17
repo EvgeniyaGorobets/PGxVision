@@ -250,7 +250,13 @@ server <- function(input, output) {
     patientLogicalDf = NULL,
     referenceDf = NULL,
     logicalModelL = NULL,
-    pdbBiomarkersDf=PGxVision::fetchPharmacoDbBiomarkers(),
+    pdbBiomarkersDf=tryCatch(
+      PGxVision::fetchPharmacoDbBiomarkers(),
+      error=function(e) fread(file.path(
+        system.file("extdata"), package="PGxVision"),
+        "sample_data",
+        "pharmacodb_biomarker_df.csv"
+      )),
     error = NULL)
 
   # ------------------ BIOMARKER TAB ------------------ #
