@@ -205,7 +205,9 @@ ui <- dashboardPage(
         h2("Multivariate Logical Model Predictor"),
         fluidRow(logicalModelFileUploadBox),
         fluidRow(
-          uiOutput("logicalModel"))
+          box(width=12,
+            uiOutput("logicalModel")
+          )
         )
       ),
       # Biomarkers tab
@@ -335,9 +337,9 @@ server <- function(input, output) {
       FUN=grepl, FUN.VALUE=logical(1),
       pattern="^[[:alnum:]]+$")))
     model_match <- with(as.list(expr_gt_thresh), eval(str2lang(form)))
-    box(
+    column(width=12,
       fluidRow(width=12,
-        renderText(form)
+        h3(form)
       ),
       fluidRow(width=12,
         renderText(paste0("\n\nModel match: ", model_match))
