@@ -253,7 +253,7 @@ server <- function(input, output) {
     pdbBiomarkersDf=tryCatch(
       PGxVision::fetchPharmacoDbBiomarkers(),
       error=function(e) fread(file.path(
-        system.file("extdata"), package="PGxVision"),
+        system.file("extdata", package="PGxVision"),
         "sample_data",
         "pharmacodb_biomarker_df.csv"
       )),
