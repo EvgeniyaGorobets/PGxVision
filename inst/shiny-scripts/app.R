@@ -256,7 +256,7 @@ server <- function(input, output) {
         system.file("extdata", package="PGxVision"),
         "sample_data",
         "pharmacodb_biomarker_df.csv"
-      )),
+      ))),
     error = NULL)
 
   # ------------------ BIOMARKER TAB ------------------ #
