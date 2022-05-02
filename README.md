@@ -17,7 +17,7 @@ guide cancer treatment decisions in molecular tumour boards.
 To download the package:
 
 ``` r
-remotes::install_github("EvgeniyaGorobets/PGxVision", build_vignettes=TRUE)
+remotes::install_github("bhklab/PGxVision", build_vignettes=TRUE)
 library("PGxVision")
 ```
 
@@ -146,8 +146,6 @@ retrieved from MSigDb.
 
 ## Contributions
 
-The author of the package is Evgeniya Gorobets.
-
 `data.table` is used to transform `data.frame`s into `data.table`s in
 some plotting and gene set analysis functions (*buildVolcanoPlot,
 buildManhattanPlot, queryGene, expandGeneSets,
@@ -270,8 +268,3 @@ jdlong. (2018). How to stack two images horizontally in R Markdown.
 Perry & YakovL. (2017). Stop vis.js physics after nodes load but allow
 drag-able nodes. *StackOverflow.*
 <https://stackoverflow.com/questions/32403578/stop-vis-js-physics-after-nodes-load-but-allow-drag-able-nodes>
-
-## Acknowledgements
-
-This package was developed as part of an assessment for 2021 BCB410H:
-Applied Bioinformatics, University of Toronto, Toronto, CANADA.
